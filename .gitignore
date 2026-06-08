@@ -1,0 +1,19 @@
+.obsidian
+.DS_Store
+Thumbs.db
+
+# Ignore all files in the vault except for the .obsidian folder
+
+!.obsidian/
+# Ignore all files in the .obsidian folder except for the config file
+.obsidian/*
+!.obsidian/config
+
+node_modules/
+.session
+Blueprint.md
+
+package-lock.json
+package.json
+Project Status.md
+QR Transfer Architecture.md
