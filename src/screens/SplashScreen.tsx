@@ -6,8 +6,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { useFonts, Fredoka_700Bold } from '@expo-google-fonts/fredoka';
-import { Nunito_400Regular, Nunito_700Bold } from '@expo-google-fonts/nunito';
+import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import Svg, { Path } from 'react-native-svg';
 
@@ -21,9 +20,9 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const ringScale = useRef(new Animated.Value(1)).current;
 
   const [fontsLoaded] = useFonts({
-    Fredoka_700Bold,
-    Nunito_400Regular,
-    Nunito_700Bold,
+    Fredoka_700Bold: require('../../assets/fonts/Fredoka-Bold.ttf'),
+    Nunito_400Regular: require('../../assets/fonts/Nunito-Regular.ttf'),
+    Nunito_700Bold: require('../../assets/fonts/Nunito-Bold.ttf'),
   });
 
   const animate = useCallback(() => {
