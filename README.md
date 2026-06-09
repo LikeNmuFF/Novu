@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icon.png" width="200" alt="LearnBasilan Logo" />
+<img src="assets/icon.png" width="200" alt="LearnBasilan Logo"  />
 
 # LearnBasilan
 
@@ -33,6 +33,7 @@ The platform enables students to learn subjects, take quizzes, track progress, a
 ## Features
 
 ### For Students
+
 - **Multi-Language Support** — Learn in Filipino, Chavacano, Yakan, Tausug, or English
 - **Interactive Lessons** — Read through structured lessons with images and examples
 - **Quizzes & Assessment** — Test knowledge with multiple-choice questions
@@ -44,6 +45,7 @@ The platform enables students to learn subjects, take quizzes, track progress, a
 - **Text-to-Speech** — Listen to lessons read aloud (Filipino & English)
 
 ### For Teachers
+
 - **Content Creator** — Create and edit lessons and quizzes directly in the app
 - **QR Distribution** — Generate QR codes for lessons, quizzes, and subjects
 - **Progress Scanner** — Scan student QR codes to import progress reports
@@ -54,19 +56,19 @@ The platform enables students to learn subjects, take quizzes, track progress, a
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| **Mobile Framework** | React Native |
-| **Runtime** | Expo SDK 52 |
-| **Language** | TypeScript |
-| **Database** | expo-sqlite (SQLite) |
-| **State Management** | Zustand |
-| **Forms** | React Hook Form + Zod |
-| **Localization** | i18next + react-i18next |
-| **QR Code** | react-native-qrcode-svg + expo-barcode-scanner |
-| **Speech** | expo-speech |
-| **Secure Storage** | expo-crypto (SHA-256 hashing) |
-| **Local Storage** | AsyncStorage |
+| Category             | Technology                                     |
+| -------------------- | ---------------------------------------------- |
+| **Mobile Framework** | React Native                                   |
+| **Runtime**          | Expo SDK 52                                    |
+| **Language**         | TypeScript                                     |
+| **Database**         | expo-sqlite (SQLite)                           |
+| **State Management** | Zustand                                        |
+| **Forms**            | React Hook Form + Zod                          |
+| **Localization**     | i18next + react-i18next                        |
+| **QR Code**          | react-native-qrcode-svg + expo-barcode-scanner |
+| **Speech**           | expo-speech                                    |
+| **Secure Storage**   | expo-crypto (SHA-256 hashing)                  |
+| **Local Storage**    | AsyncStorage                                   |
 
 ---
 
@@ -126,28 +128,30 @@ Offline-Learning-App/
 
 ### Database Schema
 
-| Table | Purpose |
-|-------|---------|
-| `users` | Student & teacher accounts |
-| `subjects` | Mathematics, Science, English, Filipino, Araling Panlipunan |
-| `lessons` | Lesson content with language and chapter ordering |
-| `quizzes` | Multiple-choice questions linked to lessons |
-| `progress` | Student lesson completion and scores |
-| `user_stats` | XP, level, and streak tracking |
-| `earned_badges` | Achievement badges earned by students |
-| `imported_content` | Content imported via QR codes |
+| Table              | Purpose                                                     |
+| ------------------ | ----------------------------------------------------------- |
+| `users`            | Student & teacher accounts                                  |
+| `subjects`         | Mathematics, Science, English, Filipino, Araling Panlipunan |
+| `lessons`          | Lesson content with language and chapter ordering           |
+| `quizzes`          | Multiple-choice questions linked to lessons                 |
+| `progress`         | Student lesson completion and scores                        |
+| `user_stats`       | XP, level, and streak tracking                              |
+| `earned_badges`    | Achievement badges earned by students                       |
+| `imported_content` | Content imported via QR codes                               |
 
 ### QR Transfer System
 
 The QR ecosystem is the primary method for distributing educational content offline.
 
 **Architecture:**
+
 1. **Compression** — Pako (deflate level 9) + base64 encoding (60-96% size reduction)
 2. **Chunking** — Splits data into ≤1800 character chunks for safe QR scanning
 3. **Integrity** — CRC32 checksums verify data wasn't corrupted during transfer
 4. **Reconstruction** — Automatic reassembly when all chunks are scanned
 
 **Supported QR Content Types:**
+
 - Lessons (with images, examples, translations)
 - Quizzes (questions, choices, explanations)
 - Subjects (metadata and structure)
@@ -226,22 +230,25 @@ Student App                          Teacher Dashboard
 ## Gamification System
 
 ### XP Rewards
-| Action | XP |
-|--------|----|
-| Lesson Completed | +10 XP |
-| Quiz Passed | +50 XP |
+
+| Action             | XP      |
+| ------------------ | ------- |
+| Lesson Completed   | +10 XP  |
+| Quiz Passed        | +50 XP  |
 | Perfect Quiz Score | +100 XP |
 
 ### Level Progression
+
 | Level | XP Required |
-|-------|-------------|
-| 1 | 0 |
-| 2 | 100 |
-| 3 | 250 |
-| 4 | 500 |
-| ... | Scaling |
+| ----- | ----------- |
+| 1     | 0           |
+| 2     | 100         |
+| 3     | 250         |
+| 4     | 500         |
+| ...   | Scaling     |
 
 ### Achievements
+
 - First Lesson Completed
 - First Quiz Passed
 - Perfect Score
@@ -254,13 +261,13 @@ Student App                          Teacher Dashboard
 
 ## Supported Languages
 
-| Language | Status |
-|----------|--------|
-| English | Complete (403 UI keys) |
-| Filipino | Pending translation |
-| Chavacano | Pending translation |
-| Yakan | Pending translation |
-| Tausug | Pending translation |
+| Language  | Status                 |
+| --------- | ---------------------- |
+| English   | Complete (403 UI keys) |
+| Filipino  | Pending translation    |
+| Chavacano | Pending translation    |
+| Yakan     | Pending translation    |
+| Tausug    | Pending translation    |
 
 ### Contributing Translations
 
@@ -276,6 +283,7 @@ python src/translations/csv_to_json.py
 ## Design System
 
 ### Color Palette
+
 - **Coral** — Primary actions, headers
 - **Teal** — Science, success states
 - **Gold** — Achievements, rewards
@@ -283,6 +291,7 @@ python src/translations/csv_to_json.py
 - **Ocean** — Text, backgrounds
 
 ### Design Principles
+
 - Child-friendly, gamified interface
 - Rounded cards and large touch targets
 - Bright, engaging colors
@@ -296,11 +305,11 @@ python src/translations/csv_to_json.py
 
 ### EAS Build Profiles
 
-| Profile | Purpose | Channel |
-|---------|---------|---------|
+| Profile       | Purpose                           | Channel     |
+| ------------- | --------------------------------- | ----------- |
 | `development` | Development builds with dev tools | development |
-| `preview` | Testing and QA | preview |
-| `production` | Production release | production |
+| `preview`     | Testing and QA                    | preview     |
+| `production`  | Production release                | production  |
 
 ### Build Configuration
 
@@ -326,6 +335,7 @@ python src/translations/csv_to_json.py
 ## Project Status
 
 ### Completed
+
 - [x] QR Transfer Architecture (compression, chunking, CRC32)
 - [x] SQLite database schema
 - [x] Authentication system (SHA-256 password hashing)
@@ -335,12 +345,14 @@ python src/translations/csv_to_json.py
 - [x] Design token system
 
 ### In Progress
+
 - [ ] EAS Build configuration
 - [ ] i18next integration
 - [ ] Tab navigation wiring
 - [ ] Phase 2 development (Subjects, Lessons, Quizzes)
 
 ### Planned
+
 - [ ] Full i18n translations (Filipino, Chavacano, Yakan, Tausug)
 - [ ] Teacher Dashboard analytics
 - [ ] Advanced gamification
