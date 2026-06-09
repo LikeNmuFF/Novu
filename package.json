@@ -1,6 +1,6 @@
 {
   "name": "learnbasilan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -13,6 +13,7 @@
     "@expo-google-fonts/nunito": "^0.4.2",
     "@react-navigation/bottom-tabs": "^7.17.1",
     "@react-navigation/native": "^7.3.0",
+    "eas-cli": "^20.1.0",
     "expo": "~52.0.0",
     "expo-asset": "~11.0.5",
     "expo-barcode-scanner": "~13.0.0",
