@@ -55,9 +55,21 @@ export default function App() {
   const [dbReady, setDbReady] = useState(false);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.warn('DB init timed out, proceeding in degraded mode');
+      setDbReady(true);
+    }, 10000);
+
     initDatabase()
-      .then(() => setDbReady(true))
-      .catch(console.error);
+      .then(() => {
+        clearTimeout(timeout);
+        setDbReady(true);
+      })
+      .catch((e) => {
+        clearTimeout(timeout);
+        console.warn('DB init failed, proceeding in degraded mode:', e);
+        setDbReady(true);
+      });
   }, []);
 
   const navigate = useCallback((to: FlowStep) => {

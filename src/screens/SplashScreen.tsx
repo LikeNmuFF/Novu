@@ -1,16 +1,19 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Animated,
   Dimensions,
+  Platform,
 } from 'react-native';
-import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import Svg, { Path } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
+
+const systemFont = Platform.select({ default: 'sans-serif', ios: 'System' });
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const logoScale = useRef(new Animated.Value(0.8)).current;
@@ -18,12 +21,17 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   const textOpacity = useRef(new Animated.Value(0)).current;
   const subtitleOpacity = useRef(new Animated.Value(0)).current;
   const ringScale = useRef(new Animated.Value(1)).current;
+  const [fontsReady, setFontsReady] = useState(false);
 
-  const [fontsLoaded] = useFonts({
-    Fredoka_700Bold: require('../../assets/fonts/Fredoka-Bold.ttf'),
-    Nunito_400Regular: require('../../assets/fonts/Nunito-Regular.ttf'),
-    Nunito_700Bold: require('../../assets/fonts/Nunito-Bold.ttf'),
-  });
+  useEffect(() => {
+    Font.loadAsync({
+      Fredoka_700Bold: require('../../assets/fonts/Fredoka-Bold.ttf'),
+      Nunito_400Regular: require('../../assets/fonts/Nunito-Regular.ttf'),
+      Nunito_700Bold: require('../../assets/fonts/Nunito-Bold.ttf'),
+    })
+      .then(() => setFontsReady(true))
+      .catch(() => setFontsReady(true));
+  }, []);
 
   const animate = useCallback(() => {
     Animated.sequence([
@@ -69,22 +77,13 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded) animate();
-  }, [fontsLoaded]);
+    animate();
+  }, []);
 
   useEffect(() => {
-    if (!fontsLoaded) return;
-    const timer = setTimeout(onComplete, 2800);
+    const timer = setTimeout(onComplete, 3000);
     return () => clearTimeout(timer);
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.container}>
-        <StatusBar style="light" />
-      </View>
-    );
-  }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -121,15 +120,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
         <View style={styles.dots}>
           {[0, 1, 2].map((i) => (
-            <View
-              key={i}
-              style={[
-                styles.dot,
-                {
-                  animationDelay: `${i * 0.2}s`,
-                },
-              ]}
-            />
+            <View key={i} style={styles.dot} />
           ))}
         </View>
       </View>
@@ -195,22 +186,24 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   logoText: {
-    fontFamily: 'Fredoka_700Bold',
+    fontFamily: systemFont,
     fontSize: 48,
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   title: {
-    fontFamily: 'Fredoka_700Bold',
+    fontFamily: systemFont,
     fontSize: 40,
     color: '#FFFFFF',
     textAlign: 'center',
     letterSpacing: -0.5,
+    fontWeight: '700',
   },
   titleAccent: {
     color: '#FFD93D',
   },
   subtitle: {
-    fontFamily: 'Nunito_400Regular',
+    fontFamily: systemFont,
     fontSize: 16,
     color: 'rgba(255,255,255,0.7)',
     textAlign: 'center',

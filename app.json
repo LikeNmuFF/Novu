@@ -35,9 +35,7 @@
           "cameraPermission": "Allow LearnBasilan to access camera to scan QR codes."
         }
       ],
-      "expo-font",
-      "expo-sqlite",
-      "expo-asset"
+      "expo-sqlite"
     ],
     "extra": {
       "eas": {
