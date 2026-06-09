@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LearnBasilan — Matuto, Maglaro, Magtagumpay</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LearnBasilan &mdash; Matuto, Maglaro, Magtagumpay</title>
+    <meta name="description" content="LearnBasilan is an offline-first mobile learning app for elementary students in Basilan. Supports Filipino, Chavacano, Yakan, Tausug, and English." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,1350 +18,714 @@
                         teal: { DEFAULT: '#2EC4B6', dark: '#219A8F', light: '#7DDAD0', glow: '#E8F8F6' },
                         gold: { DEFAULT: '#FFD93D', light: '#FFE680', glow: '#FFF8E0' },
                         green: { DEFAULT: '#6BCB77', light: '#94D99D', glow: '#EDF8EF' },
-                        ocean: { DEFAULT: '#1A535C', light: '#2D7A87' },
-                        cream: { DEFAULT: '#FFF8F0', dark: '#F5E6D5' },
-                        slate: { DEFAULT: '#4A5568', light: '#718096' }
+                        ocean: { DEFAULT: '#1A535C', dark: '#0E2D32', light: '#2D7A87' },
+                        cream: { DEFAULT: '#FFF8F0', dark: '#F5E6D5' }
                     },
                     fontFamily: { display: ['Fredoka', 'sans-serif'], body: ['Nunito', 'sans-serif'] }
                 }
             }
         }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --coral: #FF7E5F; --coral-dark: #E86548; --coral-light: #FFA68F; --coral-glow: #FFF0EB;
-            --teal: #2EC4B6; --teal-dark: #219A8F; --teal-light: #7DDAD0; --teal-glow: #E8F8F6;
-            --gold: #FFD93D; --gold-light: #FFE680; --gold-glow: #FFF8E0;
-            --green: #6BCB77; --green-light: #94D99D; --green-glow: #EDF8EF;
-            --ocean: #1A535C; --ocean-light: #2D7A87;
+            --coral: #FF7E5F; --coral-dark: #E86548; --coral-light: #FFA68F;
+            --teal: #2EC4B6; --teal-dark: #219A8F; --teal-light: #7DDAD0;
+            --gold: #FFD93D; --gold-light: #FFE680;
+            --green: #6BCB77; --green-light: #94D99D;
+            --ocean: #1A535C; --ocean-dark: #0E2D32; --ocean-light: #2D7A87;
             --cream: #FFF8F0; --cream-dark: #F5E6D5;
-            --white: #FFFFFF; --slate: #4A5568; --slate-light: #718096;
-            --z-bg: 0; --z-particles: 1; --z-content: 10; --z-nav: 50; --z-overlay: 100;
+            --white: #FFFFFF;
+            --bg: #FFF8F0; --surface: #FFFFFF; --text: #1A535C; --text-secondary: #1A535C;
+            --text-footer: #CBD5E1;
+            --border: #E2E8F0; --shadow: rgba(26,83,92,0.08);
+            --font-display: 'Fredoka', sans-serif;
+            --font-body: 'Nunito', sans-serif;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0E2D32; --surface: #1A535C; --text: #FFFFFF; --text-secondary: #CBD5E1;
+                --border: #2D7A87; --shadow: rgba(0,0,0,0.3);
+            }
+            body { background: var(--bg); color: var(--text); }
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: auto; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
         body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--cream);
-            color: var(--ocean);
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
-            cursor: default;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
-        h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
+        ::selection { background: var(--coral); color: white; }
+        :focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; border-radius: 4px; }
 
-        /* ---- Cinematic Base ---- */
-        .parallax-layer { will-change: transform; pointer-events: none; }
-        [data-depth] { transition: transform 0.1s linear; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
+        @media (min-width: 768px) { .container { padding: 0 2rem; } }
+        @media (min-width: 1024px) { .container { padding: 0 2.5rem; } }
 
-        /* Glow Cursor */
-        #glow-cursor {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(255,126,95,0.08) 0%, transparent 70%);
-            position: fixed; top: 0; left: 0;
-            pointer-events: none; z-index: var(--z-overlay);
-            transform: translate(-50%, -50%);
-            mix-blend-mode: screen;
-        }
-        #glow-cursor-2 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(46,196,182,0.06) 0%, transparent 70%);
-            position: fixed; top: 0; left: 0;
-            pointer-events: none; z-index: var(--z-overlay);
-            transform: translate(-50%, -50%);
-            mix-blend-mode: screen;
-        }
+        h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
 
-        /* Custom Cursor Ring */
-        .cursor-ring {
-            width: 40px; height: 40px;
-            border: 2px solid var(--coral);
-            border-radius: 50%;
-            position: fixed; top: 0; left: 0;
-            pointer-events: none; z-index: calc(var(--z-overlay) + 1);
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
-            mix-blend-mode: difference;
+        .glass {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
         }
-        .cursor-ring.active {
-            width: 70px; height: 70px;
-            border-color: var(--gold);
-            background: rgba(255,217,61,0.1);
+        @media (prefers-color-scheme: dark) {
+            .glass {
+                background: rgba(14,45,50,0.85);
+                border-bottom: 1px solid rgba(45,122,135,0.3);
+            }
         }
 
-        /* Grain Overlay */
-        #grain-overlay {
-            position: fixed; inset: 0;
-            pointer-events: none; z-index: calc(var(--z-overlay) + 2);
-            opacity: 0.03;
-            mix-blend-mode: overlay;
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.875rem 2rem; border-radius: 9999px; font-weight: 700;
+            font-size: 1rem; line-height: 1; cursor: pointer; transition: all 0.25s ease;
+            border: none; text-decoration: none; font-family: var(--font-display);
+            min-height: 48px; white-space: nowrap;
         }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--coral); color: white; box-shadow: 0 4px 14px rgba(255,126,95,0.35); }
+        .btn-primary:hover { background: var(--coral-dark); box-shadow: 0 6px 20px rgba(255,126,95,0.45); transform: translateY(-2px); }
+        .btn-secondary { background: var(--teal); color: white; box-shadow: 0 4px 14px rgba(46,196,182,0.35); }
+        .btn-secondary:hover { background: var(--teal-dark); box-shadow: 0 6px 20px rgba(46,196,182,0.45); transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--text); border: 2px solid var(--border); }
+        .btn-outline:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-glow); }
 
-        /* Cinematic Hero */
-        .hero-gradient {
-            background: linear-gradient(160deg, #0D3B42 0%, #1A535C 30%, #0F4A52 60%, #082228 100%);
-        }
-        .hero-gradient::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 30% 50%, rgba(255,126,95,0.08) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 30%, rgba(46,196,182,0.06) 0%, transparent 50%);
-            pointer-events: none;
-        }
+        .section { padding: 5rem 0; }
+        @media (min-width: 768px) { .section { padding: 7rem 0; } }
 
-        /* Cinematic Overlay Lines */
-        .scanlines {
-            position: absolute; inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0,0,0,0.03) 2px,
-                rgba(0,0,0,0.03) 4px
-            );
-            pointer-events: none; z-index: 2;
-        }
-
-        /* 3D Card Tilt */
-        .tilt-card {
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-        .tilt-card .tilt-content {
-            transition: transform 0.1s ease-out;
-            transform-style: preserve-3d;
-        }
-        .tilt-card .tilt-shadow {
-            transition: box-shadow 0.3s ease;
-        }
-
-        /* Section Transitions */
-        .section-morph {
-            position: relative;
-        }
-        .section-morph::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, transparent, var(--coral), var(--gold), var(--teal), transparent);
-            opacity: 0.4;
-        }
-
-        /* Cinematic Text Reveal */
-        .char-reveal {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(60px) rotateX(-40deg);
-        }
-
-        /* Typewriter */
-        .typewriter-cursor {
-            display: inline-block;
-            width: 3px; height: 1em;
-            background: var(--coral);
-            margin-left: 4px;
-            animation: blink 1s step-end infinite;
-            vertical-align: text-bottom;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* Floating Particles (CSS) */
-        .float-particle {
-            position: absolute;
-            pointer-events: none;
-            will-change: transform;
-        }
-
-        /* Phone 3D */
-        .phone-3d {
-            transform-style: preserve-3d;
-            perspective: 1200px;
-        }
-        .phone-3d .phone-body {
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-            border-radius: 48px;
+        .card {
+            position: relative; background: var(--surface); border-radius: 1.25rem;
+            padding: 2rem; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+            border: 1px solid var(--border);
             box-shadow:
-                0 30px 80px rgba(0,0,0,0.35),
-                0 0 0 1px rgba(255,255,255,0.05) inset;
-        }
-        .phone-reflection {
-            position: absolute; inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                135deg,
-                rgba(255,255,255,0.15) 0%,
-                transparent 40%,
-                transparent 60%,
-                rgba(255,255,255,0.05) 100%
-            );
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        /* Ambient Glow Card */
-        .glow-card {
-            position: relative;
+                0 1px 3px rgba(0,0,0,0.04),
+                0 4px 12px var(--shadow),
+                0 0 0 1px rgba(255,255,255,0.5) inset;
             overflow: hidden;
         }
-        .glow-card::before {
-            content: '';
-            position: absolute;
-            top: var(--mouse-y, 50%);
-            left: var(--mouse-x, 50%);
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(255,126,95,0.12) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
+        .card::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
             pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s;
         }
-        .glow-card:hover::before { opacity: 1; }
-
-        /* Scroll Progress Bar */
-        #scroll-progress {
-            position: fixed;
-            top: 0; left: 0; height: 3px;
-            background: linear-gradient(90deg, var(--coral), var(--gold), var(--teal));
-            z-index: calc(var(--z-nav) + 1);
-            width: 0%;
-            transition: width 0.1s linear;
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow:
+                0 2px 6px rgba(0,0,0,0.05),
+                0 12px 32px var(--shadow),
+                0 24px 60px rgba(255,126,95,0.08),
+                0 0 0 1px rgba(255,126,95,0.15) inset;
+            border-color: rgba(255,126,95,0.2);
+        }
+        @media (prefers-color-scheme: dark) {
+            .card::before {
+                background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+            }
+            .card:hover {
+                box-shadow:
+                    0 2px 6px rgba(0,0,0,0.1),
+                    0 12px 32px rgba(0,0,0,0.3),
+                    0 0 0 1px rgba(255,126,95,0.2) inset;
+            }
         }
 
-        /* Cinematic entrance */
-        .reveal-up, .reveal-left, .reveal-right {
-            opacity: 0;
-            will-change: transform, opacity;
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.16,1,0.3,1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .btn:active { transform: none; }
+            .card:hover { transform: none; }
+            .btn-primary:hover, .btn-secondary:hover { transform: none; }
+            .phone-float { animation: none !important; }
+            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
         }
 
-        /* Interactive Lens Flare */
-        .lens-flare {
-            position: fixed;
-            top: 50%; left: 50%;
-            width: 800px; height: 800px;
-            background: radial-gradient(
-                ellipse at center,
-                rgba(255,126,95,0.03) 0%,
-                rgba(255,217,61,0.02) 20%,
-                transparent 50%
-            );
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-16px) rotate(0deg); }
+        }
+        .phone-float { animation: float 5s ease-in-out infinite; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.8s ease forwards; }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--cream) 0%, #FFE8E0 40%, #E0F7F4 100%);
+        }
+        @media (prefers-color-scheme: dark) {
+            .hero-gradient {
+                background: linear-gradient(135deg, #0E2D32 0%, #1A535C 40%, #0E2D32 100%);
+            }
+        }
+
+        .language-chip {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; border-radius: 9999px;
+            font-weight: 700; font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.16,1,0.3,1); cursor: default;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02) inset;
+        }
+        .language-chip:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+        .stat-value {
+            font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--coral), var(--teal));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; display: inline-block;
+            filter: drop-shadow(0 4px 12px rgba(255,126,95,0.4));
+        }
+        @media (min-width: 768px) { .stat-value { font-size: 3rem; } }
+
+        .step-number {
+            display: flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; border-radius: 50%; position: relative;
+            font-family: var(--font-display); font-weight: 700; font-size: 1.35rem;
+            flex-shrink: 0; z-index: 1;
+            background: linear-gradient(135deg, var(--coral), var(--coral-dark));
+            color: white; box-shadow: 0 6px 20px rgba(255,126,95,0.3);
+        }
+        .step-number::after {
+            content: ''; position: absolute; inset: 2px; border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
             pointer-events: none;
-            z-index: 1;
-            transform: translate(-50%, -50%);
-            mix-blend-mode: screen;
+        }
+        .step-number span { position: relative; z-index: 1; }
+        .step-number.teal-step {
+            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+            box-shadow: 0 6px 20px rgba(46,196,182,0.3);
+        }
+        .step-number.gold-step {
+            background: linear-gradient(135deg, #FFD93D, #E5B800);
+            box-shadow: 0 6px 20px rgba(255,217,61,0.3);
         }
 
-        /* Depth blur effect for sections */
-        .depth-blur {
-            transition: filter 0.6s ease, opacity 0.6s ease;
+        .phone-mockup {
+            position: relative; width: 280px; height: 560px;
+            background: #1a1a2e; border-radius: 40px;
+            border: 3px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
-        .depth-blur.active { filter: blur(0); opacity: 1; }
-        .depth-blur.inactive { filter: blur(4px); opacity: 0.3; }
+        @media (min-width: 768px) { .phone-mockup { width: 300px; height: 600px; } }
+        .phone-mockup iframe { width: 100%; height: 100%; border: none; }
+        .phone-notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 24px; background: #1a1a2e;
+            border-radius: 0 0 16px 16px; z-index: 2;
+        }
+        .phone-screen {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            background: linear-gradient(180deg, #FF7E5F 0%, #FFA68F 40%, #FFF8F0 100%);
+            padding: 48px 20px 20px; z-index: 1;
+        }
+        .phone-screen .status-bar {
+            display: flex; justify-content: space-between; padding: 0 4px 16px;
+            color: white; font-size: 0.8rem; font-weight: 700;
+        }
+        .phone-screen h3 {
+            color: white; font-size: 1.6rem; margin-bottom: 0.25rem;
+        }
+        .phone-screen p {
+            color: white; font-size: 0.85rem; margin-bottom: 1.25rem; font-weight: 600;
+        }
+        .phone-subject-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .phone-subject {
+            background: rgba(255,255,255,0.25); backdrop-filter: blur(8px);
+            border-radius: 12px; padding: 14px 8px; text-align: center;
+            color: white; font-weight: 700; font-size: 0.8rem;
+        }
+        .phone-subject .icon { font-size: 1.6rem; margin-bottom: 6px; display: block; }
+        .phone-bottom-nav {
+            display: flex; justify-content: space-around; margin-top: auto;
+            padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .phone-bottom-nav span {
+            color: rgba(255,255,255,0.75); font-size: 0.7rem; text-align: center; font-weight: 600;
+        }
+        .phone-bottom-nav span.active { color: white; font-weight: 800; }
 
-        /* Nav */
-        nav { transition: background 0.5s ease, backdrop-filter 0.5s ease, box-shadow 0.5s ease; }
+        .hamburger {
+            display: flex; flex-direction: column; gap: 5px; cursor: pointer;
+            background: none; border: none; padding: 8px; min-width: 44px; min-height: 44px;
+            align-items: center; justify-content: center;
+        }
+        .hamburger span {
+            display: block; width: 24px; height: 2.5px; background: var(--text);
+            border-radius: 2px; transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
-        /* Floating emoji particles */
-        .emoji-particle {
-            position: fixed;
+        .mobile-nav {
+            position: fixed; top: 72px; left: 0; right: 0; bottom: 0;
+            background: var(--surface); z-index: 40;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+            transform: translateY(-100%); opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
             pointer-events: none;
-            z-index: var(--z-particles);
-            will-change: transform;
-            font-size: 24px;
-            opacity: 0.15;
-            transition: opacity 0.3s;
+        }
+        .mobile-nav.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+
+        .feature-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 1.25rem; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .feature-icon::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .feature-icon.icon-coral { background: linear-gradient(135deg, #FF7E5F, #FFA68F); }
+        .feature-icon.icon-teal { background: linear-gradient(135deg, #2EC4B6, #7DDAD0); }
+        .feature-icon.icon-gold { background: linear-gradient(135deg, #FFD93D, #FFE680); }
+        .feature-icon.icon-green { background: linear-gradient(135deg, #6BCB77, #94D99D); }
+        .feature-icon svg { position: relative; z-index: 1; }
+
+        .cta-gradient {
+            background: linear-gradient(135deg, var(--coral) 0%, var(--teal) 100%);
+            position: relative; overflow: hidden;
+        }
+        .cta-gradient::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-gradient::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: cta-shimmer 15s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes cta-shimmer {
+            0%, 100% { transform: translate(-10%, -5%) rotate(0deg); }
+            50% { transform: translate(10%, 5%) rotate(3deg); }
         }
 
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            .cursor-ring, #glow-cursor, #glow-cursor-2 { display: none; }
-            .lens-flare { display: none; }
-            #three-container { opacity: 0.15; }
-        }
+        .language-flag { width: 28px; height: 20px; border-radius: 3px; object-fit: cover; }
+
+        .card h3, .card p { color: var(--text); }
+        section .text-ocean { color: var(--text); }
+
+        footer a { color: var(--text-footer); text-decoration: none; transition: color 0.2s; }
+        footer a:hover { color: white; }
     </style>
 </head>
 <body>
-    <!-- Scroll Progress -->
-    <div id="scroll-progress"></div>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-coral focus:text-white focus:rounded-lg focus:font-bold">
+        Skip to main content
+    </a>
 
-    <!-- Cinematic Overlays -->
-    <div class="scanlines"></div>
-    <div id="grain-overlay"><canvas id="grain-canvas"></canvas></div>
-    <div class="lens-flare" id="lens-flare"></div>
-
-    <!-- Cursor -->
-    <div class="cursor-ring" id="cursor-ring"></div>
-    <div id="glow-cursor"></div>
-    <div id="glow-cursor-2"></div>
-
-    <!-- Three.js Container -->
-    <div id="three-container" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
-
-    <!-- Ambient Emoji Particles -->
-    <div id="emoji-particles"></div>
-
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full z-50 px-6 py-5 flex justify-between items-center" style="background:transparent;">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 bg-coral rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-2xl" style="transform:translateZ(0);">LB</div>
-            <span class="text-white font-bold text-2xl tracking-tight hidden sm:block" style="font-family:'Fredoka',sans-serif;">Learn<span style="color:var(--gold);">Basilan</span></span>
-        </div>
-        <div class="flex items-center gap-8">
-            <a href="#features" class="text-white/80 hover:text-white font-semibold transition-all duration-300 text-sm tracking-wide uppercase">Features</a>
-            <a href="#prototype" class="text-white/80 hover:text-white font-semibold transition-all duration-300 text-sm tracking-wide uppercase">Prototype</a>
-            <a href="#download" class="bg-coral text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-coral/50 hover:scale-105 active:scale-95 transition-all duration-300 text-sm tracking-wide uppercase">Download</a>
+    <nav class="fixed top-0 left-0 right-0 z-50 glass" role="navigation" aria-label="Main navigation">
+        <div class="container flex items-center justify-between h-[72px]">
+            <a href="#" class="flex items-center gap-2.5 text-xl font-bold no-underline text-ocean" style="font-family:var(--font-display)" aria-label="LearnBasilan home">
+                <img src="/static/logo.png" alt="LearnBasilan" class="w-8 h-8 rounded-lg object-cover" />
+                LearnBasilan
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">Features</a>
+                <a href="#languages" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">Languages</a>
+                <a href="#how-it-works" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">How It Works</a>
+                <a href="#download" class="btn btn-primary text-sm py-2.5 px-6">Get Started</a>
+            </div>
+            <button class="hamburger md:hidden" aria-label="Toggle navigation menu" aria-expanded="false" id="menuBtn">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient" id="hero">
-        <!-- Depth Layer 0: Stars -->
-        <div id="stars-layer" class="absolute inset-0 parallax-layer" data-depth="0.02" style="z-index:1;"></div>
+    <div class="mobile-nav md:hidden" id="mobileNav" role="dialog" aria-label="Mobile navigation">
+        <a href="#features" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">Features</a>
+        <a href="#languages" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">Languages</a>
+        <a href="#how-it-works" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">How It Works</a>
+        <a href="#download" class="btn btn-primary text-lg">Get Started</a>
+    </div>
 
-        <!-- Depth Layer 1: Geometric orbs -->
-        <div class="absolute inset-0 parallax-layer" data-depth="0.08" style="z-index:1;">
-            <div class="absolute top-1/4 left-[15%] w-72 h-72 bg-coral/10 rounded-full blur-[100px] animate-pulse" style="animation-duration:6s;"></div>
-            <div class="absolute bottom-1/3 right-[20%] w-96 h-96 bg-teal/8 rounded-full blur-[120px] animate-pulse" style="animation-duration:8s;animation-delay:2s;"></div>
-            <div class="absolute top-2/3 left-[60%] w-48 h-48 bg-gold/10 rounded-full blur-[80px] animate-pulse" style="animation-duration:7s;animation-delay:4s;"></div>
-        </div>
-
-        <!-- Depth Layer 2: Floating decorative elements -->
-        <div class="absolute inset-0 parallax-layer" data-depth="0.15" style="z-index:1;">
-            <div class="absolute top-[20%] left-[10%] text-7xl opacity-[0.08] animate-float-slow">📚</div>
-            <div class="absolute bottom-[30%] right-[12%] text-6xl opacity-[0.06] animate-float-slow" style="animation-delay:-3s;">✏️</div>
-            <div class="absolute top-[60%] left-[70%] text-5xl opacity-[0.05] animate-float-slow" style="animation-delay:-1.5s;">🎓</div>
-            <div class="absolute top-[15%] right-[25%] w-20 h-20 border-2 border-coral/20 rounded-2xl -rotate-12"></div>
-            <div class="absolute bottom-[20%] left-[30%] w-16 h-16 border-2 border-teal/20 rounded-full"></div>
-        </div>
-
-        <!-- Depth Layer 3: Main Content -->
-        <div class="container mx-auto px-6 z-10 text-center parallax-layer" data-depth="0.04" style="position:relative;z-index:10;">
-            <div class="mb-6">
-                <span class="inline-block text-xs tracking-[0.3em] uppercase text-white/40 font-bold mb-8 border border-white/10 rounded-full px-6 py-2 backdrop-blur-sm">Next-Gen Offline Learning</span>
-            </div>
-            <h1 class="text-7xl md:text-9xl text-white font-bold mb-6 tracking-tighter" id="hero-title" style="line-height:0.9;">
-                Learn<span style="color:var(--gold);">Basilan</span>
-            </h1>
-            <div id="hero-subtitle-container" class="h-16 mb-10">
-                <p class="text-xl md:text-3xl text-white/60 max-w-2xl mx-auto font-medium" id="hero-subtitle"></p>
-                <span class="typewriter-cursor"></span>
-            </div>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center" id="hero-btns">
-                <a href="#download" class="bg-coral text-white px-10 py-5 rounded-full text-xl font-bold shadow-2xl hover:shadow-coral/40 hover:-translate-y-1 transition-all duration-300 inline-block">
-                    <span class="flex items-center gap-3">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Download APK
-                    </span>
-                </a>
-                <a href="#prototype" class="bg-white/5 backdrop-blur-md text-white border border-white/15 px-10 py-5 rounded-full text-xl font-bold hover:bg-white/10 transition-all duration-300 inline-block">
-                    <span class="flex items-center gap-3">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                        Explore App
-                    </span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Depth Layer 4: Foreground particles (sparks) -->
-        <div id="spark-layer" class="absolute inset-0 pointer-events-none" style="z-index:5;"></div>
-
-        <!-- Bottom gradient fade -->
-        <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-cream to-transparent" style="z-index:3;"></div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-28 bg-white relative" style="z-index:2;">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
-                <div class="reveal-up tilt-card">
-                    <div class="text-7xl font-bold text-coral mb-4 tracking-tighter font-display">
-                        <span id="download-count-display">0</span>
-                    </div>
-                    <div class="text-slate-light font-black uppercase tracking-[0.3em] text-xs">Downloads</div>
-                    <div class="w-16 h-1 bg-coral/30 mx-auto mt-6 rounded-full"></div>
-                </div>
-                <div class="reveal-up tilt-card" style="transition-delay:0.15s">
-                    <div class="text-7xl font-bold text-teal mb-4 tracking-tighter font-display">100%</div>
-                    <div class="text-slate-light font-black uppercase tracking-[0.3em] text-xs">Offline</div>
-                    <div class="w-16 h-1 bg-teal/30 mx-auto mt-6 rounded-full"></div>
-                </div>
-                <div class="reveal-up tilt-card" style="transition-delay:0.3s">
-                    <div class="text-7xl font-bold text-gold mb-4 tracking-tighter font-display">5+</div>
-                    <div class="text-slate-light font-black uppercase tracking-[0.3em] text-xs">Languages</div>
-                    <div class="w-16 h-1 bg-gold/30 mx-auto mt-6 rounded-full"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-cream relative overflow-hidden section-morph" style="z-index:2;">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-20">
-                <span class="text-xs tracking-[0.3em] uppercase text-coral font-bold mb-4 block">Core Features</span>
-                <h2 class="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">Everything for <span class="text-coral">Learning</span></h2>
-                <div class="w-32 h-1.5 bg-coral mx-auto rounded-full mb-8"></div>
-                <p class="text-slate-light max-w-2xl mx-auto text-xl font-medium">A complete classroom in your pocket, built for the children of Basilan.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Grade Levels -->
-                <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-cream-dark tilt-card glow-card reveal-up" style="transition-delay:0s;">
-                    <div class="tilt-content">
-                        <div class="text-5xl mb-6 bg-coral-glow w-16 h-16 rounded-2xl flex items-center justify-center">🎒</div>
-                        <h3 class="text-2xl font-bold mb-4">Grade 1–6 Ready</h3>
-                        <p class="text-slate-light leading-relaxed mb-6">Personalized curriculum for every elementary level. Content adapts to each student's age and development.</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-4 py-2 bg-cream rounded-full text-xs font-black border border-cream-dark">G1</span>
-                            <span class="px-4 py-2 bg-coral/10 rounded-full text-xs font-black border border-coral/30 text-coral">G2</span>
-                            <span class="px-4 py-2 bg-cream rounded-full text-xs font-black border border-cream-dark">G3</span>
-                            <span class="px-4 py-2 bg-cream rounded-full text-xs font-black border border-cream-dark">G4</span>
-                            <span class="px-4 py-2 bg-cream rounded-full text-xs font-black border border-cream-dark">G5</span>
-                            <span class="px-4 py-2 bg-cream rounded-full text-xs font-black border border-cream-dark">G6</span>
+    <main id="main">
+        <section class="hero-gradient pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden" aria-label="Hero">
+            <div class="container">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="fade-in">
+                        <div class="inline-flex items-center gap-2 bg-teal-glow dark:bg-teal/20 text-teal-dark dark:text-teal-light px-4 py-2 rounded-full text-sm font-bold mb-6">
+                            <span class="w-2 h-2 bg-teal rounded-full" style="animation:pulse-dot 2s ease-in-out infinite"></span>
+                            Offline-First Learning App
+                        </div>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-ocean mb-4">
+                            Matuto, Maglaro,<br />
+                            <span class="text-coral">Magtagumpay</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-ocean mb-8 max-w-lg leading-relaxed font-semibold">
+                            LearnBasilan brings interactive education to elementary students in Basilan &mdash; 
+                            no internet required. Lessons, quizzes, and achievements in <strong>5 languages</strong>.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#download" class="btn btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Download App
+                            </a>
+                            <a href="#how-it-works" class="btn btn-outline">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                See How It Works
+                            </a>
+                        </div>
+                        <div class="flex items-center gap-4 mt-8 text-sm text-ocean">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 rounded-full bg-coral-light border-2 border-white flex items-center justify-center text-xs font-bold text-coral-dark">F</div>
+                                <div class="w-8 h-8 rounded-full bg-teal-light border-2 border-white flex items-center justify-center text-xs font-bold text-teal-dark">C</div>
+                                <div class="w-8 h-8 rounded-full bg-gold-light border-2 border-white flex items-center justify-center text-xs font-bold text-yellow-700">Y</div>
+                                <div class="w-8 h-8 rounded-full bg-green-light border-2 border-white flex items-center justify-center text-xs font-bold text-green-800">T</div>
+                                <div class="w-8 h-8 rounded-full bg-ocean-light border-2 border-white flex items-center justify-center text-xs font-bold text-white">E</div>
+                            </div>
+                            <span class="text-ocean font-semibold">5 Languages Supported</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- Subjects -->
-                <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-teal/20 tilt-card glow-card reveal-up" style="transition-delay:0.1s;">
-                    <div class="tilt-content">
-                        <div class="text-5xl mb-6 bg-teal-glow w-16 h-16 rounded-2xl flex items-center justify-center">📚</div>
-                        <h3 class="text-2xl font-bold mb-4 text-teal-dark">Core Subjects</h3>
-                        <p class="text-slate-light leading-relaxed mb-6">Comprehensive lessons in Math, Science, English, and Filipino — all 100% offline.</p>
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3 text-sm font-bold text-ocean bg-cream p-3 rounded-xl"><span>🔢</span> Mathematics</div>
-                            <div class="flex items-center gap-3 text-sm font-bold text-ocean bg-cream p-3 rounded-xl"><span>🔬</span> Science</div>
-                            <div class="flex items-center gap-3 text-sm font-bold text-ocean bg-cream p-3 rounded-xl"><span>📝</span> English</div>
-                            <div class="flex items-center gap-3 text-sm font-bold text-ocean bg-cream p-3 rounded-xl"><span>🇵🇭</span> Filipino</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Languages -->
-                <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-gold/20 tilt-card glow-card reveal-up" style="transition-delay:0.2s;">
-                    <div class="tilt-content">
-                        <div class="text-5xl mb-6 bg-gold-glow w-16 h-16 rounded-2xl flex items-center justify-center">🗣️</div>
-                        <h3 class="text-2xl font-bold mb-4" style="color:var(--gold);">Native Tongues</h3>
-                        <p class="text-slate-light leading-relaxed mb-6">Learn in the language you speak at home. Full support for Basilan's diverse cultures.</p>
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center text-sm font-bold bg-cream p-3 rounded-xl"><span>Bahasa Sūg</span> <span class="text-gold">Tausug</span></div>
-                            <div class="flex justify-between items-center text-sm font-bold bg-cream p-3 rounded-xl"><span>Bissa Yakan</span> <span class="text-teal">Yakan</span></div>
-                            <div class="flex justify-between items-center text-sm font-bold bg-cream p-3 rounded-xl"><span>Chavacano</span> <span class="text-coral">Zamboanga</span></div>
-                            <div class="flex justify-between items-center text-sm font-bold bg-cream p-3 rounded-xl"><span>Filipino</span> <span class="text-ocean">Tagalog</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gamified Learning Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mt-28">
-                <div class="reveal-left tilt-card">
-                    <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-cream-dark glow-card">
-                        <div class="tilt-content">
-                            <span class="text-xs tracking-[0.3em] uppercase text-teal font-bold mb-2 block">Gamification</span>
-                            <h3 class="text-3xl font-bold mb-6">Learning is an Adventure</h3>
-                            <p class="text-slate-light leading-relaxed mb-8 text-lg">Every milestone is a victory, every quiz a challenge, every level-up a celebration.</p>
-                            <div class="space-y-4">
-                                <div class="flex items-center gap-4 bg-green-glow p-4 rounded-2xl border border-green/10">
-                                    <div class="w-10 h-10 bg-green rounded-xl flex items-center justify-center text-white font-bold shrink-0">✦</div>
-                                    <span class="font-bold text-ocean">XP & Leveling System</span>
+                    <div class="flex justify-center lg:justify-end phone-float">
+                        <div class="phone-mockup" role="img" aria-label="LearnBasilan app screenshot">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="status-bar">
+                                    <span>9:41</span>
+                                    <span>LearnBasilan</span>
                                 </div>
-                                <div class="flex items-center gap-4 bg-teal-glow p-4 rounded-2xl border border-teal/10">
-                                    <div class="w-10 h-10 bg-teal rounded-xl flex items-center justify-center text-white font-bold shrink-0">✦</div>
-                                    <span class="font-bold text-ocean">Achievement Badges</span>
+                                <h3>Welcome, Juan!</h3>
+                                <p>Grade 4 &bull; Level 3 &bull; 240 XP</p>
+                                <div style="background:rgba(255,255,255,0.2);border-radius:8px;padding:10px;margin-bottom:16px">
+                                    <div style="color:white;font-size:0.75rem;font-weight:700;margin-bottom:6px">Current Streak</div>
+                                    <div style="display:flex;gap:4px">
+                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">M</span>
+                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">T</span>
+                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">W</span>
+                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">T</span>
+                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">F</span>
+                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">S</span>
+                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">S</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-4 bg-gold-glow p-4 rounded-2xl border border-gold/10">
-                                    <div class="w-10 h-10 bg-gold rounded-xl flex items-center justify-center text-ocean font-bold shrink-0">✦</div>
-                                    <span class="font-bold text-ocean">Streak Tracking</span>
+                                <p style="margin-bottom:12px;font-size:0.85rem">Your Subjects</p>
+                                <div class="phone-subject-grid">
+                                    <div class="phone-subject"><span class="icon">&#128300;</span>Science</div>
+                                    <div class="phone-subject"><span class="icon">&#128424;</span>Math</div>
+                                    <div class="phone-subject"><span class="icon">&#127758;</span>AP</div>
+                                    <div class="phone-subject"><span class="icon">&#127468;&#127463;</span>English</div>
+                                </div>
+                                <div class="phone-bottom-nav">
+                                    <span class="active">Home<br/>&#9679;</span>
+                                    <span>Learn<br/>&#9679;</span>
+                                    <span>Badges<br/>&#9679;</span>
+                                    <span>Profile<br/>&#9679;</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="reveal-right">
-                    <div class="bg-white p-4 rounded-[4rem] shadow-2xl relative overflow-hidden group tilt-card">
-                        <div class="overflow-hidden rounded-[3.5rem]">
-                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Learning" class="w-full transition-transform duration-1000 group-hover:scale-110">
-                        </div>
-                        <div class="absolute inset-0 bg-gradient-to-tr from-coral/10 via-transparent to-teal/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[4rem] pointer-events-none"></div>
+            </div>
+        </section>
+
+        <section class="section bg-white dark:bg-ocean-dark" aria-label="Trusted by students">
+            <div class="container text-center">
+                <p class="text-sm font-bold uppercase tracking-widest text-ocean mb-8">Trusted by students across Basilan</p>
+                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">DepEd Basilan</span>
+                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">LearnBasilan</span>
+                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">Mother Tongue</span>
+                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">QR Learning</span>
+                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">Offline First</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section" aria-label="Features">
+            <div class="container">
+                <div class="text-center mb-12 reveal">
+                    <p class="text-sm font-bold uppercase tracking-widest text-coral mb-3">Features</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Everything You Need to Learn</h2>
+                    <p class="text-ocean max-w-xl mx-auto font-semibold">Designed for the unique needs of students in Basilan &mdash; no internet, no problem.</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card reveal reveal-delay-1">
+                        <div class="feature-icon icon-coral"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+                        <h3 class="text-lg font-bold mb-2">Offline First</h3>
+                        <p class="text-sm">All lessons, quizzes, and progress stored locally on device. No internet connection needed.</p>
+                    </div>
+                    <div class="card reveal reveal-delay-2">
+                        <div class="feature-icon icon-teal"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                        <h3 class="text-lg font-bold mb-2">QR Sharing</h3>
+                        <p class="text-sm">Share lessons, quizzes, and progress via QR codes. No data plan required.</p>
+                    </div>
+                    <div class="card reveal reveal-delay-3">
+                        <div class="feature-icon icon-gold"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg></div>
+                        <h3 class="text-lg font-bold mb-2">5 Languages</h3>
+                        <p class="text-sm">Content in Filipino, Chavacano, Yakan, Tausug, and English &mdash; learn in your mother tongue.</p>
+                    </div>
+                    <div class="card reveal reveal-delay-4">
+                        <div class="feature-icon icon-green"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+                        <h3 class="text-lg font-bold mb-2">Gamified Learning</h3>
+                        <p class="text-sm">Earn XP, unlock achievements, build streaks, and level up as you master each lesson.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- QR Workflow Section -->
-    <section class="py-32 bg-ocean text-white overflow-hidden relative section-morph" style="z-index:2;">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(255,126,95,0.06),transparent_50%),radial-gradient(ellipse_at_70%_30%,rgba(46,196,182,0.04),transparent_50%)]"></div>
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="flex flex-col md:flex-row items-center gap-16">
-                <div class="flex-1 reveal-left">
-                    <span class="text-xs tracking-[0.3em] uppercase text-gold font-bold mb-4 block">Offline-First</span>
-                    <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tighter">No Signal? <br><span class="text-gold">No Problem.</span></h2>
-                    <p class="text-white/50 text-lg mb-12 max-w-md">Our QR ecosystem lets content flow without internet. Teachers create, students scan, knowledge transfers.</p>
-                    <div class="space-y-10">
-                        <div class="flex gap-6 group items-start">
-                            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-xl shrink-0 font-black border border-white/10 transition-all duration-500 group-hover:bg-gold group-hover:text-ocean group-hover:scale-110" style="font-family:'Fredoka',sans-serif;">1</div>
-                            <div>
-                                <h4 class="text-xl font-bold mb-2 text-gold">Teacher Generates QR</h4>
-                                <p class="text-white/40 font-medium">Lessons are compressed into chunked QR codes — display on screen or print on paper.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-6 group items-start">
-                            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-xl shrink-0 font-black border border-white/10 transition-all duration-500 group-hover:bg-teal group-hover:text-ocean group-hover:scale-110" style="font-family:'Fredoka',sans-serif;">2</div>
-                            <div>
-                                <h4 class="text-xl font-bold mb-2 text-teal-light">Student Scans</h4>
-                                <p class="text-white/40 font-medium">Built-in scanner reads chunks. App auto-validates, reconstructs, and stores the lesson.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-6 group items-start">
-                            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-xl shrink-0 font-black border border-white/10 transition-all duration-500 group-hover:bg-coral group-hover:text-white group-hover:scale-110" style="font-family:'Fredoka',sans-serif;">3</div>
-                            <div>
-                                <h4 class="text-xl font-bold mb-2 text-coral-light">Learn Anywhere</h4>
-                                <p class="text-white/40 font-medium">Once scanned, it's yours forever. Study anywhere — 100% offline, zero data costs.</p>
-                            </div>
-                        </div>
-                    </div>
+        <section id="languages" class="section bg-white dark:bg-ocean-dark" aria-label="Languages">
+            <div class="container">
+                <div class="text-center mb-12 reveal">
+                    <p class="text-sm font-bold uppercase tracking-widest text-teal mb-3">Languages</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Learn in Your Mother Tongue</h2>
+                    <p class="text-ocean max-w-xl mx-auto font-semibold">Five languages carefully chosen to represent the rich linguistic heritage of Basilan.</p>
                 </div>
-                <div class="flex-1 reveal-right">
-                    <div class="phone-3d" id="qr-phone-3d">
-                        <div class="phone-body bg-white/5 backdrop-blur-3xl border border-white/10 p-8" style="transform:rotateY(-2deg) rotateX(2deg);">
-                            <div class="text-center">
-                                <div class="bg-white w-40 h-40 mx-auto rounded-[1.5rem] flex items-center justify-center shadow-2xl mb-8" style="transform:translateZ(30px);">
-                                    <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="0" y="0" width="30" height="30" fill="#1A535C" rx="4"/>
-                                        <rect x="10" y="10" width="10" height="10" fill="white" rx="2"/>
-                                        <rect x="90" y="0" width="30" height="30" fill="#1A535C" rx="4"/>
-                                        <rect x="100" y="10" width="10" height="10" fill="white" rx="2"/>
-                                        <rect x="0" y="90" width="30" height="30" fill="#1A535C" rx="4"/>
-                                        <rect x="10" y="100" width="10" height="10" fill="white" rx="2"/>
-                                        <rect x="40" y="40" width="10" height="10" fill="#FF7E5F" rx="2"/>
-                                        <rect x="55" y="40" width="10" height="10" fill="#2EC4B6" rx="2"/>
-                                        <rect x="40" y="55" width="10" height="10" fill="#FFD93D" rx="2"/>
-                                        <rect x="70" y="70" width="10" height="10" fill="#2EC4B6" rx="2"/>
-                                        <rect x="50" y="80" width="25" height="10" fill="#1A535C" rx="3"/>
-                                    </svg>
-                                </div>
-                                <h4 class="text-2xl font-bold mb-3" style="transform:translateZ(20px);">QR Reconstruction</h4>
-                                <p class="text-white/40 text-sm font-medium mb-8" style="transform:translateZ(10px);">Chunked • Compressed • Verified</p>
-                                <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden" style="transform:translateZ(15px);">
-                                    <div class="w-[72%] h-full bg-gradient-to-r from-coral via-gold to-teal rounded-full" style="box-shadow:0 0 20px rgba(255,126,95,0.3);"></div>
-                                </div>
-                                <div class="flex justify-between text-xs font-bold mt-3 text-white/30" style="transform:translateZ(10px);">
-                                    <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 bg-coral rounded-full animate-pulse"></span> RECEIVING</span>
-                                    <span class="text-gold">72%</span>
-                                </div>
-                            </div>
-                            <div class="phone-reflection"></div>
+                <div class="flex flex-wrap justify-center gap-4 reveal">
+                    <div class="language-chip" style="background:#FFF0EB;color:var(--coral-dark)">Filipino</div>
+                    <div class="language-chip" style="background:#E8F8F6;color:var(--teal-dark)">Chavacano</div>
+                    <div class="language-chip" style="background:#FFF8E0;color:#92400E">Yakan</div>
+                    <div class="language-chip" style="background:#EDF8EF;color:#166534">Tausug</div>
+                    <div class="language-chip" style="background:#E0F2FE;color:#075985">English</div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mt-12">
+                    <div class="card reveal reveal-delay-1 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-coral to-coral-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-coral/20">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         </div>
+                        <h3 class="font-bold mb-2">For Students</h3>
+                        <p class="text-sm">Interactive lessons, quizzes, and progress tracking with rewards and achievements.</p>
+                    </div>
+                    <div class="card reveal reveal-delay-2 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal to-teal-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-teal/20">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h3 class="font-bold mb-2">For Teachers</h3>
+                        <p class="text-sm">Create custom lessons and quizzes, distribute via QR, and collect progress reports.</p>
+                    </div>
+                    <div class="card reveal reveal-delay-3 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-300 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-amber-400/20">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <h3 class="font-bold mb-2">For Communities</h3>
+                        <p class="text-sm">Share learning materials across classrooms without depending on internet infrastructure.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- XP Demo Section -->
-    <section class="py-24 bg-white relative" style="z-index:2;">
-        <div class="container mx-auto px-6">
-            <div class="bg-cream/60 rounded-[3rem] p-10 md:p-16 shadow-xl border border-cream-dark flex flex-col md:flex-row items-center gap-12 section-morph">
-                <div class="flex-1">
-                    <span class="text-xs tracking-[0.3em] uppercase text-coral font-bold mb-2 block">Interactive Demo</span>
-                    <h2 class="text-4xl font-bold mb-4">Learning is a <span class="text-coral">Game</span></h2>
-                    <p class="text-slate-light mb-8 text-lg">Every lesson earns XP. Click the book to experience the progression system.</p>
-                    <div class="bg-white p-8 rounded-2xl shadow-md border border-cream-dark">
-                        <div class="flex justify-between items-end mb-4">
-                            <div>
-                                <span class="text-slate-light font-bold uppercase text-xs tracking-widest">Level <span id="demo-level">4</span></span>
-                                <h3 class="text-2xl font-bold"><span id="demo-rank">Scholar Explorer</span></h3>
-                            </div>
-                            <span class="text-coral font-bold text-lg" id="xp-text-demo">170 / 250 XP</span>
-                        </div>
-                        <div class="w-full h-4 bg-coral/10 rounded-full overflow-hidden mb-6">
-                            <div id="xp-bar-demo" class="h-full bg-gradient-to-r from-coral via-gold to-teal transition-all duration-700 ease-out" style="width:68%;"></div>
-                        </div>
-                        <div class="flex gap-4 items-center">
-                            <button id="study-btn" class="bg-coral text-white px-8 py-4 rounded-2xl font-bold shadow-lg hover:shadow-coral/30 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-3 text-lg">
-                                <span>📖</span> Study (+20 XP)
-                            </button>
-                            <div id="level-up-toast" class="hidden text-gold font-bold flex items-center gap-2 text-xl">
-                                <span class="animate-bounce inline-block">🌟</span> Level Up!
-                            </div>
-                        </div>
-                    </div>
+        <section id="how-it-works" class="section" aria-label="How It Works">
+            <div class="container">
+                <div class="text-center mb-12 reveal">
+                    <p class="text-sm font-bold uppercase tracking-widest text-coral mb-3">How It Works</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Learning Made Simple</h2>
+                    <p class="text-ocean max-w-xl mx-auto font-semibold">Three easy steps to start your learning journey with LearnBasilan.</p>
                 </div>
-                <div class="shrink-0">
-                    <div class="w-56 h-56 bg-gold/10 rounded-full flex items-center justify-center relative">
-                        <div class="text-8xl animate-float-slow">🎒</div>
-                        <div class="absolute -top-3 -right-3 bg-white shadow-xl p-4 rounded-2xl border-2 border-gold rotate-12 hover:rotate-0 transition-transform">
-                            <div class="flex items-center gap-2">
-                                <span class="text-2xl">🔥</span>
-                                <span class="font-bold text-sm"><span id="demo-streak">5</span> Day Streak</span>
-                            </div>
-                        </div>
+                <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    <div class="text-center reveal reveal-delay-1">
+                        <div class="step-number mx-auto mb-5"><span>1</span></div>
+                        <h3 class="text-lg font-bold mb-3">Install the App</h3>
+                        <p class="text-sm">Download LearnBasilan on any Android device. No registration or internet needed to get started.</p>
+                    </div>
+                    <div class="text-center reveal reveal-delay-2">
+                        <div class="step-number teal-step mx-auto mb-5"><span>2</span></div>
+                        <h3 class="text-lg font-bold mb-3">Choose Language</h3>
+                        <p class="text-sm">Pick your preferred language &mdash; Filipino, Chavacano, Yakan, Tausug, or English.</p>
+                    </div>
+                    <div class="text-center reveal reveal-delay-3">
+                        <div class="step-number gold-step mx-auto mb-5"><span>3</span></div>
+                        <h3 class="text-lg font-bold mb-3">Start Learning</h3>
+                        <p class="text-sm">Explore subjects, complete lessons, take quizzes, earn XP, and unlock achievements!</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Language Preview -->
-    <section class="py-24 bg-cream relative section-morph" style="z-index:2;">
-        <div class="container mx-auto px-6 text-center">
-            <span class="text-xs tracking-[0.3em] uppercase text-teal font-bold mb-4 block">Localization</span>
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">Localized for <span class="text-teal">Basilan</span></h2>
-            <p class="text-slate-light mb-12 max-w-xl mx-auto">We speak your language. Toggle below to see the app in action.</p>
-            <div class="flex flex-wrap justify-center gap-3 mb-16">
-                <button class="lang-toggle active bg-white shadow-md px-6 py-3 rounded-full font-bold border-2 border-coral text-coral transition-all duration-300 hover:shadow-lg" data-lang="Filipino" data-greet="Kamusta, Juan! 👋">🇵🇭 Filipino</button>
-                <button class="lang-toggle bg-white shadow-sm px-6 py-3 rounded-full font-bold border-2 border-transparent transition-all duration-300 hover:border-coral-light hover:shadow-md" data-lang="Chavacano" data-greet="Buenas, Juan! 👋">🇪🇸 Chavacano</button>
-                <button class="lang-toggle bg-white shadow-sm px-6 py-3 rounded-full font-bold border-2 border-transparent transition-all duration-300 hover:border-coral-light hover:shadow-md" data-lang="Yakan" data-greet="Bini-bini, Juan! 👋">🏝️ Yakan</button>
-                <button class="lang-toggle bg-white shadow-sm px-6 py-3 rounded-full font-bold border-2 border-transparent transition-all duration-300 hover:border-coral-light hover:shadow-md" data-lang="Tausug" data-greet="Maugas, Juan! 👋">🕌 Tausug</button>
-            </div>
-            <div class="max-w-md mx-auto bg-white p-10 rounded-[2.5rem] shadow-xl border-t-8 border-coral tilt-card">
-                <div class="text-sm text-slate-light font-bold mb-2 uppercase tracking-tighter" id="lang-label">Currently: Filipino</div>
-                <h3 class="text-4xl font-bold text-ocean" id="demo-greeting">Kamusta, Juan! 👋</h3>
-                <p class="text-slate mt-4">Matuto, Maglaro, Magtagumpay</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Prototype Section -->
-    <section id="prototype" class="py-32 bg-ocean text-white overflow-hidden relative section-morph" style="z-index:2;">
-        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-coral/8 rounded-full blur-[120px] animate-pulse" style="animation-duration:8s;"></div>
-        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-teal/8 rounded-full blur-[120px] animate-pulse" style="animation-duration:10s;animation-delay:2s;"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[150px]"></div>
-
-        <div class="container mx-auto px-6 relative z-10 text-center">
-            <span class="text-xs tracking-[0.3em] uppercase text-gold font-bold mb-4 block">Interactive Preview</span>
-            <h2 class="text-4xl md:text-7xl font-bold mb-4 tracking-tighter">Experience the <span class="text-gold">Future</span></h2>
-            <p class="text-white/40 mb-16 max-w-xl mx-auto">Hover to feel the depth. Drag to explore the interface.</p>
-
-            <div id="phone-3d-container" class="inline-block phone-3d relative" style="perspective:1200px;">
-                <div id="phone-3d-body" class="phone-body relative w-[300px] h-[620px] md:w-[360px] md:h-[740px] rounded-[3rem] border-[10px] border-white/10 bg-black shadow-[0_50px_120px_-20px_rgba(0,0,0,0.6)]" style="transform:rotateY(0deg) rotateX(0deg); transition:transform 0.1s ease-out; cursor:grab;">
-                    <!-- Notch -->
-                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-white/10 rounded-b-2xl z-20 backdrop-blur-xl border border-white/5">
-                        <div class="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/20 rounded-full"></div>
+        <section class="section bg-white dark:bg-ocean-dark" aria-label="Statistics">
+            <div class="container">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div class="reveal reveal-delay-1">
+                        <div class="stat-value count-up" data-target="24">0</div>
+                        <p class="text-sm font-semibold text-ocean mt-2">Interactive Lessons</p>
                     </div>
-                    <!-- Screen content -->
-                    <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden" style="background:linear-gradient(180deg,#FFF8F0,#F5E6D5);">
-                        <!-- App Header -->
-                        <div class="flex justify-between items-center px-5 pt-14 pb-3">
-                            <div>
-                                <div class="text-xs text-slate-light" style="font-family:'Nunito',sans-serif;">Hello,</div>
-                                <div class="font-bold text-ocean text-lg" style="font-family:'Fredoka',sans-serif;">Juan! 👋</div>
-                            </div>
-                            <div class="w-10 h-10 bg-coral-light rounded-full flex items-center justify-center text-white font-bold shadow-md">J</div>
-                        </div>
-                        <!-- XP bar -->
-                        <div class="mx-4 p-3 rounded-2xl mb-4" style="background:#FFF8E0;">
-                            <div class="flex justify-between text-sm font-bold text-ocean">
-                                <span>Level 4</span>
-                                <span style="color:#E86548;">🔥 5-day streak</span>
-                            </div>
-                            <div class="h-2 bg-white rounded-full mt-2 overflow-hidden">
-                                <div class="h-full w-[68%] rounded-full" style="background:linear-gradient(90deg,#FF7E5F,#FFD93D);"></div>
-                            </div>
-                        </div>
-                        <!-- Subject Cards -->
-                        <div class="px-4">
-                            <div class="text-sm font-bold text-ocean mb-3" style="font-family:'Fredoka',sans-serif;">Mga Asignatura</div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-white p-3 rounded-xl shadow-sm border border-cream-dark">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-lg" style="background:#FFE8E0;">🔢</div>
-                                    <div class="font-bold text-sm text-ocean" style="font-family:'Fredoka',sans-serif;">Math</div>
-                                    <div class="text-xs text-slate-light">8 / 12</div>
-                                </div>
-                                <div class="bg-white p-3 rounded-xl shadow-sm border border-cream-dark">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-lg" style="background:#E0F5F3;">🔬</div>
-                                    <div class="font-bold text-sm text-ocean" style="font-family:'Fredoka',sans-serif;">Science</div>
-                                    <div class="text-xs text-slate-light">5 / 11</div>
-                                </div>
-                                <div class="bg-white p-3 rounded-xl shadow-sm border border-cream-dark">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-lg" style="background:#FFF3D6;">📝</div>
-                                    <div class="font-bold text-sm text-ocean" style="font-family:'Fredoka',sans-serif;">English</div>
-                                    <div class="text-xs text-slate-light">3 / 10</div>
-                                </div>
-                                <div class="bg-white p-3 rounded-xl shadow-sm border border-cream-dark">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-2 text-lg" style="background:#E0F5E6;">🇵🇭</div>
-                                    <div class="font-bold text-sm text-ocean" style="font-family:'Fredoka',sans-serif;">Filipino</div>
-                                    <div class="text-xs text-slate-light">9 / 10</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="reveal reveal-delay-2">
+                        <div class="stat-value count-up" data-target="12">0</div>
+                        <p class="text-sm font-semibold text-ocean mt-2">Quiz Sets</p>
                     </div>
-                    <!-- Reflection overlay -->
-                    <div class="absolute inset-0 rounded-[2.5rem] pointer-events-none phone-reflection" style="background:linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%, rgba(255,255,255,0.03) 100%);"></div>
-                    <!-- Drag hint -->
-                    <div class="absolute -bottom-14 left-1/2 -translate-x-1/2 text-white/20 text-sm font-bold tracking-widest uppercase text-xs flex items-center gap-2 pointer-events-none">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-                        DRAG TO EXPLORE
+                    <div class="reveal reveal-delay-3">
+                        <div class="stat-value count-up" data-target="8">0</div>
+                        <p class="text-sm font-semibold text-ocean mt-2">Achievement Badges</p>
+                    </div>
+                    <div class="reveal reveal-delay-4">
+                        <div class="stat-value count-up" data-target="5">0</div>
+                        <p class="text-sm font-semibold text-ocean mt-2">Languages</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Download CTA -->
-    <section id="download" class="py-32 relative overflow-hidden" style="z-index:2;">
-        <div class="absolute inset-0" style="background:linear-gradient(160deg, #0D3B42 0%, #1A535C 50%, #0F4A52 100%);"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(255,126,95,0.08),transparent_50%)]"></div>
-        <div class="container mx-auto px-6 relative z-10 text-center text-white">
-            <span class="text-xs tracking-[0.3em] uppercase text-gold font-bold mb-4 block">Get Started</span>
-            <h2 class="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">Ready to Start?</h2>
-            <p class="text-xl mb-12 text-white/60 max-w-xl mx-auto">Join hundreds of students already learning better with LearnBasilan.</p>
-            <button id="download-btn" class="bg-gold text-ocean px-12 py-6 rounded-full text-2xl font-bold shadow-2xl hover:shadow-gold/30 hover:scale-110 active:scale-95 transition-all duration-300 inline-flex items-center gap-4">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download APK
-            </button>
-            <div class="mt-12 flex justify-center gap-12 opacity-50 text-xs tracking-widest font-bold uppercase">
-                <span class="flex items-center gap-2"><span class="w-2 h-2 bg-green rounded-full"></span> Safe & Verified</span>
-                <span>12MB</span>
-                <span>v1.0.0</span>
+        <section id="download" class="section" aria-label="Get Started">
+            <div class="container">
+                <div class="cta-gradient rounded-3xl p-8 md:p-16 text-center text-white reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Start Learning?</h2>
+                    <p class="text-lg text-white/90 max-w-lg mx-auto mb-8 font-semibold">
+                        Join students across Basilan and experience learning in your mother tongue &mdash; 
+                        completely offline, completely free.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="#" class="btn text-ocean-dark font-bold hover:bg-cream hover:scale-105 transition-all shadow-lg" style="background:#FFFFFF;color:#0E2D32">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.807 1.626a1 1 0 0 1 0 1.732l-2.807 1.626L15.206 12l2.492-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
+                            Download APK
+                        </a>
+                        <a href="#features" class="btn bg-white/15 text-white border-2 border-white/30 hover:bg-white/25 hover:scale-105 transition-all">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-ocean-dark text-white py-12">
+        <div class="container">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2.5 text-lg font-bold mb-4" style="font-family:var(--font-display)">
+                        <img src="/static/logo.png" alt="LearnBasilan" class="w-7 h-7 rounded-lg object-cover" />
+                        LearnBasilan
+                    </div>
+                    <p class="text-sm text-white/75 max-w-xs">An offline-first mother tongue mobile learning system with QR-based content distribution for elementary students.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Product</h4>
+                    <div class="flex flex-col gap-2 text-sm">
+                        <a href="#features">Features</a>
+                        <a href="#languages">Languages</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#download">Download</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Languages</h4>
+                    <div class="flex flex-col gap-2 text-sm">
+                        <span>Filipino</span>
+                        <span>Chavacano</span>
+                        <span>Yakan</span>
+                        <span>Tausug</span>
+                        <span>English</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Contact</h4>
+                    <div class="flex flex-col gap-2 text-sm">
+                        <span class="text-white/75">Basilan, Philippines</span>
+                        <a href="#" class="text-white/75 hover:text-white">learnbasilan@email.com</a>
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="Facebook">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="Twitter">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="GitHub">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 mt-8 pt-8 text-center text-sm text-white/60">
+                &copy; 2024 LearnBasilan. Open source under MIT License.
             </div>
         </div>
-    </section>
-
-    <footer class="py-12 bg-white text-center border-t border-cream-dark relative" style="z-index:2;">
-        <p class="text-slate-light text-sm">&copy; 2026 LearnBasilan. Built with care for the children of Basilan.</p>
     </footer>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
-
-        // ---- GRAIN OVERLAY ----
         (function() {
-            const canvas = document.getElementById('grain-canvas');
-            const ctx = canvas.getContext('2d');
-            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            resize(); window.addEventListener('resize', resize);
-            function draw() {
-                const w = canvas.width, h = canvas.height;
-                const imageData = ctx.createImageData(w, h);
-                const data = imageData.data;
-                for (let i = 0; i < data.length; i += 4) {
-                    const v = (Math.random() * 255) | 0;
-                    data[i] = v; data[i+1] = v; data[i+2] = v; data[i+3] = 25;
-                }
-                ctx.putImageData(imageData, 0, 0);
-            }
-            draw();
-            setInterval(draw, 200);
-        })();
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileNav = document.getElementById('mobileNav');
 
-        // ---- THREE.JS BACKGROUND ----
-        (function() {
-            const container = document.getElementById('three-container');
-            const scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x0D3B42, 0.0008);
+            if (menuBtn && mobileNav) {
+                menuBtn.addEventListener('click', function() {
+                    const isOpen = mobileNav.classList.toggle('open');
+                    menuBtn.classList.toggle('active');
+                    menuBtn.setAttribute('aria-expanded', isOpen);
+                    document.body.style.overflow = isOpen ? 'hidden' : '';
+                });
 
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
-
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.setClearColor(0x000000, 0);
-            container.appendChild(renderer.domElement);
-
-            // Particles
-            const particleCount = 600;
-            const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            const sizes = new Float32Array(particleCount);
-            const velocities = [];
-
-            const palette = [
-                new THREE.Color('#FF7E5F'),
-                new THREE.Color('#2EC4B6'),
-                new THREE.Color('#FFD93D'),
-                new THREE.Color('#6BCB77'),
-                new THREE.Color('#FFA68F'),
-            ];
-
-            for (let i = 0; i < particleCount; i++) {
-                positions[i*3] = (Math.random() - 0.5) * 80;
-                positions[i*3+1] = (Math.random() - 0.5) * 60;
-                positions[i*3+2] = (Math.random() - 0.5) * 40;
-                const color = palette[Math.floor(Math.random() * palette.length)];
-                colors[i*3] = color.r;
-                colors[i*3+1] = color.g;
-                colors[i*3+2] = color.b;
-                sizes[i] = Math.random() * 3 + 0.5;
-                velocities.push({
-                    x: (Math.random() - 0.5) * 0.02,
-                    y: (Math.random() - 0.5) * 0.02,
-                    z: (Math.random() - 0.5) * 0.01,
-                    phase: Math.random() * Math.PI * 2,
+                mobileNav.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        mobileNav.classList.remove('open');
+                        menuBtn.classList.remove('active');
+                        menuBtn.setAttribute('aria-expanded', 'false');
+                        document.body.style.overflow = '';
+                    });
                 });
             }
 
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-            const material = new THREE.PointsMaterial({
-                size: 0.25,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.6,
-                blending: THREE.AdditiveBlending,
-                sizeAttenuation: true,
-                depthWrite: false,
-            });
-
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            // Mouse tracking
-            let mouseX = 0, mouseY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-                mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-            });
-
-            // Resize
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-
-            // Animation
-            let time = 0;
-            function animate() {
-                requestAnimationFrame(animate);
-                time += 0.005;
-
-                // Gentle camera tilt based on mouse
-                camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
-                camera.position.y += (-mouseY * 2 - camera.position.y) * 0.02;
-                camera.lookAt(0, 0, 0);
-
-                // Particle floating motion
-                const positionsAttrib = geometry.attributes.position;
-                const posArray = positionsAttrib.array;
-                for (let i = 0; i < particleCount; i++) {
-                    const v = velocities[i];
-                    posArray[i*3] += Math.sin(time + v.phase) * 0.002;
-                    posArray[i*3+1] += Math.cos(time * 0.7 + v.phase) * 0.002;
-                    posArray[i*3+2] += Math.sin(time * 0.5 + v.phase * 2) * 0.001;
-                    // Wrap around
-                    if (posArray[i*3] > 40) posArray[i*3] = -40;
-                    if (posArray[i*3] < -40) posArray[i*3] = 40;
-                    if (posArray[i*3+1] > 30) posArray[i*3+1] = -30;
-                    if (posArray[i*3+1] < -30) posArray[i*3+1] = 30;
-                }
-                positionsAttrib.needsUpdate = true;
-
-                renderer.render(scene, camera);
-            }
-            animate();
-        })();
-
-        // ---- STARS LAYER ----
-        (function() {
-            const container = document.getElementById('stars-layer');
-            const canvas = document.createElement('canvas');
-            canvas.style.width = '100%'; canvas.style.height = '100%';
-            canvas.style.position = 'absolute'; canvas.style.inset = '0';
-            container.appendChild(canvas);
-            const ctx = canvas.getContext('2d');
-            const stars = [];
-            const starCount = 200;
-            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            resize(); window.addEventListener('resize', resize);
-            for (let i = 0; i < starCount; i++) {
-                stars.push({
-                    x: Math.random() * window.innerWidth,
-                    y: Math.random() * window.innerHeight,
-                    r: Math.random() * 1.5 + 0.3,
-                    a: Math.random() * 0.5 + 0.1,
-                    speed: Math.random() * 0.02 + 0.005,
-                });
-            }
-            function drawStars() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                stars.forEach(s => {
-                    s.a += Math.sin(Date.now() * s.speed) * 0.02;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${Math.max(0.05, Math.min(0.5, s.a))})`;
-                    ctx.fill();
-                });
-                requestAnimationFrame(drawStars);
-            }
-            drawStars();
-        })();
-
-        // ---- CURSOR RING ----
-        (function() {
-            const ring = document.getElementById('cursor-ring');
-            let mx = 0, my = 0, rx = 0, ry = 0;
-            document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
-            // Hover detection for interactive elements
-            document.querySelectorAll('a, button, .tilt-card, .lang-toggle').forEach(el => {
-                el.addEventListener('mouseenter', () => ring.classList.add('active'));
-                el.addEventListener('mouseleave', () => ring.classList.remove('active'));
-            });
-            function lerpRing() {
-                rx += (mx - rx) * 0.12;
-                ry += (my - ry) * 0.12;
-                ring.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
-                requestAnimationFrame(lerpRing);
-            }
-            lerpRing();
-        })();
-
-        // ---- GLOW CURSORS ----
-        (function() {
-            const g1 = document.getElementById('glow-cursor');
-            const g2 = document.getElementById('glow-cursor-2');
-            let mx = 0, my = 0;
-            document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
-            function moveGlow() {
-                g1.style.transform = `translate(${mx - 250}px, ${my - 250}px)`;
-                g2.style.transform = `translate(${mx - 150}px, ${my - 150}px)`;
-                requestAnimationFrame(moveGlow);
-            }
-            moveGlow();
-        })();
-
-        // ---- LENS FLARE ----
-        (function() {
-            const flare = document.getElementById('lens-flare');
-            let mx = 0, my = 0;
-            document.addEventListener('mousemove', (e) => {
-                mx = (e.clientX / window.innerWidth - 0.5) * 40;
-                my = (e.clientY / window.innerHeight - 0.5) * 40;
-                flare.style.transform = `translate(calc(-50% + ${mx}px), calc(-50% + ${my}px))`;
-            });
-        })();
-
-        // ---- SCROLL PROGRESS ----
-        (function() {
-            const bar = document.getElementById('scroll-progress');
-            window.addEventListener('scroll', () => {
-                const h = document.documentElement.scrollHeight - window.innerHeight;
-                bar.style.width = `${(window.scrollY / h) * 100}%`;
-            });
-        })();
-
-        // ---- HERO TEXT REVEAL ----
-        (function() {
-            const subtitle = document.getElementById('hero-subtitle');
-            const text = 'The future of education, delivered offline.';
-            let i = 0;
-            function type() {
-                if (i < text.length) {
-                    subtitle.textContent += text[i];
-                    i++;
-                    setTimeout(type, 40 + Math.random() * 30);
-                }
-            }
-            setTimeout(type, 1500);
-        })();
-
-        // ---- HERO TITLE CHAR REVEAL ----
-        (function() {
-            const title = document.getElementById('hero-title');
-            const chars = title.textContent.split('');
-            title.innerHTML = '';
-            chars.forEach((ch, i) => {
-                const span = document.createElement('span');
-                span.textContent = ch === ' ' ? '\u00A0' : ch;
-                span.style.display = 'inline-block';
-                span.style.opacity = '0';
-                span.style.transform = 'translateY(40px) rotateX(-30deg)';
-                span.style.transition = `opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)`;
-                span.style.transitionDelay = `${i * 0.04}s`;
-                title.appendChild(span);
-            });
-            requestAnimationFrame(() => {
-                title.querySelectorAll('span').forEach(span => {
-                    span.style.opacity = '1';
-                    span.style.transform = 'translateY(0) rotateX(0)';
-                });
-            });
-        })();
-
-        // ---- CARD TILT (4D) ----
-        (function() {
-            document.querySelectorAll('.tilt-card').forEach(card => {
-                const content = card.querySelector('.tilt-content');
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = (e.clientX - rect.left) / rect.width - 0.5;
-                    const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    if (content) {
-                        content.style.transform = `rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateZ(10px)`;
-                    } else {
-                        card.style.transform = `rotateX(${-y * 6}deg) rotateY(${x * 6}deg)`;
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
                     }
                 });
-                card.addEventListener('mouseleave', () => {
-                    if (content) {
-                        content.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
-                    } else {
-                        card.style.transform = 'rotateX(0) rotateY(0)';
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(function(el) {
+                observer.observe(el);
+            });
+
+            const countObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const target = parseInt(el.getAttribute('data-target'));
+                        if (!el.dataset.counted) {
+                            el.dataset.counted = 'true';
+                            animateCount(el, target);
+                        }
+                        countObserver.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            function animateCount(el, target) {
+                let current = 0;
+                const increment = Math.ceil(target / 40);
+                const timer = setInterval(function() {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = current;
+                }, 40);
+            }
+
+            document.querySelectorAll('.count-up').forEach(function(el) {
+                countObserver.observe(el);
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function(e) {
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({ behavior: 'smooth' });
                     }
                 });
             });
         })();
-
-        // ---- 3D PHONE INTERACTION ----
-        (function() {
-            const container = document.getElementById('phone-3d-container');
-            const body = document.getElementById('phone-3d-body');
-            let isDragging = false;
-            let prevX = 0, prevY = 0;
-            let rotX = 0, rotY = 0;
-            let targetX = 0, targetY = 0;
-
-            container.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                prevX = e.clientX;
-                prevY = e.clientY;
-                body.style.cursor = 'grabbing';
-            });
-            window.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    body.style.cursor = 'grab';
-                    targetX = 0;
-                    targetY = 0;
-                }
-            });
-            container.addEventListener('mousemove', (e) => {
-                if (isDragging) {
-                    const dx = e.clientX - prevX;
-                    const dy = e.clientY - prevY;
-                    targetY += dx * 0.5;
-                    targetX -= dy * 0.5;
-                    targetX = Math.max(-30, Math.min(30, targetX));
-                    targetY = Math.max(-30, Math.min(30, targetY));
-                    prevX = e.clientX;
-                    prevY = e.clientY;
-                } else {
-                    const rect = container.getBoundingClientRect();
-                    const x = (e.clientX - rect.left) / rect.width - 0.5;
-                    const y = (e.clientY - rect.top) / rect.height - 0.5;
-                    targetX = -y * 15;
-                    targetY = x * 15;
-                }
-            });
-            container.addEventListener('mouseleave', () => {
-                if (!isDragging) { targetX = 0; targetY = 0; }
-            });
-
-            function animatePhone() {
-                rotX += (targetX - rotX) * 0.08;
-                rotY += (targetY - rotY) * 0.08;
-                body.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-                // Shift reflection
-                const refl = body.querySelector('.phone-reflection');
-                if (refl) {
-                    const rx = (rotY / 30) * 20;
-                    const ry = (rotX / 30) * 20;
-                    refl.style.background = `linear-gradient(${135 + rx}deg, rgba(255,255,255,${0.12 + Math.abs(rotY)/200}) 0%, transparent ${40 + Math.abs(ry)}%, transparent 60%, rgba(255,255,255,${0.03 + Math.abs(rotX)/300}) 100%)`;
-                }
-                requestAnimationFrame(animatePhone);
-            }
-            animatePhone();
-        })();
-
-        // ---- QR PHONE 3D ----
-        (function() {
-            const container = document.getElementById('qr-phone-3d');
-            if (!container) return;
-            const body = container.querySelector('.phone-body');
-            container.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width - 0.5;
-                const y = (e.clientY - rect.top) / rect.height - 0.5;
-                body.style.transform = `rotateY(${x * 15}deg) rotateX(${-y * 10}deg)`;
-            });
-            container.addEventListener('mouseleave', () => {
-                body.style.transform = 'rotateY(-2deg) rotateX(2deg)';
-            });
-        })();
-
-        // ---- SCROLL ANIMATIONS (GSAP) ----
-        gsap.utils.toArray('.reveal-up').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
-                y: 60, opacity: 0, duration: 1.2, ease: 'power3.out'
-            });
-        });
-        gsap.utils.toArray('.reveal-left').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: 'top 88%' },
-                x: -60, opacity: 0, duration: 1.2, ease: 'power3.out'
-            });
-        });
-        gsap.utils.toArray('.reveal-right').forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: { trigger: el, start: 'top 88%' },
-                x: 60, opacity: 0, duration: 1.2, ease: 'power3.out'
-            });
-        });
-
-        // ---- SECTION MORPH (Blur depth) ----
-        (function() {
-            const sections = document.querySelectorAll('.section-morph');
-            sections.forEach(section => {
-                ScrollTrigger.create({
-                    trigger: section,
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    onEnter: () => section.classList.add('active'),
-                    onLeaveBack: () => section.classList.remove('active'),
-                });
-            });
-        })();
-
-        // ---- NAVBAR ----
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 80) {
-                nav.style.background = 'rgba(13,59,66,0.85)';
-                nav.style.backdropFilter = 'blur(20px)';
-                nav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.1)';
-            } else {
-                nav.style.background = 'transparent';
-                nav.style.backdropFilter = 'none';
-                nav.style.boxShadow = 'none';
-            }
-        });
-
-        // ---- GLOW CARD TRACKING ----
-        document.querySelectorAll('.glow-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-            });
-        });
-
-        // ---- DOWNLOAD COUNT ----
-        const countDisplay = document.getElementById('download-count-display');
-        const downloadBtn = document.getElementById('download-btn');
-
-        async function updateCount() {
-            try {
-                const res = await fetch('/api/download-count');
-                const data = await res.json();
-                gsap.to({ val: parseInt(countDisplay.innerText) || 0 }, {
-                    val: data.count, duration: 2, ease: 'power2.out',
-                    onUpdate: function() { countDisplay.innerText = Math.floor(this.targets()[0].val); }
-                });
-            } catch(e) { console.error(e); }
-        }
-
-        downloadBtn.addEventListener('click', async () => {
-            try {
-                await fetch('/download');
-                updateCount();
-                // Cinematic feedback
-                const btn = downloadBtn;
-                btn.textContent = '✓ Downloaded!';
-                btn.style.background = '#6BCB77';
-                setTimeout(() => {
-                    btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download APK';
-                    btn.style.background = '';
-                }, 2000);
-            } catch(e) { console.error(e); }
-        });
-
-        // ---- XP DEMO ----
-        let currentXP = 170;
-        const maxXP = 250;
-        const xpBar = document.getElementById('xp-bar-demo');
-        const xpText = document.getElementById('xp-text-demo');
-        const studyBtn = document.getElementById('study-btn');
-        const levelUpToast = document.getElementById('level-up-toast');
-        const demoLevel = document.getElementById('demo-level');
-        const demoRank = document.getElementById('demo-rank');
-        const demoStreak = document.getElementById('demo-streak');
-
-        const ranks = [
-            { min: 1, name: 'Beginner' }, { min: 2, name: 'Curious Mind' },
-            { min: 3, name: 'Knowledge Seeker' }, { min: 4, name: 'Scholar Explorer' },
-            { min: 5, name: 'Bright Star' }, { min: 6, name: 'Wise Owl' },
-            { min: 7, name: 'Genius' }, { min: 8, name: 'Legend' },
-        ];
-        function getRank(level) {
-            let rank = ranks[0];
-            for (const r of ranks) { if (level >= r.min) rank = r; }
-            return rank.name;
-        }
-
-        let level = 4;
-        let streak = 5;
-
-        studyBtn.addEventListener('click', () => {
-            currentXP += 20;
-            if (currentXP >= maxXP) {
-                currentXP = currentXP - maxXP;
-                level++;
-                demoLevel.textContent = level;
-                demoRank.textContent = getRank(level);
-                if (level % 2 === 0) streak++;
-                demoStreak.textContent = streak;
-                levelUpToast.classList.remove('hidden');
-                gsap.from(levelUpToast, { scale: 0, duration: 0.5, ease: 'elastic.out(1,0.5)' });
-                setTimeout(() => {
-                    gsap.to(levelUpToast, { opacity: 0, duration: 0.5, onComplete: () => {
-                        levelUpToast.classList.add('hidden');
-                        levelUpToast.style.opacity = '1';
-                    }});
-                }, 2500);
-            }
-            const pct = Math.min(100, (currentXP / maxXP) * 100);
-            xpBar.style.width = pct + '%';
-            xpText.textContent = `${currentXP} / ${maxXP} XP`;
-            // Pulse
-            gsap.from(studyBtn, { scale: 0.95, duration: 0.15, ease: 'power2.out' });
-        });
-
-        // ---- LANGUAGE PICKER ----
-        const langToggles = document.querySelectorAll('.lang-toggle');
-        const demoGreeting = document.getElementById('demo-greeting');
-        const langLabel = document.getElementById('lang-label');
-
-        langToggles.forEach(btn => {
-            btn.addEventListener('click', () => {
-                langToggles.forEach(b => {
-                    b.classList.remove('active', 'border-coral', 'text-coral');
-                    b.classList.add('border-transparent');
-                });
-                btn.classList.add('active', 'border-coral', 'text-coral');
-                btn.classList.remove('border-transparent');
-                gsap.to(demoGreeting, {
-                    opacity: 0, x: -20, duration: 0.15,
-                    onComplete: () => {
-                        demoGreeting.innerText = btn.dataset.greet;
-                        langLabel.innerText = `Currently: ${btn.dataset.lang}`;
-                        gsap.to(demoGreeting, { opacity: 1, x: 0, duration: 0.3 });
-                    }
-                });
-            });
-        });
-
-        // ---- FLOATING EMOJI PARTICLES ----
-        (function() {
-            const container = document.getElementById('emoji-particles');
-            const emojis = ['📚', '✏️', '🎓', '⭐', '🌟', '📖', '🔢', '🔬'];
-            const particles = [];
-            for (let i = 0; i < 15; i++) {
-                const el = document.createElement('div');
-                el.className = 'emoji-particle';
-                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                container.appendChild(el);
-                particles.push({
-                    el,
-                    x: Math.random() * window.innerWidth,
-                    y: Math.random() * window.innerHeight,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3 - 0.1,
-                    size: Math.random() * 16 + 16,
-                    phase: Math.random() * Math.PI * 2,
-                });
-                el.style.fontSize = particles[i].size + 'px';
-            }
-            let mx = -1000, my = -1000;
-            document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
-
-            function animateEmojis() {
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy + Math.sin(Date.now() * 0.001 + p.phase) * 0.05;
-                    // Wrap
-                    if (p.y > window.innerHeight + 50) { p.y = -50; p.x = Math.random() * window.innerWidth; }
-                    if (p.x < -50) p.x = window.innerWidth + 50;
-                    if (p.x > window.innerWidth + 50) p.x = -50;
-                    // Repel from cursor
-                    const dx = mx - p.x, dy = my - p.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 150) {
-                        p.x -= dx * 0.02;
-                        p.y -= dy * 0.02;
-                    }
-                    p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-                    p.el.style.opacity = 0.08 + Math.sin(Date.now() * 0.001 + p.phase) * 0.04;
-                });
-                requestAnimationFrame(animateEmojis);
-            }
-            animateEmojis();
-        })();
-
-        // ---- SPARK LAYER (Hero foreground) ----
-        (function() {
-            const container = document.getElementById('spark-layer');
-            const canvas = document.createElement('canvas');
-            canvas.style.width = '100%'; canvas.style.height = '100%';
-            canvas.style.position = 'absolute'; canvas.style.inset = '0';
-            container.appendChild(canvas);
-            const ctx = canvas.getContext('2d');
-            let w, h;
-            function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-            resize(); window.addEventListener('resize', resize);
-
-            const sparks = [];
-            for (let i = 0; i < 30; i++) {
-                sparks.push({
-                    x: Math.random() * w, y: Math.random() * h,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: -Math.random() * 2 - 0.5,
-                    life: Math.random() * 1 + 0.5,
-                    maxLife: Math.random() * 1 + 0.5,
-                    size: Math.random() * 2 + 1,
-                });
-            }
-
-            function animateSparks() {
-                ctx.clearRect(0, 0, w, h);
-                sparks.forEach(s => {
-                    s.x += s.vx;
-                    s.y += s.vy;
-                    s.life -= 0.005;
-                    if (s.life <= 0) {
-                        s.x = Math.random() * w;
-                        s.y = h * 0.7 + Math.random() * h * 0.3;
-                        s.life = s.maxLife;
-                    }
-                    const alpha = Math.max(0, s.life / s.maxLife) * 0.6;
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 217, 61, ${alpha})`;
-                    ctx.fill();
-                    // Glow
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 217, 61, ${alpha * 0.15})`;
-                    ctx.fill();
-                });
-                requestAnimationFrame(animateSparks);
-            }
-            animateSparks();
-        })();
-
-        // ---- INITIAL COUNT ----
-        updateCount();
-
-        // ---- KEYFRAMES for float ----
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float-slow { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
-            .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
-        `;
-        document.head.appendChild(style);
-
-        console.log('LearnBasilan • 4D Cinematic Landing Page v2.0');
     </script>
 </body>
 </html>
