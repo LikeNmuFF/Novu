@@ -1,0 +1,47 @@
+export const colors = {
+  coral: '#FF7E5F',
+  coralDark: '#E86548',
+  coralLight: '#FFA68F',
+  coralGlow: '#FFF0EB',
+  teal: '#2EC4B6',
+  tealDark: '#219A8F',
+  tealLight: '#7DDAD0',
+  tealGlow: '#E8F8F6',
+  gold: '#FFD93D',
+  goldLight: '#FFE680',
+  goldGlow: '#FFF8E0',
+  green: '#6BCB77',
+  greenLight: '#94D99D',
+  greenGlow: '#EDF8EF',
+  ocean: '#1A535C',
+  oceanLight: '#2D7A87',
+  cream: '#FFF8F0',
+  creamDark: '#F5E6D5',
+  white: '#FFFFFF',
+  slate: '#4A5568',
+  slateLight: '#718096',
+} as const;
+
+export const shadows = {
+  sm: {
+    shadowColor: colors.ocean,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: colors.ocean,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: colors.ocean,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.16,
+    shadowRadius: 40,
+    elevation: 8,
+  },
+} as const;
