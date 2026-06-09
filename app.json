@@ -29,17 +29,12 @@
       ]
     },
     "plugins": [
-      "expo-font",
-      "expo-sqlite",
-      "expo-asset",
-      "expo-crypto",
       [
-        "expo-camera",
+        "expo-barcode-scanner",
         {
           "cameraPermission": "Allow LearnBasilan to access camera to scan QR codes."
         }
-      ]
-    ],
+      ],
       "expo-sqlite"
     ],
     "extra": {
