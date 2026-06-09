@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -5,8 +6,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Animated,
-  useRef,
-  useEffect,
 } from 'react-native';
 
 const features = [

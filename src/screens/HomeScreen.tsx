@@ -36,6 +36,7 @@ export default function HomeScreen({
   const barAnims = useRef(subjects.map(() => new Animated.Value(0))).current;
   const [importedCount, setImportedCount] = useState(0);
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
+  const [importedItems, setImportedItems] = useState<ImportedItem[]>([]);
   const badgeScale = useRef(new Animated.Value(0)).current;
 
   const refreshImported = useCallback(() => {
@@ -83,8 +84,6 @@ export default function HomeScreen({
     inputRange: [0, 1],
     outputRange: ['0%', `${xpPercent}%`],
   });
-
-  const [importedItems, setImportedItems] = useState<ImportedItem[]>([]);
 
   return (
     <SafeAreaView style={styles.container}>

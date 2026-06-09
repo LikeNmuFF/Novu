@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   Animated,
   Dimensions,
@@ -106,7 +107,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
             ]}
           />
           <View style={styles.logo}>
-            <Text style={styles.logoText}>LB</Text>
+            <Image source={require('../../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
           </View>
         </Animated.View>
 
@@ -185,11 +186,10 @@ const styles = StyleSheet.create({
     shadowRadius: 40,
     elevation: 10,
   },
-  logoText: {
-    fontFamily: systemFont,
-    fontSize: 48,
-    color: '#FFFFFF',
-    fontWeight: '700',
+  logoImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
   },
   title: {
     fontFamily: systemFont,
