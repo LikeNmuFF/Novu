@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/icon.png" width="200" alt="LearnBasilan Logo" />
+
 # LearnBasilan
 
 ### Offline-First Mother Tongue Mobile Learning System with QR-Based Content Distribution
