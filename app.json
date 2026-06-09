@@ -30,7 +30,7 @@
     },
     "plugins": [
       [
-        "expo-barcode-scanner",
+        "expo-camera",
         {
           "cameraPermission": "Allow LearnBasilan to access camera to scan QR codes."
         }
