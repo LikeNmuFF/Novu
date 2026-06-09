@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.learnbasilan.app"
@@ -21,7 +23,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.learnbasilan.app"
+      "package": "com.learnbasilan.app",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "plugins": [
       [
@@ -29,7 +34,14 @@
         {
           "cameraPermission": "Allow LearnBasilan to access camera to scan QR codes."
         }
-      ]
-    ]
+      ],
+      "expo-font",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5ee659fd-8af0-4ccc-944c-bc140025bf98"
+      }
+    }
   }
 }

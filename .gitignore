@@ -12,7 +12,5 @@ Thumbs.db
 node_modules/
 .session
 Blueprint.md
-
-package-lock.json
 Project Status.md
 QR Transfer Architecture.md
