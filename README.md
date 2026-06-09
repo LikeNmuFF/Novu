@@ -1,24 +1,117 @@
 <div align="center">
 
-<img src="assets/icon.png" width="200" alt="LearnBasilan Logo"  />
+<!-- Cinematic Header with Animated Glow and Real Logo -->
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF7E5F;stop-opacity:1">
+        <animate attributeName="stop-color" values="#FF7E5F;#2EC4B6;#FFD93D;#FF7E5F" dur="8s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" style="stop-color:#2EC4B6;stop-opacity:1">
+        <animate attributeName="stop-color" values="#2EC4B6;#FFD93D;#FF7E5F;#2EC4B6" dur="8s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Pulsing Background Aura -->
+  <circle cx="120" cy="120" r="100" fill="url(#logoGrad)" opacity="0.1">
+    <animate attributeName="r" values="100;110;100" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.1;0.2;0.1" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Logo Container with Glow -->
+  <g filter="url(#glow)">
+    <circle cx="120" cy="120" r="85" fill="white" opacity="0.1" stroke="url(#logoGrad)" stroke-width="2"/>
+    <clipPath id="circleClip">
+      <circle cx="120" cy="120" r="80" />
+    </clipPath>
+    <!-- Actual App Logo (using absolute URL for GitHub compatibility) -->
+    <image xlink:href="https://raw.githubusercontent.com/LikeNmuFF/Novu/main/assets/icon.png" x="40" y="40" width="160" height="160" clip-path="url(#circleClip)" />
+  </g>
+  
+  <!-- Floating Particles -->
+  <circle cx="50" cy="50" r="3" fill="#FF7E5F">
+    <animate attributeName="cy" values="50;30;50" dur="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="190" cy="180" r="2.5" fill="#2EC4B6">
+    <animate attributeName="cy" values="180;160;180" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.2;0.7;0.2" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="210" cy="60" r="2" fill="#FFD93D">
+    <animate attributeName="cy" values="60;40;60" dur="6s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0.9;0.4" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>
 
 # LearnBasilan
 
+<svg width="300" height="4" viewBox="0 0 300 4" xmlns="http://www.w3.org/2000/svg">
+  <line x1="0" y1="2" x2="300" y2="2" stroke="#FF7E5F" stroke-width="3" stroke-dasharray="10 10">
+    <animate attributeName="stroke-dashoffset" values="0;20" dur="1.5s" repeatCount="indefinite"/>
+  </line>
+</svg>
+
 ### Offline-First Mother Tongue Mobile Learning System with QR-Based Content Distribution
 
-![Version](https://img.shields.io/badge/version-1.0.1-blue)
-![React Native](https://img.shields.io/badge/React%20Native-0.76.9-61DAFB)
-![Expo](https://img.shields.io/badge/Expo%20SDK-52-000020)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6)
-![License](https://img.shields.io/badge/license-MIT-green)
+<div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 25px 0">
 
-**Built for elementary students in Basilan, Philippines**
+<!-- Custom Branded Badges -->
+<svg width="100" height="32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="32" rx="16" fill="#FF7E5F"/>
+  <text x="50" y="21" text-anchor="middle" fill="white" font-family="sans-serif" font-size="12" font-weight="bold">v1.0.1</text>
+  <animate attributeName="opacity" values="1;0.8;1" dur="3s" repeatCount="indefinite"/>
+</svg>
+
+<svg width="140" height="32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="140" height="32" rx="16" fill="#2EC4B6"/>
+  <text x="70" y="21" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11" font-weight="bold">React Native 0.76.9</text>
+</svg>
+
+<svg width="110" height="32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="110" height="32" rx="16" fill="#1A535C"/>
+  <text x="55" y="21" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11" font-weight="bold">Expo SDK 52</text>
+</svg>
+
+<svg width="110" height="32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="110" height="32" rx="16" fill="#3178C6"/>
+  <text x="55" y="21" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11" font-weight="bold">TypeScript 5.3</text>
+</svg>
+
+<svg width="90" height="32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="90" height="32" rx="16" fill="#6BCB77"/>
+  <text x="45" y="21" text-anchor="middle" fill="white" font-family="sans-serif" font-size="12" font-weight="bold">MIT</text>
+</svg>
+
+</div>
+
+**Empowering education through mother tongue learning for Basilan, Philippines**
 
 [Getting Started](#getting-started) | [Features](#features) | [Tech Stack](#tech-stack) | [Architecture](#architecture) | [Contributing](#contributing)
 
 </div>
 
 ---
+
+<svg width="100%" height="2" xmlns="http://www.w3.org/2000/svg">
+  <line x1="0" y1="1" x2="100%" y2="1" stroke="url(#gradLine)" stroke-width="2">
+    <animate attributeName="x1" values="0;100%;0" dur="10s" repeatCount="indefinite"/>
+  </line>
+  <defs>
+    <linearGradient id="gradLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6B6B"/>
+      <stop offset="50%" style="stop-color:#4ECDC4"/>
+      <stop offset="100%" style="stop-color:#45B7D1"/>
+    </linearGradient>
+  </defs>
+</svg>
 
 ## Overview
 
@@ -58,9 +151,9 @@ The platform enables students to learn subjects, take quizzes, track progress, a
 
 | Category             | Technology                                     |
 | -------------------- | ---------------------------------------------- |
-| **Mobile Framework** | React Native                                   |
+| **Mobile Framework** | React Native 0.76.9                            |
 | **Runtime**          | Expo SDK 52                                    |
-| **Language**         | TypeScript                                     |
+| **Language**         | TypeScript 5.3                                 |
 | **Database**         | expo-sqlite (SQLite)                           |
 | **State Management** | Zustand                                        |
 | **Forms**            | React Hook Form + Zod                          |
@@ -144,6 +237,36 @@ Offline-Learning-App/
 The QR ecosystem is the primary method for distributing educational content offline.
 
 **Architecture:**
+
+<svg width="100%" height="80" viewBox="0 0 800 80" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="20" width="110" height="40" rx="8" fill="#FF6B6B" opacity="0.8">
+    <text x="65" y="45" text-anchor="middle" fill="white" font-size="11">Compress</text>
+  </rect>
+  <line x1="120" y1="40" x2="160" y2="40" stroke="#4ECDC4" stroke-width="2" stroke-dasharray="5 5">
+    <animate attributeName="stroke-dashoffset" values="0;20" dur="1s" repeatCount="indefinite"/>
+  </line>
+  <rect x="160" y="20" width="110" height="40" rx="8" fill="#4ECDC4" opacity="0.8">
+    <text x="215" y="45" text-anchor="middle" fill="white" font-size="11">Chunk</text>
+  </rect>
+  <line x1="270" y1="40" x2="310" y2="40" stroke="#45B7D1" stroke-width="2" stroke-dasharray="5 5">
+    <animate attributeName="stroke-dashoffset" values="0;20" dur="1s" repeatCount="indefinite" begin="0.3s"/>
+  </line>
+  <rect x="310" y="20" width="110" height="40" rx="8" fill="#45B7D1" opacity="0.8">
+    <text x="365" y="45" text-anchor="middle" fill="white" font-size="11">CRC32</text>
+  </rect>
+  <line x1="420" y1="40" x2="460" y2="40" stroke="#96CEB4" stroke-width="2" stroke-dasharray="5 5">
+    <animate attributeName="stroke-dashoffset" values="0;20" dur="1s" repeatCount="indefinite" begin="0.6s"/>
+  </line>
+  <rect x="460" y="20" width="110" height="40" rx="8" fill="#96CEB4" opacity="0.8">
+    <text x="515" y="45" text-anchor="middle" fill="white" font-size="11">QR Code</text>
+  </rect>
+  <line x1="570" y1="40" x2="610" y2="40" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="5 5">
+    <animate attributeName="stroke-dashoffset" values="0;20" dur="1s" repeatCount="indefinite" begin="0.9s"/>
+  </line>
+  <rect x="610" y="20" width="110" height="40" rx="8" fill="#FF6B6B" opacity="0.8">
+    <text x="665" y="45" text-anchor="middle" fill="white" font-size="11">✅ Done</text>
+  </rect>
+</svg>
 
 1. **Compression** — Pako (deflate level 9) + base64 encoding (60-96% size reduction)
 2. **Chunking** — Splits data into ≤1800 character chunks for safe QR scanning
@@ -398,6 +521,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**LearnBasilan** — Empowering education through mother tongue learning
+<svg width="400" height="50" viewBox="0 0 400 50">
+  <text x="200" y="20" text-anchor="middle" fill="#FF6B6B" font-size="14" font-weight="bold">
+    LearnBasilan — Empowering education through mother tongue learning
+    <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite"/>
+  </text>
+</svg>
 
 </div>
