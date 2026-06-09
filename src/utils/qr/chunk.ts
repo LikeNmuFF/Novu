@@ -59,6 +59,9 @@ export function createChunks<T>(
 }
 
 export function createReconstruction(chunks: QRChunkMeta[]): QRReconstruction {
+  if (chunks.length === 0) {
+    return { packageId: '', totalChunks: 0, receivedChunks: [], data: [] };
+  }
   const sorted = [...chunks].sort((a, b) => a.i - b.i);
   const totalChunks = sorted[0].t;
 

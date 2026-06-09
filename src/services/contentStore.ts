@@ -2,7 +2,7 @@ import { getDb } from './database';
 import type { QRContentType } from '../types/qr';
 
 export interface ImportedItem {
-  id: string;
+  id: number;
   user_id: number | null;
   type: QRContentType;
   title: string;
@@ -12,15 +12,21 @@ export interface ImportedItem {
 
 export async function getImportedContent(userId?: number): Promise<ImportedItem[]> {
   const db = await getDb();
+  let rows;
   if (userId) {
-    return await db.getAllAsync<ImportedItem>(
+    rows = await db.getAllAsync<ImportedItem>(
       'SELECT id, user_id, type, title, content, imported_at as importedAt FROM imported_content WHERE user_id = ? ORDER BY imported_at DESC',
       [userId]
     );
+  } else {
+    rows = await db.getAllAsync<ImportedItem>(
+      'SELECT id, user_id, type, title, content, imported_at as importedAt FROM imported_content ORDER BY imported_at DESC'
+    );
   }
-  return await db.getAllAsync<ImportedItem>(
-    'SELECT id, user_id, type, title, content, imported_at as importedAt FROM imported_content ORDER BY imported_at DESC'
-  );
+  return rows.map(r => ({
+    ...r,
+    content: typeof r.content === 'string' ? (() => { try { return JSON.parse(r.content); } catch { return r.content; } })() : r.content,
+  }));
 }
 
 export async function importContent(
@@ -39,7 +45,7 @@ export async function importContent(
   );
 
   return {
-    id: String(result.lastInsertRowId),
+    id: result.lastInsertRowId,
     user_id: userId ?? null,
     type,
     title,
@@ -67,7 +73,7 @@ export async function clearImportedContent(userId?: number): Promise<void> {
   }
 }
 
-export async function removeImportedItem(id: string): Promise<void> {
+export async function removeImportedItem(id: number): Promise<void> {
   const db = await getDb();
   await db.runAsync('DELETE FROM imported_content WHERE id = ?', [id]);
 }

@@ -11,7 +11,7 @@ export interface User {
 }
 
 async function hashPassword(password: string): Promise<string> {
-  const salt = await Crypto.getRandomBytesAsync(16);
+    const salt = Crypto.getRandomBytes(16);
   const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
@@ -162,4 +162,30 @@ export async function addXp(userId: number, amount: number): Promise<{ xp: numbe
     [newXp, newLevel, userId]
   );
   return { xp: newXp, level: newLevel };
+}
+
+export async function getLastSessionUser(): Promise<User | null> {
+  try {
+    const db = await getDb();
+    const row = await db.getFirstAsync<{
+      id: number;
+      name: string;
+      username: string;
+      grade: string;
+      role: string;
+    }>(
+      'SELECT id, name, username, grade, role FROM users ORDER BY created_at DESC LIMIT 1'
+    );
+    if (!row) return null;
+    return {
+      id: row.id,
+      name: row.name,
+      username: row.username,
+      grade: row.grade,
+      avatar: row.name.charAt(0).toUpperCase(),
+      role: row.role as 'student' | 'teacher',
+    };
+  } catch {
+    return null;
+  }
 }

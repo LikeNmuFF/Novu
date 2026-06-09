@@ -11,6 +11,8 @@ export async function getDb(): Promise<SQLite.SQLiteDatabase> {
 export async function initDatabase(): Promise<void> {
   const database = await getDb();
 
+  await database.execAsync('PRAGMA foreign_keys = ON');
+
   await database.execAsync(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

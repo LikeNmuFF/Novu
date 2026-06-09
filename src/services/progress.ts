@@ -1,4 +1,5 @@
 import { getDb } from './database';
+import type { SQLiteDatabase } from 'expo-sqlite';
 
 export type ChapterStatus = 'locked' | 'unlocked' | 'completed';
 
@@ -139,51 +140,55 @@ export const BADGES = [
 ];
 
 export async function checkAndAwardBadges(userId: number): Promise<string[]> {
-  const db = await getDb();
-  const earned = await db.getAllAsync<{ badge_id: string }>(
-    'SELECT badge_id FROM earned_badges WHERE user_id = ?',
-    [userId]
-  );
-  const earnedIds = new Set(earned.map(b => b.badge_id));
-  const newlyEarned: string[] = [];
+  try {
+    const db = await getDb();
+    const earned = await db.getAllAsync<{ badge_id: string }>(
+      'SELECT badge_id FROM earned_badges WHERE user_id = ?',
+      [userId]
+    );
+    const earnedIds = new Set(earned.map(b => b.badge_id));
+    const newlyEarned: string[] = [];
 
-  const completedCount = await db.getFirstAsync<{ count: number }>(
-    "SELECT COUNT(*) as count FROM progress WHERE user_id = ? AND status = 'completed'",
-    [userId]
-  );
+    const completedCount = await db.getFirstAsync<{ count: number }>(
+      "SELECT COUNT(*) as count FROM progress WHERE user_id = ? AND status = 'completed'",
+      [userId]
+    );
 
-  const stats = await db.getFirstAsync<{ streak: number }>(
-    'SELECT streak FROM user_stats WHERE user_id = ?',
-    [userId]
-  );
+    const stats = await db.getFirstAsync<{ streak: number }>(
+      'SELECT streak FROM user_stats WHERE user_id = ?',
+      [userId]
+    );
 
-  const checkBadge = async (id: string, condition: boolean) => {
-    if (condition && !earnedIds.has(id)) {
-      await db.runAsync(
-        'INSERT INTO earned_badges (user_id, badge_id, earned_at) VALUES (?, ?, ?)',
-        [userId, id, Date.now()]
-      );
-      const badge = BADGES.find(b => b.id === id);
-      if (badge) {
-        await addXpDirect(db, userId, badge.xp);
+    const checkBadge = async (id: string, condition: boolean) => {
+      if (condition && !earnedIds.has(id)) {
+        await db.runAsync(
+          'INSERT INTO earned_badges (user_id, badge_id, earned_at) VALUES (?, ?, ?)',
+          [userId, id, Date.now()]
+        );
+        const badge = BADGES.find(b => b.id === id);
+        if (badge) {
+          await addXpDirect(db, userId, badge.xp);
+        }
+        newlyEarned.push(id);
       }
-      newlyEarned.push(id);
-    }
-  };
+    };
 
-  const count = completedCount?.count ?? 0;
-  const streak = stats?.streak ?? 0;
+    const count = completedCount?.count ?? 0;
+    const streak = stats?.streak ?? 0;
 
-  await checkBadge('first_lesson', count >= 1);
-  await checkBadge('five_lessons', count >= 5);
-  await checkBadge('ten_lessons', count >= 10);
-  await checkBadge('streak_3', streak >= 3);
-  await checkBadge('streak_7', streak >= 7);
+    await checkBadge('first_lesson', count >= 1);
+    await checkBadge('five_lessons', count >= 5);
+    await checkBadge('ten_lessons', count >= 10);
+    await checkBadge('streak_3', streak >= 3);
+    await checkBadge('streak_7', streak >= 7);
 
-  return newlyEarned;
+    return newlyEarned;
+  } catch {
+    return [];
+  }
 }
 
-async function addXpDirect(db: any, userId: number, amount: number): Promise<void> {
+async function addXpDirect(db: SQLiteDatabase, userId: number, amount: number): Promise<void> {
   const current = await db.getFirstAsync<{ xp: number; level: number }>(
     'SELECT xp, level FROM user_stats WHERE user_id = ?',
     [userId]

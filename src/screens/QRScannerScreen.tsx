@@ -1,97 +1,113 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
-  Animated,
   Vibration,
+  Alert,
 } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { processQRScan, getQRProgress } from '../utils/qr/package';
 import { importContent } from '../services/contentStore';
 import type { QRScanResult } from '../types/qr';
 
-export default function QRScannerScreen({ onBack, onImported }: { onBack: () => void; onImported: () => void }) {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+export default function QRScannerScreen({
+  onBack,
+  onImported,
+}: {
+  onBack: () => void;
+  onImported: () => void;
+}) {
+  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
-  const [result, setResult] = useState<QRScanResult | null>(null);
-  const [scanning, setScanning] = useState(true);
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [scanning, setScanning] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [scanResult, setScanResult] = useState<QRScanResult | null>(null);
+  const scannedPackages = useRef(new Set<string>());
 
-  useEffect(() => {
-    const getPermission = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    };
-    getPermission();
-  }, []);
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 0.3, duration: 1500, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
-
-  const handleBarCodeScanned = useCallback(async ({ data }: { type: string; data: string }) => {
-    if (!scanning) return;
-    setScanning(false);
+  const handleBarCodeScanned = useCallback(async ({ data }: { data: string }) => {
+    if (scanning) return;
+    setScanning(true);
     Vibration.vibrate(100);
 
-    const scanResult = processQRScan(data);
-    setResult(scanResult);
+    try {
+      const result: QRScanResult = processQRScan(data);
 
-    if (scanResult.status === 'complete' && scanResult.content) {
-      await importContent(scanResult.type!, scanResult.content);
-      setTimeout(() => {
-        onImported();
-      }, 1500);
-      return;
+      if (result.status === 'invalid') {
+        setStatus(`Invalid QR code: ${result.error}`);
+        setScanning(false);
+        return;
+      }
+
+      if (result.status === 'duplicate') {
+        setStatus('Already scanned this code');
+        setScanning(false);
+        return;
+      }
+
+      if (result.status === 'partial' && result.packageId) {
+        if (scannedPackages.current.has(result.packageId + '_' + result.progress?.received)) {
+          setStatus('Already scanned this code');
+          setScanning(false);
+          return;
+        }
+        scannedPackages.current.add(result.packageId + '_' + result.progress?.received);
+        setScanResult(result);
+        setStatus(`Scanning... ${result.progress?.received}/${result.progress?.total} chunks received`);
+        setScanning(false);
+        return;
+      }
+
+      if (result.status === 'complete') {
+        setScanResult(result);
+        setStatus('Content imported successfully!');
+
+        try {
+          await importContent(result.type!, result.content);
+        } catch (err) {
+          setStatus('Error saving content. Please try again.');
+          setScanning(false);
+          return;
+        }
+
+        setTimeout(() => {
+          onImported();
+        }, 1500);
+        return;
+      }
+    } catch (err) {
+      setStatus('Error scanning QR code');
     }
 
-    if (scanResult.status === 'duplicate') {
-      setTimeout(() => {
-        setResult(null);
-        setScanning(true);
-      }, 1500);
-      return;
-    }
+    setScanning(false);
+  }, [scanning, onImported]);
 
-    if (scanResult.status === 'partial') {
-      setTimeout(() => {
-        setScanned(false);
-        setScanning(true);
-      }, 2000);
-      return;
-    }
-  }, [scanning]);
-
-  const progress = result?.progress
-    ? `${result.progress.received} / ${result.progress.total}`
-    : null;
-
-  if (hasPermission === null) {
+  if (!permission) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <Text style={styles.permissionText}>Requesting camera permission...</Text>
+          <Text style={styles.statusText}>Requesting camera permission...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (!hasPermission) {
+  if (!permission.granted) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <Text style={styles.permissionText}>No camera access</Text>
-          <Text style={styles.permissionSub}>Please enable camera in your settings to scan QR codes</Text>
-          <TouchableOpacity style={styles.btnOutline} onPress={onBack}>
-            <Text style={styles.btnOutlineText}>Go Back</Text>
+          <Text style={styles.errorIcon}>📷</Text>
+          <Text style={styles.errorTitle}>No camera access</Text>
+          <Text style={styles.errorDesc}>
+            Please enable camera in your settings to scan QR codes
+          </Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={requestPermission}>
+            <Text style={styles.retryBtnText}>Grant Permission</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.backBtn} onPress={onBack}>
+            <Text style={styles.backBtnText}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -100,99 +116,43 @@ export default function QRScannerScreen({ onBack, onImported }: { onBack: () => 
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.headerBack}>
-          <Text style={styles.headerBackText}>← Back</Text>
+        <TouchableOpacity onPress={onBack}>
+          <Text style={styles.headerBack}>← Back</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Scan QR Code</Text>
         <View style={{ width: 60 }} />
       </View>
 
-      {/* Scanner */}
       <View style={styles.scannerWrapper}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        <CameraView
           style={StyleSheet.absoluteFillObject}
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         />
-        <View style={styles.scanOverlay}>
+        <View style={styles.overlay}>
           <View style={styles.scanFrame}>
-            <Animated.View
-              style={[
-                styles.scanCornerTL,
-                { opacity: pulseAnim },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.scanCornerTR,
-                { opacity: pulseAnim },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.scanCornerBL,
-                { opacity: pulseAnim },
-              ]}
-            />
-            <Animated.View
-              style={[
-                styles.scanCornerBR,
-                { opacity: pulseAnim },
-              ]}
-            />
-            {scanning && (
-              <View style={styles.scanLine} />
-            )}
+            <View style={[styles.corner, styles.cornerTL]} />
+            <View style={[styles.corner, styles.cornerTR]} />
+            <View style={[styles.corner, styles.cornerBL]} />
+            <View style={[styles.corner, styles.cornerBR]} />
           </View>
         </View>
+        <View style={styles.scanLine} />
       </View>
 
-      {/* Status */}
-      <View style={styles.statusArea}>
-        {result?.status === 'complete' && (
-          <View style={styles.statusSuccess}>
-            <Text style={styles.statusIcon}>✅</Text>
-            <Text style={styles.statusText}>Content imported successfully!</Text>
+      <View style={styles.statusBar}>
+        {status ? (
+          <View style={[
+            styles.statusCard,
+            scanResult?.status === 'complete' && styles.statusCardSuccess,
+            scanResult?.status === 'partial' && styles.statusCardPartial,
+          ]}>
+            <Text style={styles.statusText}>{status}</Text>
           </View>
-        )}
-        {result?.status === 'partial' && (
-          <View style={styles.statusPartial}>
-            <Text style={styles.statusIcon}>📦</Text>
-            <Text style={styles.statusText}>
-              Scanning... {progress} chunks received
-            </Text>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${
-                      ((result.progress?.received ?? 0) / (result.progress?.total ?? 1)) * 100
-                    }%`,
-                  },
-                ]}
-              />
-            </View>
-            <Text style={styles.statusHint}>Scan the next QR code</Text>
-          </View>
-        )}
-        {result?.status === 'duplicate' && (
-          <View style={styles.statusWarn}>
-            <Text style={styles.statusIcon}>🔄</Text>
-            <Text style={styles.statusText}>Already scanned this code</Text>
-          </View>
-        )}
-        {result?.status === 'invalid' && (
-          <View style={styles.statusError}>
-            <Text style={styles.statusIcon}>⚠️</Text>
-            <Text style={styles.statusText}>Invalid QR code</Text>
-          </View>
-        )}
-        {!result && scanning && (
-          <View style={styles.statusIdle}>
-            <Text style={styles.statusIcon}>📷</Text>
-            <Text style={styles.statusText}>Point your camera at a QR code</Text>
+        ) : (
+          <View style={styles.statusCard}>
+            <Text style={styles.statusHint}>Point your camera at a QR code</Text>
           </View>
         )}
       </View>
@@ -201,30 +161,7 @@ export default function QRScannerScreen({ onBack, onImported }: { onBack: () => 
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A2E33',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  permissionText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 20,
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  permissionSub: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
-    textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 24,
-  },
+  container: { flex: 1, backgroundColor: '#1A535C' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -233,171 +170,70 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     zIndex: 10,
   },
-  headerBack: {
-    width: 60,
-  },
-  headerBackText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-  scannerWrapper: {
-    flex: 1,
-    margin: 20,
-    borderRadius: 24,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  scanOverlay: {
+  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: 'rgba(255,255,255,0.8)' },
+  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#FFFFFF' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40 },
+  scannerWrapper: { flex: 1, position: 'relative' },
+  overlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.15)',
   },
   scanFrame: {
-    width: 240,
-    height: 240,
+    width: 260,
+    height: 260,
     position: 'relative',
   },
-  scanCornerTL: {
+  corner: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 36,
-    height: 36,
-    borderTopWidth: 4,
-    borderLeftWidth: 4,
+    width: 30,
+    height: 30,
     borderColor: '#FF7E5F',
-    borderTopLeftRadius: 12,
   },
-  scanCornerTR: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    borderTopWidth: 4,
-    borderRightWidth: 4,
-    borderColor: '#FF7E5F',
-    borderTopRightRadius: 12,
-  },
-  scanCornerBL: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: 36,
-    height: 36,
-    borderBottomWidth: 4,
-    borderLeftWidth: 4,
-    borderColor: '#FF7E5F',
-    borderBottomLeftRadius: 12,
-  },
-  scanCornerBR: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    borderBottomWidth: 4,
-    borderRightWidth: 4,
-    borderColor: '#FF7E5F',
-    borderBottomRightRadius: 12,
-  },
+  cornerTL: { top: 0, left: 0, borderTopWidth: 3, borderLeftWidth: 3 },
+  cornerTR: { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3 },
+  cornerBL: { bottom: 0, left: 0, borderBottomWidth: 3, borderLeftWidth: 3 },
+  cornerBR: { bottom: 0, right: 0, borderBottomWidth: 3, borderRightWidth: 3 },
   scanLine: {
     position: 'absolute',
-    top: '50%',
-    left: '10%',
-    right: '10%',
+    left: 30,
+    right: 30,
     height: 2,
     backgroundColor: '#FF7E5F',
+    top: '50%',
     opacity: 0.6,
   },
-  statusArea: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    minHeight: 80,
-    justifyContent: 'center',
-  },
-  statusSuccess: {
-    flexDirection: 'row',
+  statusBar: {
+    padding: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#EDF8EF',
+    zIndex: 10,
+  },
+  statusCard: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 16,
-    padding: 16,
-  },
-  statusPartial: {
-    backgroundColor: '#E8F8F6',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    gap: 8,
-  },
-  statusWarn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#FFF8E0',
-    borderRadius: 16,
-    padding: 16,
-  },
-  statusError: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#FFE8E0',
-    borderRadius: 16,
-    padding: 16,
-  },
-  statusIdle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  statusIcon: {
-    fontSize: 24,
-  },
-  statusText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-  statusHint: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.6)',
-  },
-  progressBar: {
+    paddingVertical: 14,
+    paddingHorizontal: 24,
     width: '100%',
-    height: 6,
-    backgroundColor: 'rgba(46, 196, 182, 0.2)',
-    borderRadius: 3,
-    overflow: 'hidden',
+    alignItems: 'center',
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#2EC4B6',
-    borderRadius: 3,
-  },
-  btnOutline: {
+  statusCardSuccess: { backgroundColor: 'rgba(107,203,119,0.3)' },
+  statusCardPartial: { backgroundColor: 'rgba(255,217,61,0.3)' },
+  statusText: { fontFamily: 'Nunito_700Bold', fontSize: 15, color: '#FFFFFF', textAlign: 'center' },
+  statusHint: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
+  errorIcon: { fontSize: 48, marginBottom: 16 },
+  errorTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 22, color: '#FFFFFF', marginBottom: 8 },
+  errorDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginBottom: 24 },
+  retryBtn: {
+    backgroundColor: '#FF7E5F',
     paddingVertical: 14,
     paddingHorizontal: 32,
-    borderRadius: 9999,
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderRadius: 999,
+    marginBottom: 12,
   },
-  btnOutlineText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 16,
-    color: '#FFFFFF',
+  retryBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#FFFFFF' },
+  backBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 32,
   },
+  backBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: 'rgba(255,255,255,0.6)' },
 });

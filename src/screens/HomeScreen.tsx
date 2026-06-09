@@ -12,28 +12,37 @@ import {
 import Svg, { Path } from 'react-native-svg';
 import { getImportedContent, ImportedItem } from '../services/contentStore';
 import { getUserStats } from '../services/auth';
+import { getSubjectProgress } from '../services/progress';
+import { getDb } from '../services/database';
 import type { User } from '../services/auth';
 
 const { width } = Dimensions.get('window');
 
-const subjects = [
-  { id: 'math', icon: '🔢', name: 'Mathematics', progress: '8 / 12', pct: 72, color: '#FF7E5F', bg: '#FFE8E0' },
-  { id: 'sci', icon: '🔬', name: 'Science', progress: '5 / 11', pct: 45, color: '#2EC4B6', bg: '#E0F5F3' },
-  { id: 'eng', icon: '📝', name: 'English', progress: '3 / 10', pct: 30, color: '#FFD93D', bg: '#FFF3D6' },
-  { id: 'fil', icon: '🇵🇭', name: 'Filipino', progress: '9 / 10', pct: 88, color: '#6BCB77', bg: '#E0F5E6' },
-];
+interface SubjectCard {
+  id: number;
+  name: string;
+  icon: string;
+  color: string;
+  bg_color: string;
+  completed: number;
+  total: number;
+  pct: number;
+}
 
 export default function HomeScreen({
   user,
   onSubjectPress,
   onScanPress,
+  onNavPress,
 }: {
   user: User;
-  onSubjectPress: () => void;
+  onSubjectPress: (subjectId: number) => void;
   onScanPress: () => void;
+  onNavPress: (screen: string) => void;
 }) {
   const xpAnim = useRef(new Animated.Value(0)).current;
-  const barAnims = useRef(subjects.map(() => new Animated.Value(0))).current;
+  const [subjects, setSubjects] = useState<SubjectCard[]>([]);
+  const barAnims = useRef<Animated.Value[]>([]).current;
   const [importedCount, setImportedCount] = useState(0);
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
   const [importedItems, setImportedItems] = useState<ImportedItem[]>([]);
@@ -51,12 +60,48 @@ export default function HomeScreen({
           useNativeDriver: true,
         }).start();
       }
-    });
+    }).catch(() => {});
   }, [user.id]);
 
   useEffect(() => {
     refreshImported();
     getUserStats(user.id).then(setStats).catch(() => {});
+
+    const loadSubjects = async () => {
+      try {
+        const db = await getDb();
+        const rows = await db.getAllAsync<{ id: number; name: string; icon: string; color: string; bg_color: string }>(
+          'SELECT id, name, icon, color, bg_color FROM subjects ORDER BY subject_order ASC'
+        );
+        const cards: SubjectCard[] = [];
+        for (const row of rows) {
+          const progress = await getSubjectProgress(user.id, row.id);
+          cards.push({
+            id: row.id,
+            name: row.name,
+            icon: row.icon,
+            color: row.color,
+            bg_color: row.bg_color,
+            completed: progress.completed,
+            total: progress.total,
+            pct: progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0,
+          });
+        }
+        setSubjects(cards);
+        barAnims.splice(0, barAnims.length, ...cards.map(() => new Animated.Value(0)));
+        setTimeout(() => {
+          Animated.stagger(200, barAnims.map((anim) =>
+            Animated.timing(anim, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: false,
+            })
+          )).start();
+        }, 300);
+      } catch {}
+    };
+    loadSubjects();
+
     const interval = setInterval(refreshImported, 2000);
     return () => clearInterval(interval);
   }, [user.id]);
@@ -142,7 +187,7 @@ export default function HomeScreen({
         </View>
 
         {/* Continue Learning */}
-        <TouchableOpacity style={styles.continueCard} onPress={onSubjectPress} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.continueCard} onPress={() => onSubjectPress(subjects.length > 0 ? subjects[0].id : 1)} activeOpacity={0.8}>
           <View style={styles.continueContent}>
             <Text style={styles.continueTitle}>Ipagpatuloy ang Pag-aaral</Text>
             <Text style={styles.continueDesc}>Math — Addition with Regrouping</Text>
@@ -186,7 +231,7 @@ export default function HomeScreen({
 
         <View style={styles.subjectGrid}>
           {subjects.map((subj, i) => {
-            const barW = barAnims[i].interpolate({
+            const barW = (barAnims[i] || new Animated.Value(0)).interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', `${subj.pct}%`],
             });
@@ -194,14 +239,14 @@ export default function HomeScreen({
               <TouchableOpacity
                 key={subj.id}
                 style={styles.subjectCard}
-                onPress={onSubjectPress}
+                onPress={() => onSubjectPress(subj.id)}
                 activeOpacity={0.7}
               >
-                <View style={[styles.subjIcon, { backgroundColor: subj.bg }]}>
+                <View style={[styles.subjIcon, { backgroundColor: subj.bg_color }]}>
                   <Text style={styles.subjIconText}>{subj.icon}</Text>
                 </View>
                 <Text style={styles.subjName}>{subj.name}</Text>
-                <Text style={styles.subjProgress}>{subj.progress} lessons</Text>
+                <Text style={styles.subjProgress}>{subj.completed} / {subj.total} lessons</Text>
                 <View style={styles.subjBar}>
                   <Animated.View
                     style={[styles.subjBarInner, { backgroundColor: subj.color, width: barW }]}
@@ -217,17 +262,17 @@ export default function HomeScreen({
       {/* Bottom Nav */}
       <View style={styles.bottomNav}>
         {[
-          { icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z', label: 'Home', active: true },
-          { icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z', label: 'Learn' },
-          { icon: 'M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4h4v-2H5v-2zm14 0h-2v2h-2v2h4v-4z', label: 'Rewards' },
-          { icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'Progress' },
-          { icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', label: 'Profile' },
+          { key: 'home', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z', label: 'Home' },
+          { key: 'learn', icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z', label: 'Learn' },
+          { key: 'rewards', icon: 'M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4h4v-2H5v-2zm14 0h-2v2h-2v2h4v-4z', label: 'Rewards' },
+          { key: 'progress', icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'Progress' },
+          { key: 'profile', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', label: 'Profile' },
         ].map((item, i) => (
-          <TouchableOpacity key={i} style={styles.navItem}>
-            <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.active ? '#FF7E5F' : '#718096'}>
+          <TouchableOpacity key={i} style={styles.navItem} onPress={() => onNavPress(item.key)}>
+            <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === 'home' ? '#FF7E5F' : '#718096'}>
               <Path d={item.icon} />
             </Svg>
-            <Text style={[styles.navLabel, item.active && styles.navLabelActive]}>
+            <Text style={[styles.navLabel, item.key === 'home' && styles.navLabelActive]}>
               {item.label}
             </Text>
           </TouchableOpacity>

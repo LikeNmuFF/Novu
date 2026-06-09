@@ -39,6 +39,13 @@ export default function QuizEngineScreen({
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (showResult) {
@@ -64,7 +71,7 @@ export default function QuizEngineScreen({
     const newAnswers = [...answers, index];
     setAnswers(newAnswers);
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       if (currentQ < questions.length - 1) {
         setCurrentQ(currentQ + 1);
         setSelected(null);

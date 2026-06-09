@@ -54,12 +54,16 @@ export default function LessonViewerScreen({
     };
     const lang = langMap[lesson.language] || 'fil-PH';
     setSpeaking(true);
-    Speech.speak(lesson.content, {
-      language: lang,
-      rate: 0.85,
-      onDone: () => setSpeaking(false),
-      onError: () => setSpeaking(false),
-    });
+    try {
+      Speech.speak(lesson.content, {
+        language: lang,
+        rate: 0.85,
+        onDone: () => setSpeaking(false),
+        onError: () => setSpeaking(false),
+      });
+    } catch {
+      setSpeaking(false);
+    }
   };
 
   return (

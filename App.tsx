@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { initDatabase } from './src/services/database';
+import { initDatabase, getDb } from './src/services/database';
 import type { User } from './src/services/auth';
-import { getDb } from './src/services/database';
+import { getLastSessionUser } from './src/services/auth';
 import { completeLesson, checkAndAwardBadges } from './src/services/progress';
 import { addXp } from './src/services/auth';
 import type { LessonView } from './src/screens/LessonViewerScreen';
 import type { QuizQuestion } from './src/screens/QuizEngineScreen';
+import { QRContentType } from './src/types/qr';
 
 import SplashScreen from './src/screens/SplashScreen';
 import LanguageScreen from './src/screens/LanguageScreen';
@@ -21,7 +22,6 @@ import QRScannerScreen from './src/screens/QRScannerScreen';
 import QRGeneratorScreen from './src/screens/QRGeneratorScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import TeacherLessonCreatorScreen from './src/screens/TeacherLessonCreatorScreen';
-import type { QRContentType } from './src/types/qr';
 
 type FlowStep =
   | 'splash'
@@ -36,7 +36,10 @@ type FlowStep =
   | 'qrcode'
   | 'generate'
   | 'teacher'
-  | 'createlesson';
+  | 'createlesson'
+  | 'rewards'
+  | 'progress'
+  | 'profile';
 
 interface PendingLesson {
   subject: string;
@@ -53,24 +56,37 @@ export default function App() {
   const [currentLesson, setCurrentLesson] = useState<LessonView | null>(null);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [dbReady, setDbReady] = useState(false);
+  const [selectedSubjectId, setSelectedSubjectId] = useState(1);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.warn('DB init timed out, proceeding in degraded mode');
       setDbReady(true);
     }, 10000);
 
     initDatabase()
-      .then(() => {
+      .then(async () => {
         clearTimeout(timeout);
+        const sessionUser = await getLastSessionUser();
+        if (sessionUser) {
+          setUser(sessionUser);
+          setStep('home');
+        }
         setDbReady(true);
       })
-      .catch((e) => {
+      .catch(async () => {
         clearTimeout(timeout);
-        console.warn('DB init failed, proceeding in degraded mode:', e);
+        const sessionUser = await getLastSessionUser();
+        if (sessionUser) {
+          setUser(sessionUser);
+          setStep('home');
+        }
         setDbReady(true);
       });
   }, []);
+
+  useEffect(() => {
+    if (step === 'home' && !user) setStep('login');
+  }, [step, user]);
 
   const navigate = useCallback((to: FlowStep) => {
     setStep(to);
@@ -127,12 +143,20 @@ export default function App() {
     if (rows.length === 0) {
       setQuizQuestions(defaultQuestions(currentLesson.title));
     } else {
-      setQuizQuestions(rows.map(r => ({
-        question: r.question,
-        options: JSON.parse(r.options),
-        correctAnswer: r.correct_answer,
-        explanation: r.explanation ?? undefined,
-      })));
+      setQuizQuestions(rows.map(r => {
+        let options: string[];
+        try {
+          options = JSON.parse(r.options);
+        } catch {
+          options = ['Option A', 'Option B', 'Option C', 'Option D'];
+        }
+        return {
+          question: r.question,
+          options,
+          correctAnswer: r.correct_answer,
+          explanation: r.explanation ?? undefined,
+        };
+      }));
     }
     setStep('quiz');
   }, [currentLesson]);
@@ -141,13 +165,23 @@ export default function App() {
     if (!user || !currentLesson) return;
     const pct = Math.round((score / total) * 100);
     await completeLesson(user.id, currentLesson.id, pct);
-    await addXp(user.id, score * 10);
-    const newBadges = await checkAndAwardBadges(user.id);
-    if (newBadges.length > 0) {
-      // badges earned - could show notification
+    const xp = pct === 100 ? 100 : pct >= 75 ? 50 : 0;
+    if (xp > 0) {
+      await addXp(user.id, xp);
     }
+    await checkAndAwardBadges(user.id);
     setStep('subject');
   }, [user, currentLesson]);
+
+  const handleNavPress = useCallback((screen: string) => {
+    switch (screen) {
+      case 'home': setStep('home'); break;
+      case 'learn': setStep('home'); break;
+      case 'rewards': setStep('rewards'); break;
+      case 'progress': setStep('progress'); break;
+      case 'profile': setStep('profile'); break;
+    }
+  }, []);
 
   if (!dbReady) {
     return (
@@ -206,35 +240,40 @@ export default function App() {
       );
 
     case 'home':
-      return user ? (
+      if (!user) return null;
+      return (
         <>
           <StatusBar style="dark" />
           <HomeScreen
             user={user}
-            onSubjectPress={() => navigate('subject')}
+            onSubjectPress={(id: number) => {
+              setSelectedSubjectId(id);
+              navigate('subject');
+            }}
             onScanPress={() => navigate('qrcode')}
+            onNavPress={handleNavPress}
           />
         </>
-      ) : (
-        <>{navigate('login')}</>
       );
 
     case 'subject':
-      return user ? (
+      if (!user) return null;
+      return (
         <>
           <StatusBar style="light" />
           <SubjectDetailScreen
+            subjectId={selectedSubjectId}
             userId={user.id}
+            userGrade={user.grade}
             onBack={() => navigate('home')}
             onOpenLesson={handleOpenLesson}
           />
         </>
-      ) : (
-        <>{navigate('login')}</>
       );
 
     case 'lesson':
-      return currentLesson ? (
+      if (!currentLesson) return null;
+      return (
         <>
           <StatusBar style="light" />
           <LessonViewerScreen
@@ -243,12 +282,11 @@ export default function App() {
             onTakeQuiz={handleTakeQuiz}
           />
         </>
-      ) : (
-        <>{navigate('subject')}</>
       );
 
     case 'quiz':
-      return currentLesson ? (
+      if (!currentLesson) return null;
+      return (
         <>
           <StatusBar style="light" />
           <QuizEngineScreen
@@ -258,8 +296,6 @@ export default function App() {
             onComplete={handleQuizComplete}
           />
         </>
-      ) : (
-        <>{navigate('subject')}</>
       );
 
     case 'qrcode':
@@ -274,19 +310,18 @@ export default function App() {
       );
 
     case 'generate':
-      return pendingLesson ? (
+      if (!pendingLesson) return null;
+      return (
         <>
           <StatusBar style="dark" />
           <QRGeneratorScreen
             content={{ ...pendingLesson }}
-            contentType={'lesson' as QRContentType}
+            contentType={QRContentType.Lesson}
             title={pendingLesson.title}
             onBack={() => navigate('teacher')}
             onShareAnother={() => navigate('createlesson')}
           />
         </>
-      ) : (
-        <>{navigate('teacher')}</>
       );
 
     case 'teacher':
@@ -300,7 +335,7 @@ export default function App() {
               setPendingLesson({
                 subject: lesson.subject,
                 title: lesson.title,
-                content: lesson.title,
+                content: lesson.content,
                 language: lesson.language,
                 images: [],
               });
@@ -320,6 +355,25 @@ export default function App() {
               setPendingLesson(lesson);
               navigate('generate');
             }}
+          />
+        </>
+      );
+
+    case 'rewards':
+    case 'progress':
+    case 'profile':
+      if (!user) return null;
+      return (
+        <>
+          <StatusBar style="dark" />
+          <HomeScreen
+            user={user}
+            onSubjectPress={(id: number) => {
+              setSelectedSubjectId(id);
+              navigate('subject');
+            }}
+            onScanPress={() => navigate('qrcode')}
+            onNavPress={handleNavPress}
           />
         </>
       );

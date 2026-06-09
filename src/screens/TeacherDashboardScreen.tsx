@@ -12,6 +12,7 @@ interface CreatedLesson {
   id: string;
   subject: string;
   title: string;
+  content: string;
   language: string;
   createdAt: number;
 }

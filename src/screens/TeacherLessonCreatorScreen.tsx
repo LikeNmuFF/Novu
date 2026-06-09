@@ -10,7 +10,6 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { QRContentType } from '../types/qr';
 
 const SUBJECTS = [
   { id: 'math', name: 'Mathematics', icon: '🔢' },
@@ -37,6 +36,7 @@ export default function TeacherLessonCreatorScreen({
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [language, setLanguage] = useState('fil');
+  const [imageUrls, setImageUrls] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -137,7 +137,7 @@ export default function TeacherLessonCreatorScreen({
             />
           </View>
 
-          {/* Image URLs (placeholder) */}
+          {/* Image URLs (optional) */}
           <View style={styles.formGroup}>
             <Text style={styles.label}>Image URLs (optional)</Text>
             <TextInput
@@ -145,6 +145,8 @@ export default function TeacherLessonCreatorScreen({
               placeholder="Add image URLs, one per line"
               placeholderTextColor="#718096"
               multiline
+              value={imageUrls}
+              onChangeText={setImageUrls}
             />
           </View>
 
@@ -153,7 +155,7 @@ export default function TeacherLessonCreatorScreen({
             style={[styles.btnSave, (!title || !content) && styles.btnSaveDisabled]}
             onPress={() => {
               if (!title || !content) return;
-              onSave({ subject, title, content, language, images: [] });
+              onSave({ subject, title, content, language, images: imageUrls.split('\n').filter(Boolean) });
             }}
             disabled={!title || !content}
             activeOpacity={0.8}

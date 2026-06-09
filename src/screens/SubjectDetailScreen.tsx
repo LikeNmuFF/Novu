@@ -10,14 +10,16 @@ import {
 import { getDb } from '../services/database';
 import { getChaptersForSubject, getSubjectProgress, ChapterStatus } from '../services/progress';
 
-const SUBJECT_ID = 1;
-
 export default function SubjectDetailScreen({
+  subjectId,
   userId,
+  userGrade,
   onBack,
   onOpenLesson,
 }: {
+  subjectId: number;
   userId: number;
+  userGrade: string;
   onBack: () => void;
   onOpenLesson: (lessonId: number) => void;
 }) {
@@ -34,15 +36,15 @@ export default function SubjectDetailScreen({
     (async () => {
       const db = await getDb();
       const subj = await db.getFirstAsync<{ name: string; icon: string; color: string }>(
-        'SELECT name, icon, color FROM subjects WHERE id = ?', [SUBJECT_ID]
+        'SELECT name, icon, color FROM subjects WHERE id = ?', [subjectId]
       );
       setSubject(subj);
-      const chs = await getChaptersForSubject(userId, SUBJECT_ID);
+      const chs = await getChaptersForSubject(userId, subjectId);
       setChapters(chs);
-      const p = await getSubjectProgress(userId, SUBJECT_ID);
+      const p = await getSubjectProgress(userId, subjectId);
       setProgress(p);
     })();
-  }, [userId]);
+  }, [userId, subjectId]);
 
   const statusMeta = (status: ChapterStatus, score: number | null) => {
     if (status === 'completed') return `Score: ${score}% • +${Math.round((score ?? 0) / 10) * 10} XP`;
@@ -59,7 +61,7 @@ export default function SubjectDetailScreen({
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.heroTitle}>{subject?.name ?? 'Loading...'}</Text>
-          <Text style={styles.heroSub}>Grade {userId} • Tagalog</Text>
+          <Text style={styles.heroSub}>Grade {userGrade}</Text>
           <View style={styles.heroStats}>
             <View style={styles.stat}>
               <Text style={styles.statIcon}>📊</Text>
