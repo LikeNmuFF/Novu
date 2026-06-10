@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icon.png" width="220" alt="LearnBasilan Logo" />
+<img src="website/static/logo.gif" width="220" alt="LearnBasilan Logo" />
 
 # LearnBasilan
 
@@ -443,14 +443,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Thank You to Our Contributors
 
 We appreciate all the contributions made to LearnBasilan! Whether it's code, translations, bug fixes, or suggestions — every contribution helps empower education through mother tongue learning.
-
-<div align="center">
-
-### Contributor Activity
-
-<img src="https://github-contributions-api.jogruber.de/v4/C000KED/contributions.svg" width="100%" />
-
-</div>
 
 ### Our Contributors
 
