@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import * as Font from 'expo-font';
+import Svg, { Path } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 

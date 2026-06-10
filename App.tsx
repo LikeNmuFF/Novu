@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initDatabase, getDb } from './src/services/database';
 import type { User } from './src/services/auth';
 import { getLastSessionUser } from './src/services/auth';
@@ -84,13 +85,9 @@ export default function App() {
         }
         setDbReady(true);
       })
-      .catch(async () => {
+      .catch(async (error) => {
         clearTimeout(timeout);
-        const sessionUser = await getLastSessionUser();
-        if (sessionUser) {
-          setUser(sessionUser);
-          setStep('home');
-        }
+        console.error('Database initialization failed:', error);
         setDbReady(true);
       });
   }, []);
@@ -196,64 +193,64 @@ export default function App() {
 
   if (!dbReady) {
     return (
-      <>
+      <SafeAreaProvider>
         <StatusBar style="light" />
         <SplashScreen onComplete={() => {}} />
-      </>
+      </SafeAreaProvider>
     );
   }
 
   switch (step) {
     case 'splash':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           <SplashScreen onComplete={() => navigate('language')} />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'language':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <LanguageScreen onContinue={(lang) => { setSelectedLanguage(lang); navigate('onboarding'); }} />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'onboarding':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <OnboardingScreen onStart={() => navigate('login')} />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'login':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <LoginScreen
             onLogin={handleLogin}
             onSwitchToRegister={() => navigate('register')}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'register':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <RegisterScreen
             onRegister={handleRegister}
             onSwitchToLogin={() => navigate('login')}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'home':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <HomeScreen
             user={user}
@@ -265,13 +262,13 @@ export default function App() {
             onNavPress={handleNavPress}
             activeTab="home"
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'learn':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <LearnScreen
             user={user}
@@ -282,13 +279,13 @@ export default function App() {
             onNavPress={handleNavPress}
             activeTab="learn"
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'subject':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           <SubjectDetailScreen
             subjectId={selectedSubjectId}
@@ -297,26 +294,26 @@ export default function App() {
             onBack={() => navigate('home')}
             onOpenLesson={handleOpenLesson}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'lesson':
       if (!currentLesson) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           <LessonViewerScreen
             lesson={currentLesson}
             onBack={() => navigate('subject')}
             onTakeQuiz={handleTakeQuiz}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'quiz':
       if (!currentLesson) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           <QuizEngineScreen
             lessonTitle={currentLesson.title}
@@ -324,24 +321,24 @@ export default function App() {
             onBack={() => navigate('lesson')}
             onComplete={handleQuizComplete}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'qrcode':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="light" />
           <QRScannerScreen
             onBack={() => navigate('home')}
             onImported={() => navigate('home')}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'generate':
       if (!pendingLesson) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <QRGeneratorScreen
             content={{ ...pendingLesson }}
@@ -350,12 +347,12 @@ export default function App() {
             onBack={() => navigate('teacher')}
             onShareAnother={() => navigate('createlesson')}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'teacher':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <TeacherDashboardScreen
             onBack={() => navigate('home')}
@@ -371,12 +368,12 @@ export default function App() {
               navigate('generate');
             }}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'createlesson':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <TeacherLessonCreatorScreen
             onBack={() => navigate('teacher')}
@@ -385,31 +382,31 @@ export default function App() {
               navigate('generate');
             }}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'rewards':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <RewardsScreen user={user} onBack={() => navigate('home')} />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'progress':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <ProgressScreen user={user} onBack={() => navigate('home')} />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'profile':
       if (!user) return null;
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <ProfileScreen
             user={user}
@@ -418,12 +415,12 @@ export default function App() {
             onSettings={() => navigate('settings')}
             onUserUpdate={(updated) => setUser(updated)}
           />
-        </>
+        </SafeAreaProvider>
       );
 
     case 'settings':
       return (
-        <>
+        <SafeAreaProvider>
           <StatusBar style="dark" />
           <SettingsScreen
             onBack={() => navigate('profile')}
@@ -444,7 +441,7 @@ export default function App() {
               navigate('splash');
             }}
           />
-        </>
+        </SafeAreaProvider>
       );
   }
 }
