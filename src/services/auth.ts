@@ -164,6 +164,18 @@ export async function addXp(userId: number, amount: number): Promise<{ xp: numbe
   return { xp: newXp, level: newLevel };
 }
 
+export async function updateUserProfile(
+  userId: number,
+  name: string,
+  grade: string
+): Promise<void> {
+  const db = await getDb();
+  await db.runAsync(
+    'UPDATE users SET name = ?, grade = ? WHERE id = ?',
+    [name, grade, userId]
+  );
+}
+
 export async function getLastSessionUser(): Promise<User | null> {
   try {
     const db = await getDb();

@@ -6,24 +6,41 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
+  Modal,
+  TextInput,
+  Alert,
 } from 'react-native';
-import { getUserStats } from '../services/auth';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Path } from 'react-native-svg';
+import { getUserStats, updateUserProfile } from '../services/auth';
 import { getEarnedBadges } from '../services/progress';
 import { getDb } from '../services/database';
+import { createQRPackage } from '../utils/qr/package';
+import { QRContentType } from '../types/qr';
 import type { User } from '../services/auth';
 
 export default function ProfileScreen({
   user,
   onBack,
   onLogout,
+  onSettings,
+  onUserUpdate,
 }: {
   user: User;
   onBack: () => void;
   onLogout: () => void;
+  onSettings: () => void;
+  onUserUpdate: (user: User) => void;
 }) {
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
+
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
   const [badgeCount, setBadgeCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editName, setEditName] = useState(user.name);
+  const [editGrade, setEditGrade] = useState(user.grade);
 
   useEffect(() => {
     getUserStats(user.id).then(setStats).catch(() => {});
@@ -42,17 +59,59 @@ export default function ProfileScreen({
     loadCompleted();
   }, [user.id]);
 
+  const handleSaveProfile = async () => {
+    if (!editName.trim()) {
+      Alert.alert('Error', 'Name cannot be empty');
+      return;
+    }
+    try {
+      await updateUserProfile(user.id, editName.trim(), editGrade.trim());
+      onUserUpdate({ ...user, name: editName.trim(), grade: editGrade.trim() });
+      setShowEditModal(false);
+      Alert.alert('Success', 'Profile updated');
+    } catch {
+      Alert.alert('Error', 'Failed to update profile');
+    }
+  };
+
+  const handleExportQR = async () => {
+    try {
+      const qrData = {
+        student: user.name,
+        grade: user.grade,
+        xp: stats.xp,
+        level: stats.level,
+        streak: stats.streak,
+        badges: badgeCount,
+        lessons: completedCount,
+      };
+      const qr = createQRPackage(qrData, QRContentType.Progress);
+      Alert.alert('QR Generated', `Ready to share with ${qr.length} chunk(s)`);
+    } catch {
+      Alert.alert('Error', 'Failed to generate QR');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onBack}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        pointerEvents="box-none"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* Header */}
+        <View style={[styles.header, { paddingTop: topInset }]}>
+          <TouchableOpacity
+            onPress={onBack}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
             <Text style={styles.headerBack}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile</Text>
           <View style={{ width: 60 }} />
         </View>
 
+        {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{user.avatar}</Text>
@@ -60,10 +119,13 @@ export default function ProfileScreen({
           <Text style={styles.userName}>{user.name}</Text>
           <Text style={styles.userGrade}>{user.grade}</Text>
           <View style={styles.roleBadge}>
-            <Text style={styles.roleBadgeText}>{user.role === 'teacher' ? '👩‍🏫 Teacher' : '🎓 Student'}</Text>
+            <Text style={styles.roleBadgeText}>
+              {user.role === 'teacher' ? '👩‍🏫 Teacher' : '🎓 Student'}
+            </Text>
           </View>
         </View>
 
+        {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statNum}>{stats.level}</Text>
@@ -83,29 +145,112 @@ export default function ProfileScreen({
           </View>
         </View>
 
+        {/* Menu Section */}
         <View style={styles.menuSection}>
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>✏️</Text>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              setEditName(user.name);
+              setEditGrade(user.grade);
+              setShowEditModal(true);
+            }}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <View style={styles.menuIconWrap}>
+              <Text style={styles.menuIcon}>✏️</Text>
+            </View>
             <Text style={styles.menuLabel}>Edit Profile</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="#718096">
+              <Path d="M9 18l6-6-6-6" />
+            </Svg>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>📷</Text>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleExportQR}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <View style={styles.menuIconWrap}>
+              <Text style={styles.menuIcon}>📷</Text>
+            </View>
             <Text style={styles.menuLabel}>Share Progress QR</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="#718096">
+              <Path d="M9 18l6-6-6-6" />
+            </Svg>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuIcon}>⚙️</Text>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={onSettings}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <View style={styles.menuIconWrap}>
+              <Text style={styles.menuIcon}>⚙️</Text>
+            </View>
             <Text style={styles.menuLabel}>Settings</Text>
-            <Text style={styles.menuArrow}>→</Text>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="#718096">
+              <Path d="M9 18l6-6-6-6" />
+            </Svg>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
+        {/* Logout Button */}
+        <TouchableOpacity
+          style={styles.logoutBtn}
+          onPress={onLogout}
+          activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Text style={styles.logoutBtnText}>Logout</Text>
         </TouchableOpacity>
-        <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* Edit Profile Modal */}
+      <Modal visible={showEditModal} transparent animationType="fade" onRequestClose={() => setShowEditModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+
+            <Text style={styles.inputLabel}>Name</Text>
+            <TextInput
+              style={styles.input}
+              value={editName}
+              onChangeText={setEditName}
+              placeholder="Your name"
+              placeholderTextColor="#718096"
+            />
+
+            <Text style={styles.inputLabel}>Grade</Text>
+            <TextInput
+              style={styles.input}
+              value={editGrade}
+              onChangeText={setEditGrade}
+              placeholder="Your grade"
+              placeholderTextColor="#718096"
+            />
+
+            <View style={styles.modalBtnRow}>
+              <TouchableOpacity
+                style={styles.modalCancelBtn}
+                onPress={() => setShowEditModal(false)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.modalCancelBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalSaveBtn}
+                onPress={handleSaveProfile}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.modalSaveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -117,15 +262,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingBottom: 12,
   },
   headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#718096' },
   headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
-  profileCard: {
-    alignItems: 'center',
-    paddingVertical: 24,
-    marginBottom: 20,
-  },
+  profileCard: { alignItems: 'center', paddingVertical: 24, marginBottom: 16 },
   avatar: {
     width: 80,
     height: 80,
@@ -190,9 +331,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F5E6D5',
   },
-  menuIcon: { fontSize: 20, marginRight: 14 },
+  menuIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#FFF8F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  menuIcon: { fontSize: 18 },
   menuLabel: { fontFamily: 'Nunito_700Bold', fontSize: 15, color: '#1A535C', flex: 1 },
-  menuArrow: { fontSize: 18, color: '#718096' },
   logoutBtn: {
     marginHorizontal: 20,
     backgroundColor: '#FFF0EB',
@@ -201,4 +350,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#E86548' },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 28,
+    width: '100%',
+    maxWidth: 360,
+  },
+  modalTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20, color: '#1A535C', marginBottom: 20 },
+  inputLabel: { fontFamily: 'Nunito_700Bold', fontSize: 13, color: '#4A5568', marginBottom: 6 },
+  input: {
+    backgroundColor: '#F8F4EF',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 15,
+    color: '#1A535C',
+    marginBottom: 16,
+  },
+  modalBtnRow: { flexDirection: 'row', gap: 12, marginTop: 8 },
+  modalCancelBtn: {
+    flex: 1,
+    backgroundColor: '#F5E6D5',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalCancelBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#4A5568' },
+  modalSaveBtn: {
+    flex: 1,
+    backgroundColor: '#FF7E5F',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalSaveBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#FFFFFF' },
 });

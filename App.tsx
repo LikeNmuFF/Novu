@@ -15,6 +15,7 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import LearnScreen from './src/screens/LearnScreen';
 import SubjectDetailScreen from './src/screens/SubjectDetailScreen';
 import LessonViewerScreen from './src/screens/LessonViewerScreen';
 import QuizEngineScreen from './src/screens/QuizEngineScreen';
@@ -25,6 +26,7 @@ import TeacherLessonCreatorScreen from './src/screens/TeacherLessonCreatorScreen
 import RewardsScreen from './src/screens/RewardsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
 type FlowStep =
   | 'splash'
@@ -33,6 +35,7 @@ type FlowStep =
   | 'login'
   | 'register'
   | 'home'
+  | 'learn'
   | 'subject'
   | 'lesson'
   | 'quiz'
@@ -42,7 +45,8 @@ type FlowStep =
   | 'createlesson'
   | 'rewards'
   | 'progress'
-  | 'profile';
+  | 'profile'
+  | 'settings';
 
 interface PendingLesson {
   subject: string;
@@ -61,6 +65,9 @@ export default function App() {
   const [dbReady, setDbReady] = useState(false);
   const [selectedSubjectId, setSelectedSubjectId] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState('fil');
+  const [darkMode, setDarkMode] = useState(false);
+  const [textSize, setTextSize] = useState(16);
+  const [readAloud, setReadAloud] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -180,7 +187,7 @@ export default function App() {
   const handleNavPress = useCallback((screen: string) => {
     switch (screen) {
       case 'home': setStep('home'); break;
-      case 'learn': setStep('home'); break;
+      case 'learn': setStep('learn'); break;
       case 'rewards': setStep('rewards'); break;
       case 'progress': setStep('progress'); break;
       case 'profile': setStep('profile'); break;
@@ -257,6 +264,23 @@ export default function App() {
             onScanPress={() => navigate('qrcode')}
             onNavPress={handleNavPress}
             activeTab="home"
+          />
+        </>
+      );
+
+    case 'learn':
+      if (!user) return null;
+      return (
+        <>
+          <StatusBar style="dark" />
+          <LearnScreen
+            user={user}
+            onSubjectPress={(id: number) => {
+              setSelectedSubjectId(id);
+              navigate('subject');
+            }}
+            onNavPress={handleNavPress}
+            activeTab="learn"
           />
         </>
       );
@@ -387,7 +411,39 @@ export default function App() {
       return (
         <>
           <StatusBar style="dark" />
-          <ProfileScreen user={user} onBack={() => navigate('home')} onLogout={() => { setUser(null); navigate('login'); }} />
+          <ProfileScreen
+            user={user}
+            onBack={() => navigate('home')}
+            onLogout={() => { setUser(null); navigate('login'); }}
+            onSettings={() => navigate('settings')}
+            onUserUpdate={(updated) => setUser(updated)}
+          />
+        </>
+      );
+
+    case 'settings':
+      return (
+        <>
+          <StatusBar style="dark" />
+          <SettingsScreen
+            onBack={() => navigate('profile')}
+            currentLanguage={selectedLanguage}
+            onLanguageChange={setSelectedLanguage}
+            darkMode={darkMode}
+            onDarkModeToggle={() => setDarkMode(!darkMode)}
+            textSize={textSize}
+            onTextSizeChange={setTextSize}
+            readAloud={readAloud}
+            onReadAloudToggle={() => setReadAloud(!readAloud)}
+            onResetData={() => {
+              setUser(null);
+              setSelectedLanguage('fil');
+              setDarkMode(false);
+              setTextSize(16);
+              setReadAloud(true);
+              navigate('splash');
+            }}
+          />
         </>
       );
   }

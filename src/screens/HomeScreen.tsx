@@ -9,6 +9,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { getImportedContent, ImportedItem } from '../services/contentStore';
 import { getUserStats } from '../services/auth';
@@ -49,6 +50,10 @@ export default function HomeScreen({
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
   const [importedItems, setImportedItems] = useState<ImportedItem[]>([]);
   const badgeScale = useRef(new Animated.Value(0)).current;
+
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
+  const bottomInset = insets.bottom;
 
   const refreshImported = useCallback(() => {
     getImportedContent(user.id).then((items) => {
@@ -134,9 +139,13 @@ export default function HomeScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        pointerEvents="box-none"
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: topInset }]}>
           <View>
             <Text style={styles.greeting}>
               Hello, <Text style={styles.greetingAccent}>{user.name}!</Text> 👋
@@ -144,7 +153,7 @@ export default function HomeScreen({
             <Text style={styles.greetingSub}>{user.grade} • Last active today</Text>
           </View>
           <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.scanBtn} onPress={onScanPress} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.scanBtn} onPress={onScanPress} activeOpacity={0.7} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Text style={styles.scanBtnIcon}>📷</Text>
               {importedCount > 0 && (
                 <Animated.View
@@ -266,7 +275,7 @@ export default function HomeScreen({
       </ScrollView>
 
       {/* Bottom Nav */}
-      <View style={styles.bottomNav}>
+      <View style={[styles.bottomNav, { paddingBottom: bottomInset, zIndex: 100 }]}>
         {[
           { key: 'home', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z', label: 'Home' },
           { key: 'learn', icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z', label: 'Learn' },
@@ -274,7 +283,7 @@ export default function HomeScreen({
           { key: 'progress', icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'Progress' },
           { key: 'profile', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', label: 'Profile' },
         ].map((item, i) => (
-          <TouchableOpacity key={i} style={styles.navItem} onPress={() => onNavPress(item.key)}>
+          <TouchableOpacity key={i} style={styles.navItem} onPress={() => onNavPress(item.key)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
             <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === activeTab ? '#FF7E5F' : '#718096'}>
               <Path d={item.icon} />
             </Svg>
@@ -295,7 +304,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 16,
     paddingBottom: 20,
   },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -475,7 +483,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 80,
+    height: 90,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#F5E6D5',

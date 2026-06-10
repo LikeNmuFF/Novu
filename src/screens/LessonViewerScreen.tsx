@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Speech from 'expo-speech';
 
 export interface LessonView {
@@ -31,6 +32,10 @@ export default function LessonViewerScreen({
   onBack: () => void;
   onTakeQuiz: () => void;
 }) {
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
+  const bottomInset = insets.bottom;
+
   const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
@@ -70,8 +75,13 @@ export default function LessonViewerScreen({
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={[styles.hero, { backgroundColor: lesson.subjectColor }]}>
-          <TouchableOpacity style={styles.backBtn} onPress={onBack} activeOpacity={0.7}>
+        <View style={[styles.hero, { backgroundColor: lesson.subjectColor, paddingTop: topInset + 24 }]}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={onBack}
+            activeOpacity={0.7}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
             <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.breadcrumb}>
@@ -113,11 +123,12 @@ export default function LessonViewerScreen({
       </ScrollView>
 
       {/* Take Quiz CTA */}
-      <View style={styles.bottomCta}>
+      <View style={[styles.bottomCta, { paddingBottom: bottomInset + 12 }]}>
         <TouchableOpacity
           style={styles.quizBtn}
           onPress={onTakeQuiz}
           activeOpacity={0.8}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <Text style={styles.quizBtnText}>Take Quiz →</Text>
         </TouchableOpacity>
@@ -129,7 +140,6 @@ export default function LessonViewerScreen({
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF8F0' },
   hero: {
-    paddingTop: 24,
     paddingBottom: 28,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 32,
@@ -189,7 +199,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    paddingBottom: 32,
     backgroundColor: '#FFF8F0',
   },
   quizBtn: {
