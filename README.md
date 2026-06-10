@@ -139,8 +139,8 @@ Offline-Learning-App/
 │   ├── theme/                       # Design system
 │   │   └── colors.ts              # Color palette & shadows
 │   └── translations/               # i18n localization
-│       ├── en.json                 # English (403 keys - complete)
-│       ├── fil.json                # Filipino (placeholder)
+│       ├── en.json                 # English (479 keys - complete)
+│       ├── fil.json                # Filipino (479 keys - complete)
 │       ├── chavacano.json          # Chavacano (placeholder)
 │       ├── yakan.json              # Yakan (placeholder)
 │       ├── tausug.json             # Tausug (placeholder)
@@ -316,8 +316,8 @@ Student App                          Teacher Dashboard
 
 | Language  | Status                 |
 | --------- | ---------------------- |
-| English   | Complete (403 UI keys) |
-| Filipino  | Pending translation    |
+| English   | Complete (479 UI keys) |
+| Filipino  | Complete (479 UI keys) |
 | Chavacano | Pending translation    |
 | Yakan     | Pending translation    |
 | Tausug    | Pending translation    |
@@ -440,12 +440,33 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## Thank You to Our Contributors
+
+We appreciate all the contributions made to LearnBasilan! Whether it's code, translations, bug fixes, or suggestions — every contribution helps empower education through mother tongue learning.
+
+<div align="center">
+
+### Contributor Activity
+
+<img src="https://github-contributions-api.jogruber.de/v4/C000KED/contributions.svg" width="100%" />
+
+</div>
+
+### Our Contributors
+
+| Contributor | Role | Contributions |
+|-------------|------|---------------|
+| [@C000KED](https://github.com/C000KED) | Lead Developer | 30 commits |
+
+---
+
 ## Acknowledgments
 
 - Built with [Expo](https://expo.dev/)
 - QR code generation with [react-native-qrcode-svg](https://github.com/nicko170/react-native-qrcode-svg)
 - Inspired by [Duolingo](https://www.duolingo.com/), [Khan Academy Kids](https://learn.khanacademy.org/khan-academy-kids/), and [Google Classroom](https://classroom.google.com/)
 - Designed for the students and teachers of Basilan, Philippines
+- Special thanks to all contributors who help make this project better
 
 ---
 
