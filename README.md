@@ -455,6 +455,13 @@ We appreciate all the contributions made to LearnBasilan! Whether it's code, tra
       <br />
       <b>@C000KED</b> — Lead Developer
     </td>
+    <td align="center">
+      <a href="https://github.com/LikeNmuFF">
+        <img src="https://github-readme-stats.vercel.app/api?username=LikeNmuFF&show_icons=true&theme=radical&include_all_commits=true" width="400" />
+      </a>
+      <br />
+      <b>@LikeNmuFF</b> — Assistant Developer
+    </td>
   </tr>
 </table>
 
