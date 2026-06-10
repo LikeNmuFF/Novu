@@ -22,6 +22,9 @@ import QRScannerScreen from './src/screens/QRScannerScreen';
 import QRGeneratorScreen from './src/screens/QRGeneratorScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import TeacherLessonCreatorScreen from './src/screens/TeacherLessonCreatorScreen';
+import RewardsScreen from './src/screens/RewardsScreen';
+import ProgressScreen from './src/screens/ProgressScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 type FlowStep =
   | 'splash'
@@ -57,6 +60,7 @@ export default function App() {
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [dbReady, setDbReady] = useState(false);
   const [selectedSubjectId, setSelectedSubjectId] = useState(1);
+  const [selectedLanguage, setSelectedLanguage] = useState('fil');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -205,7 +209,7 @@ export default function App() {
       return (
         <>
           <StatusBar style="dark" />
-          <LanguageScreen onContinue={() => navigate('onboarding')} />
+          <LanguageScreen onContinue={(lang) => { setSelectedLanguage(lang); navigate('onboarding'); }} />
         </>
       );
 
@@ -252,6 +256,7 @@ export default function App() {
             }}
             onScanPress={() => navigate('qrcode')}
             onNavPress={handleNavPress}
+            activeTab="home"
           />
         </>
       );
@@ -360,21 +365,29 @@ export default function App() {
       );
 
     case 'rewards':
+      if (!user) return null;
+      return (
+        <>
+          <StatusBar style="dark" />
+          <RewardsScreen user={user} onBack={() => navigate('home')} />
+        </>
+      );
+
     case 'progress':
+      if (!user) return null;
+      return (
+        <>
+          <StatusBar style="dark" />
+          <ProgressScreen user={user} onBack={() => navigate('home')} />
+        </>
+      );
+
     case 'profile':
       if (!user) return null;
       return (
         <>
           <StatusBar style="dark" />
-          <HomeScreen
-            user={user}
-            onSubjectPress={(id: number) => {
-              setSelectedSubjectId(id);
-              navigate('subject');
-            }}
-            onScanPress={() => navigate('qrcode')}
-            onNavPress={handleNavPress}
-          />
+          <ProfileScreen user={user} onBack={() => navigate('home')} onLogout={() => { setUser(null); navigate('login'); }} />
         </>
       );
   }

@@ -47,7 +47,10 @@ export default function SubjectDetailScreen({
   }, [userId, subjectId]);
 
   const statusMeta = (status: ChapterStatus, score: number | null) => {
-    if (status === 'completed') return `Score: ${score}% • +${Math.round((score ?? 0) / 10) * 10} XP`;
+    if (status === 'completed') {
+      const xp = (score ?? 0) === 100 ? 100 : (score ?? 0) >= 75 ? 50 : 0;
+      return `Score: ${score}% • +${xp} XP`;
+    }
     if (status === 'unlocked') return 'Available • Start learning!';
     return 'Complete previous chapter first';
   };

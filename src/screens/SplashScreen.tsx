@@ -9,8 +9,6 @@ import {
   Platform,
 } from 'react-native';
 import * as Font from 'expo-font';
-import { StatusBar } from 'expo-status-bar';
-import Svg, { Path } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 
@@ -88,7 +86,6 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
 
       <View style={styles.content}>
         <Animated.View

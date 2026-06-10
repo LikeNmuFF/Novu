@@ -80,7 +80,7 @@ export default function LoginScreen({
 
         <View style={styles.btnGroup}>
           <TouchableOpacity
-            style={styles.btnPrimary}
+            style={[styles.btnPrimary, loading && styles.btnPrimaryDisabled]}
             onPress={async () => {
               if (!username.trim() || !password.trim()) {
                 Alert.alert('Error', 'Please fill in all fields');
@@ -96,10 +96,11 @@ export default function LoginScreen({
                 setLoading(false);
               }
             }}
-            activeOpacity={0.8}
+            activeOpacity={loading ? 1 : 0.8}
+            disabled={loading}
           >
             <Text style={styles.btnPrimaryText}>
-              {loading ? 'Loading...' : 'Mag-login'}
+              {loading ? 'Logging in...' : 'Mag-login'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnSecondary} onPress={onSwitchToRegister} activeOpacity={0.8}>
@@ -232,6 +233,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 20,
     elevation: 4,
+  },
+  btnPrimaryDisabled: {
+    backgroundColor: '#FFB5A0',
+    shadowOpacity: 0.1,
   },
   btnPrimaryText: {
     fontFamily: 'Fredoka_700Bold',

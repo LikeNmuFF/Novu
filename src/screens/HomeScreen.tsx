@@ -34,11 +34,13 @@ export default function HomeScreen({
   onSubjectPress,
   onScanPress,
   onNavPress,
+  activeTab = 'home',
 }: {
   user: User;
   onSubjectPress: (subjectId: number) => void;
   onScanPress: () => void;
   onNavPress: (screen: string) => void;
+  activeTab?: string;
 }) {
   const xpAnim = useRef(new Animated.Value(0)).current;
   const [subjects, setSubjects] = useState<SubjectCard[]>([]);
@@ -190,7 +192,11 @@ export default function HomeScreen({
         <TouchableOpacity style={styles.continueCard} onPress={() => onSubjectPress(subjects.length > 0 ? subjects[0].id : 1)} activeOpacity={0.8}>
           <View style={styles.continueContent}>
             <Text style={styles.continueTitle}>Ipagpatuloy ang Pag-aaral</Text>
-            <Text style={styles.continueDesc}>Math — Addition with Regrouping</Text>
+            <Text style={styles.continueDesc}>
+              {subjects.length > 0
+                ? `${subjects[0].name} — ${subjects[0].completed}/${subjects[0].total} lessons`
+                : 'Start your learning journey!'}
+            </Text>
             <View style={styles.continueChip}>
               <Text style={styles.continueChipText}>▶ Ipagpatuloy</Text>
             </View>
@@ -269,10 +275,10 @@ export default function HomeScreen({
           { key: 'profile', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', label: 'Profile' },
         ].map((item, i) => (
           <TouchableOpacity key={i} style={styles.navItem} onPress={() => onNavPress(item.key)}>
-            <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === 'home' ? '#FF7E5F' : '#718096'}>
+            <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === activeTab ? '#FF7E5F' : '#718096'}>
               <Path d={item.icon} />
             </Svg>
-            <Text style={[styles.navLabel, item.key === 'home' && styles.navLabelActive]}>
+            <Text style={[styles.navLabel, item.key === activeTab && styles.navLabelActive]}>
               {item.label}
             </Text>
           </TouchableOpacity>

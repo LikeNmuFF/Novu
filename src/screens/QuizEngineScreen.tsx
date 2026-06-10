@@ -117,7 +117,9 @@ export default function QuizEngineScreen({
           <Text style={styles.scoreDetail}>
             {correct} / {questions.length} correct
           </Text>
-          <Text style={styles.scoreXp}>+{correct * 10} XP</Text>
+          <Text style={styles.scoreXp}>
+            {pct === 1 ? '+100 XP' : pct >= 0.75 ? '+50 XP' : '+0 XP'}
+          </Text>
 
           <View style={styles.resultActions}>
             {!passed && (

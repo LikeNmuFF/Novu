@@ -121,7 +121,7 @@ export default function RegisterScreen({
 
           <View style={styles.btnGroup}>
             <TouchableOpacity
-              style={styles.btnPrimary}
+              style={[styles.btnPrimary, loading && styles.btnPrimaryDisabled]}
               onPress={async () => {
                 if (!name.trim() || !username.trim() || !password.trim()) {
                   Alert.alert('Error', 'Please fill in all fields');
@@ -137,10 +137,11 @@ export default function RegisterScreen({
                   setLoading(false);
                 }
               }}
-              activeOpacity={0.8}
+              activeOpacity={loading ? 1 : 0.8}
+              disabled={loading}
             >
               <Text style={styles.btnPrimaryText}>
-                {loading ? 'Loading...' : 'Gumawa ng Account'}
+                {loading ? 'Creating account...' : 'Gumawa ng Account'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onSwitchToLogin} activeOpacity={0.7}>
@@ -275,6 +276,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 20,
     elevation: 4,
+  },
+  btnPrimaryDisabled: {
+    backgroundColor: '#FFB5A0',
+    shadowOpacity: 0.1,
   },
   btnPrimaryText: {
     fontFamily: 'Fredoka_700Bold',
