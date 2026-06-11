@@ -10,13 +10,14 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path, Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { getDb } from '../services/database';
 import { getUserStats } from '../services/auth';
 import { createQRPackage } from '../utils/qr/package';
 import { QRContentType } from '../types/qr';
+import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -32,11 +33,14 @@ interface SubjectProgress {
 
 export default function ProgressScreen({
   user,
-  onBack,
+  onNavPress,
+  activeTab = 'progress',
 }: {
   user: User;
-  onBack: () => void;
+  onNavPress: (screen: string) => void;
+  activeTab?: string;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
 
@@ -136,21 +140,14 @@ export default function ProgressScreen({
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7E5F" />
         }
       >
         {/* Header */}
         <View style={[styles.header, { paddingTop: topInset }]}>
-          <TouchableOpacity
-            onPress={onBack}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          >
-            <Text style={styles.headerBack}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Progress</Text>
-          <View style={{ width: 60 }} />
+          <Text style={styles.headerTitle}>{t('progress.title')}</Text>
         </View>
 
         {/* Overview Card */}
@@ -261,6 +258,8 @@ export default function ProgressScreen({
           <Text style={styles.exportBtnText}>📤 Export Progress QR</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BottomNav activeTab={activeTab} onNavPress={onNavPress} />
     </SafeAreaView>
   );
 }
@@ -274,7 +273,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#718096' },
   headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
   overviewCard: {
     marginHorizontal: 20,

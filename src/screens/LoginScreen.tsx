@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { loginUser } from '../services/auth';
 import type { User } from '../services/auth';
 
@@ -20,6 +21,7 @@ export default function LoginScreen({
   onLogin: (user: User) => void;
   onSwitchToRegister: () => void;
 }) {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,17 +39,17 @@ export default function LoginScreen({
 
         <View style={styles.header}>
           <Text style={styles.headerTitle}>
-            Mag<Text style={styles.headerAccent}>login</Text>
+            {t('auth.login.title')}
           </Text>
-          <Text style={styles.headerSub}>Ipagpatuloy ang iyong pag-aaral</Text>
+          <Text style={styles.headerSub}>{t('auth.login.subtitle')}</Text>
         </View>
 
         <View style={styles.form}>
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Username</Text>
+            <Text style={styles.label}>{t('auth.login.username')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Ilagay ang iyong username"
+              placeholder={t('auth.login.usernamePlaceholder')}
               placeholderTextColor="#718096"
               value={username}
               onChangeText={setUsername}
@@ -56,10 +58,10 @@ export default function LoginScreen({
           </View>
 
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{t('auth.login.password')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Ilagay ang iyong password"
+              placeholder={t('auth.login.passwordPlaceholder')}
               placeholderTextColor="#718096"
               value={password}
               onChangeText={setPassword}
@@ -74,7 +76,7 @@ export default function LoginScreen({
               </View>
               <Text style={styles.checkboxLabel}>Tandaan ako</Text>
             </TouchableOpacity>
-            <Text style={styles.forgotLink}>Nakalimutan ang password?</Text>
+            <Text style={styles.forgotLink}>{t('auth.login.forgotPassword')}</Text>
           </View>
         </View>
 
@@ -83,7 +85,7 @@ export default function LoginScreen({
             style={[styles.btnPrimary, loading && styles.btnPrimaryDisabled]}
             onPress={async () => {
               if (!username.trim() || !password.trim()) {
-                Alert.alert('Error', 'Please fill in all fields');
+                Alert.alert('Error', t('auth.login.errorEmpty'));
                 return;
               }
               setLoading(true);
@@ -100,11 +102,11 @@ export default function LoginScreen({
             disabled={loading}
           >
             <Text style={styles.btnPrimaryText}>
-              {loading ? 'Logging in...' : 'Mag-login'}
+              {loading ? 'Logging in...' : t('auth.login.loginButton')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnSecondary} onPress={onSwitchToRegister} activeOpacity={0.8}>
-            <Text style={styles.btnSecondaryText}>Walang account? Magrehistro</Text>
+            <Text style={styles.btnSecondaryText}>{t('auth.login.noAccount')} {t('auth.login.register')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

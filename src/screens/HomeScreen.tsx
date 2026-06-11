@@ -11,10 +11,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { getImportedContent, ImportedItem } from '../services/contentStore';
 import { getUserStats } from '../services/auth';
 import { getSubjectProgress } from '../services/progress';
 import { getDb } from '../services/database';
+import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
 const { width } = Dimensions.get('window');
@@ -43,6 +45,7 @@ export default function HomeScreen({
   onNavPress: (screen: string) => void;
   activeTab?: string;
 }) {
+  const { t } = useTranslation();
   const xpAnim = useRef(new Animated.Value(0)).current;
   const [subjects, setSubjects] = useState<SubjectCard[]>([]);
   const barAnims = useRef<Animated.Value[]>([]).current;
@@ -53,7 +56,6 @@ export default function HomeScreen({
 
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
-  const bottomInset = insets.bottom;
 
   const refreshImported = useCallback(() => {
     getImportedContent(user.id).then((items) => {
@@ -83,6 +85,12 @@ export default function HomeScreen({
         const cards: SubjectCard[] = [];
         for (const row of rows) {
           const progress = await getSubjectProgress(user.id, row.id);
+          // Get lesson count for this grade level
+          const gradeNum = parseInt(user.grade.replace('Grade ', '')) || 1;
+          const lessonCount = await db.getFirstAsync<{ count: number }>(
+            'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ? AND grade_level = ?',
+            [row.id, gradeNum]
+          );
           cards.push({
             id: row.id,
             name: row.name,
@@ -90,8 +98,8 @@ export default function HomeScreen({
             color: row.color,
             bg_color: row.bg_color,
             completed: progress.completed,
-            total: progress.total,
-            pct: progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0,
+            total: lessonCount?.count || progress.total,
+            pct: (lessonCount?.count || progress.total) > 0 ? Math.round((progress.completed / (lessonCount?.count || progress.total)) * 100) : 0,
           });
         }
         setSubjects(cards);
@@ -200,14 +208,14 @@ export default function HomeScreen({
         {/* Continue Learning */}
         <TouchableOpacity style={styles.continueCard} onPress={() => onSubjectPress(subjects.length > 0 ? subjects[0].id : 1)} activeOpacity={0.8}>
           <View style={styles.continueContent}>
-            <Text style={styles.continueTitle}>Ipagpatuloy ang Pag-aaral</Text>
+            <Text style={styles.continueTitle}>{t('home.continueLearning')}</Text>
             <Text style={styles.continueDesc}>
               {subjects.length > 0
                 ? `${subjects[0].name} — ${subjects[0].completed}/${subjects[0].total} lessons`
                 : 'Start your learning journey!'}
             </Text>
             <View style={styles.continueChip}>
-              <Text style={styles.continueChipText}>▶ Ipagpatuloy</Text>
+              <Text style={styles.continueChipText}>▶ {t('home.continueLearning')}</Text>
             </View>
           </View>
           <Text style={styles.continueEmoji}>📚</Text>
@@ -241,7 +249,7 @@ export default function HomeScreen({
 
         {/* Subjects */}
         <View style={styles.sectionTitle}>
-          <Text style={styles.sectionTitleText}>Mga Asignatura</Text>
+          <Text style={styles.sectionTitleText}>{t('home.subjects')}</Text>
         </View>
 
         <View style={styles.subjectGrid}>
@@ -274,25 +282,7 @@ export default function HomeScreen({
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Bottom Nav */}
-      <View style={[styles.bottomNav, { paddingBottom: bottomInset, zIndex: 100 }]}>
-        {[
-          { key: 'home', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z', label: 'Home' },
-          { key: 'learn', icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z', label: 'Learn' },
-          { key: 'rewards', icon: 'M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4h4v-2H5v-2zm14 0h-2v2h-2v2h4v-4z', label: 'Rewards' },
-          { key: 'progress', icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'Progress' },
-          { key: 'profile', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', label: 'Profile' },
-        ].map((item, i) => (
-          <TouchableOpacity key={i} style={styles.navItem} onPress={() => onNavPress(item.key)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === activeTab ? '#FF7E5F' : '#718096'}>
-              <Path d={item.icon} />
-            </Svg>
-            <Text style={[styles.navLabel, item.key === activeTab && styles.navLabelActive]}>
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <BottomNav activeTab={activeTab} onNavPress={onNavPress} />
     </SafeAreaView>
   );
 }
@@ -478,21 +468,4 @@ const styles = StyleSheet.create({
   subjProgress: { fontFamily: 'Nunito_400Regular', fontSize: 13, color: '#718096', marginTop: 2 },
   subjBar: { height: 4, backgroundColor: '#F5E6D5', borderRadius: 999, marginTop: 8, overflow: 'hidden' },
   subjBarInner: { height: '100%', borderRadius: 999 },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 90,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F5E6D5',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-around',
-    paddingTop: 8,
-  },
-  navItem: { alignItems: 'center', gap: 2, paddingHorizontal: 8, paddingVertical: 6 },
-  navLabel: { fontFamily: 'Nunito_700Bold', fontSize: 11, color: '#718096' },
-  navLabelActive: { color: '#FF7E5F' },
 });

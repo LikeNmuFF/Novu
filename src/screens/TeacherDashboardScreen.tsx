@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,44 +6,97 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { getDb } from '../services/database';
+import { generateTeacherCode } from '../services/auth';
+import type { User } from '../services/auth';
 
 interface CreatedLesson {
-  id: string;
+  id: number;
   subject: string;
   title: string;
   content: string;
   language: string;
+  grade_level: number;
   createdAt: number;
 }
 
 export default function TeacherDashboardScreen({
+  user,
   onBack,
   onCreateLesson,
+  onCreateQuiz,
   onShareLesson,
 }: {
+  user: User;
   onBack: () => void;
   onCreateLesson: () => void;
+  onCreateQuiz: () => void;
   onShareLesson: (lesson: CreatedLesson) => void;
 }) {
-  const [lessons] = useState<CreatedLesson[]>([
-    {
-      id: '1',
-      subject: 'Mathematics',
-      title: 'Addition with Regrouping',
-      content: 'Ang addition ay ang proseso ng pagdaragdag ng dalawa o higit pang numero. Kapag may regrouping, isinasama ang sobra sa susunod na column.',
-      language: 'Filipino',
-      createdAt: Date.now() - 3600000,
-    },
-    {
-      id: '2',
-      subject: 'Science',
-      title: 'Parts of a Plant',
-      content: 'A plant has roots, stem, leaves, flowers, and fruit. Each part has a specific function that helps the plant grow and survive.',
-      language: 'English',
-      createdAt: Date.now() - 7200000,
-    },
-  ]);
+  const { t } = useTranslation();
+  const [lessons, setLessons] = useState<CreatedLesson[]>([]);
+  const [quizCount, setQuizCount] = useState(0);
+  const [studentCount, setStudentCount] = useState(0);
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [loadingCode, setLoadingCode] = useState(false);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    const db = await getDb();
+
+    // Load lessons created by this teacher
+    const lessonRows = await db.getAllAsync<{
+      id: number; title: string; content: string; language: string;
+      grade_level: number; created_at: number; subject_id: number;
+      subject_name: string;
+    }>(
+      'SELECT l.id, l.title, l.content, l.language, l.grade_level, l.created_at, l.subject_id, s.name as subject_name FROM lessons l LEFT JOIN subjects s ON l.subject_id = s.id WHERE l.created_by = ? ORDER BY l.created_at DESC',
+      [user.id]
+    );
+
+    setLessons(lessonRows.map(r => ({
+      id: r.id,
+      subject: r.subject_name || 'Unknown',
+      title: r.title,
+      content: r.content,
+      language: r.language,
+      grade_level: r.grade_level,
+      createdAt: r.created_at,
+    })));
+
+    // Count quizzes for teacher's lessons
+    const quizResult = await db.getFirstAsync<{ count: number }>(
+      'SELECT COUNT(*) as count FROM quizzes WHERE lesson_id IN (SELECT id FROM lessons WHERE created_by = ?)',
+      [user.id]
+    );
+    setQuizCount(quizResult?.count || 0);
+
+    // Count students
+    const studentResult = await db.getFirstAsync<{ count: number }>(
+      'SELECT COUNT(*) as count FROM users WHERE role = ?',
+      ['student']
+    );
+    setStudentCount(studentResult?.count || 0);
+  };
+
+  const handleGenerateCode = async () => {
+    setLoadingCode(true);
+    try {
+      const code = await generateTeacherCode(user.id);
+      setGeneratedCode(code);
+      Alert.alert('Teacher Code Generated', `Share this code with new teachers:\n\n${code}\n\nThis code expires in 7 days and can only be used once.`);
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setLoadingCode(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,9 +105,9 @@ export default function TeacherDashboardScreen({
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.headerBack}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Teacher Dashboard</Text>
+        <Text style={styles.headerTitle}>{t('teacher.dashboard.title')}</Text>
         <View style={styles.headerAvatar}>
-          <Text style={styles.headerAvatarText}>T</Text>
+          <Text style={styles.headerAvatarText}>{user.name.charAt(0).toUpperCase()}</Text>
         </View>
       </View>
 
@@ -63,39 +116,57 @@ export default function TeacherDashboardScreen({
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statNum}>{lessons.length}</Text>
-            <Text style={styles.statLabel}>Lessons</Text>
+            <Text style={styles.statLabel}>{t('subjects.title')}</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNum}>0</Text>
-            <Text style={styles.statLabel}>Quizzes</Text>
+            <Text style={styles.statNum}>{quizCount}</Text>
+            <Text style={styles.statLabel}>{t('quiz.title')}</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNum}>0</Text>
-            <Text style={styles.statLabel}>Students</Text>
+            <Text style={styles.statNum}>{studentCount}</Text>
+            <Text style={styles.statLabel}>{t('teacher.dashboard.totalStudents')}</Text>
           </View>
         </View>
 
-        {/* Create Button */}
+        {/* Generate Teacher Code */}
+        <TouchableOpacity style={styles.codeCard} onPress={handleGenerateCode} activeOpacity={0.8}>
+          <Text style={styles.codeIcon}>🔑</Text>
+          <View style={styles.codeContent}>
+            <Text style={styles.codeTitle}>Generate Teacher Code</Text>
+            <Text style={styles.codeDesc}>Create a code for new teacher registration</Text>
+          </View>
+          <Text style={styles.codeArrow}>→</Text>
+        </TouchableOpacity>
+
+        {generatedCode ? (
+          <View style={styles.codeDisplay}>
+            <Text style={styles.codeLabel}>Latest Code:</Text>
+            <Text style={styles.codeValue}>{generatedCode}</Text>
+            <Text style={styles.codeHint}>Expires in 7 days • One-time use</Text>
+          </View>
+        ) : null}
+
+        {/* Create Buttons */}
         <TouchableOpacity style={styles.createCard} onPress={onCreateLesson} activeOpacity={0.8}>
           <Text style={styles.createIcon}>➕</Text>
           <View style={styles.createContent}>
-            <Text style={styles.createTitle}>Create New Lesson</Text>
+            <Text style={styles.createTitle}>{t('teacher.contentCreator.createLesson')}</Text>
             <Text style={styles.createDesc}>Write a lesson and generate a QR code to share</Text>
           </View>
           <Text style={styles.createArrow}>→</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.createCard} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.createCard} onPress={onCreateQuiz} activeOpacity={0.8}>
           <Text style={styles.createIcon}>❓</Text>
           <View style={styles.createContent}>
-            <Text style={styles.createTitle}>Create New Quiz</Text>
+            <Text style={styles.createTitle}>{t('teacher.contentCreator.createQuiz')}</Text>
             <Text style={styles.createDesc}>Make a quiz and distribute it via QR</Text>
           </View>
           <Text style={styles.createArrow}>→</Text>
         </TouchableOpacity>
 
         {/* Existing Lessons */}
-        <Text style={styles.sectionTitle}>Your Lessons</Text>
+        <Text style={styles.sectionTitle}>{t('teacher.dashboard.lessonsCreated')}</Text>
 
         {lessons.length === 0 ? (
           <View style={styles.emptyState}>
@@ -110,6 +181,7 @@ export default function TeacherDashboardScreen({
                 <View style={styles.lessonSubject}>
                   <Text style={styles.lessonSubjectText}>{lesson.subject}</Text>
                   <Text style={styles.lessonLang}>{lesson.language}</Text>
+                  <Text style={styles.lessonGrade}>Grade {lesson.grade_level}</Text>
                 </View>
                 <Text style={styles.lessonTitle}>{lesson.title}</Text>
               </View>
@@ -170,7 +242,7 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   statCard: {
     flex: 1,
@@ -194,6 +266,66 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#718096',
     marginTop: 2,
+  },
+  codeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F8F6',
+    borderRadius: 18,
+    padding: 18,
+    marginBottom: 12,
+    gap: 14,
+    borderWidth: 2,
+    borderColor: '#7DDAD0',
+  },
+  codeIcon: {
+    fontSize: 28,
+    width: 44,
+    textAlign: 'center',
+  },
+  codeContent: {
+    flex: 1,
+  },
+  codeTitle: {
+    fontFamily: 'Fredoka_700Bold',
+    fontSize: 16,
+    color: '#1A535C',
+  },
+  codeDesc: {
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 13,
+    color: '#4A5568',
+    marginTop: 2,
+  },
+  codeArrow: {
+    fontSize: 20,
+    color: '#1A535C',
+  },
+  codeDisplay: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#7DDAD0',
+  },
+  codeLabel: {
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 12,
+    color: '#718096',
+  },
+  codeValue: {
+    fontFamily: 'Fredoka_700Bold',
+    fontSize: 24,
+    color: '#1A535C',
+    marginVertical: 4,
+    letterSpacing: 2,
+  },
+  codeHint: {
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 11,
+    color: '#718096',
   },
   createCard: {
     flexDirection: 'row',
@@ -292,6 +424,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
     fontSize: 12,
     color: '#718096',
+  },
+  lessonGrade: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 11,
+    color: '#2EC4B6',
+    backgroundColor: '#E0F5F3',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
   lessonTitle: {
     fontFamily: 'Fredoka_700Bold',

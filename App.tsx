@@ -9,6 +9,8 @@ import { addXp } from './src/services/auth';
 import type { LessonView } from './src/screens/LessonViewerScreen';
 import type { QuizQuestion } from './src/screens/QuizEngineScreen';
 import { QRContentType } from './src/types/qr';
+import './src/i18n';
+import i18n from './src/i18n';
 
 import SplashScreen from './src/screens/SplashScreen';
 import LanguageScreen from './src/screens/LanguageScreen';
@@ -24,6 +26,7 @@ import QRScannerScreen from './src/screens/QRScannerScreen';
 import QRGeneratorScreen from './src/screens/QRGeneratorScreen';
 import TeacherDashboardScreen from './src/screens/TeacherDashboardScreen';
 import TeacherLessonCreatorScreen from './src/screens/TeacherLessonCreatorScreen';
+import TeacherQuizCreatorScreen from './src/screens/TeacherQuizCreatorScreen';
 import RewardsScreen from './src/screens/RewardsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
@@ -44,6 +47,7 @@ type FlowStep =
   | 'generate'
   | 'teacher'
   | 'createlesson'
+  | 'createquiz'
   | 'rewards'
   | 'progress'
   | 'profile'
@@ -81,7 +85,7 @@ export default function App() {
         const sessionUser = await getLastSessionUser();
         if (sessionUser) {
           setUser(sessionUser);
-          setStep('home');
+          setStep(sessionUser.role === 'teacher' ? 'teacher' : 'home');
         }
         setDbReady(true);
       })
@@ -102,12 +106,12 @@ export default function App() {
 
   const handleLogin = useCallback((loggedInUser: User) => {
     setUser(loggedInUser);
-    setStep('home');
+    setStep(loggedInUser.role === 'teacher' ? 'teacher' : 'home');
   }, []);
 
   const handleRegister = useCallback((newUser: User) => {
     setUser(newUser);
-    setStep('home');
+    setStep(newUser.role === 'teacher' ? 'teacher' : 'home');
   }, []);
 
   const handleOpenLesson = useCallback(async (lessonId: number) => {
@@ -213,7 +217,7 @@ export default function App() {
       return (
         <SafeAreaProvider>
           <StatusBar style="dark" />
-          <LanguageScreen onContinue={(lang) => { setSelectedLanguage(lang); navigate('onboarding'); }} />
+          <LanguageScreen onContinue={(lang) => { setSelectedLanguage(lang); i18n.changeLanguage(lang); navigate('onboarding'); }} />
         </SafeAreaProvider>
       );
 
@@ -351,12 +355,15 @@ export default function App() {
       );
 
     case 'teacher':
+      if (!user) return null;
       return (
         <SafeAreaProvider>
           <StatusBar style="dark" />
           <TeacherDashboardScreen
+            user={user}
             onBack={() => navigate('home')}
             onCreateLesson={() => navigate('createlesson')}
+            onCreateQuiz={() => navigate('createquiz')}
             onShareLesson={(lesson) => {
               setPendingLesson({
                 subject: lesson.subject,
@@ -372,10 +379,12 @@ export default function App() {
       );
 
     case 'createlesson':
+      if (!user) return null;
       return (
         <SafeAreaProvider>
           <StatusBar style="dark" />
           <TeacherLessonCreatorScreen
+            user={user}
             onBack={() => navigate('teacher')}
             onSave={(lesson) => {
               setPendingLesson(lesson);
@@ -385,12 +394,25 @@ export default function App() {
         </SafeAreaProvider>
       );
 
+    case 'createquiz':
+      if (!user) return null;
+      return (
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <TeacherQuizCreatorScreen
+            user={user}
+            onBack={() => navigate('teacher')}
+            onSaved={() => navigate('teacher')}
+          />
+        </SafeAreaProvider>
+      );
+
     case 'rewards':
       if (!user) return null;
       return (
         <SafeAreaProvider>
           <StatusBar style="dark" />
-          <RewardsScreen user={user} onBack={() => navigate('home')} />
+          <RewardsScreen user={user} onNavPress={handleNavPress} activeTab="rewards" />
         </SafeAreaProvider>
       );
 
@@ -399,7 +421,7 @@ export default function App() {
       return (
         <SafeAreaProvider>
           <StatusBar style="dark" />
-          <ProgressScreen user={user} onBack={() => navigate('home')} />
+          <ProgressScreen user={user} onNavPress={handleNavPress} activeTab="progress" />
         </SafeAreaProvider>
       );
 
@@ -410,10 +432,11 @@ export default function App() {
           <StatusBar style="dark" />
           <ProfileScreen
             user={user}
-            onBack={() => navigate('home')}
             onLogout={() => { setUser(null); navigate('login'); }}
             onSettings={() => navigate('settings')}
             onUserUpdate={(updated) => setUser(updated)}
+            onNavPress={handleNavPress}
+            activeTab="profile"
           />
         </SafeAreaProvider>
       );
@@ -425,7 +448,7 @@ export default function App() {
           <SettingsScreen
             onBack={() => navigate('profile')}
             currentLanguage={selectedLanguage}
-            onLanguageChange={setSelectedLanguage}
+            onLanguageChange={(lang) => { setSelectedLanguage(lang); i18n.changeLanguage(lang); }}
             darkMode={darkMode}
             onDarkModeToggle={() => setDarkMode(!darkMode)}
             textSize={textSize}

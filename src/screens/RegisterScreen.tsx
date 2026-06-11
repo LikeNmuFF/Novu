@@ -11,7 +11,8 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import { registerUser } from '../services/auth';
+import { useTranslation } from 'react-i18next';
+import { registerUser, registerTeacher } from '../services/auth';
 import type { User } from '../services/auth';
 
 const GRADE_OPTIONS = [1, 2, 3, 4, 5, 6];
@@ -23,11 +24,14 @@ export default function RegisterScreen({
   onRegister: (user: User) => void;
   onSwitchToLogin: () => void;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [grade, setGrade] = useState(2);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<'student' | 'teacher'>('student');
+  const [teacherCode, setTeacherCode] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,62 +47,101 @@ export default function RegisterScreen({
 
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
-              Gumawa ng <Text style={styles.headerAccent}>Account</Text>
+              {t('auth.register.title')}
             </Text>
-            <Text style={styles.headerSub}>Sumali sa LearnBasilan!</Text>
+            <Text style={styles.headerSub}>{t('auth.register.subtitle')}</Text>
           </View>
 
           <View style={styles.form}>
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Buong Pangalan</Text>
+              <Text style={styles.label}>{t('auth.role.student')} / {t('auth.role.teacher')}</Text>
+              <View style={styles.roleRow}>
+                <TouchableOpacity
+                  style={[styles.roleCard, role === 'student' && styles.roleCardSelected]}
+                  onPress={() => setRole('student')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.roleIcon}>🎓</Text>
+                  <Text style={[styles.roleText, role === 'student' && styles.roleTextSelected]}>{t('auth.role.student')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.roleCard, role === 'teacher' && styles.roleCardSelected]}
+                  onPress={() => setRole('teacher')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.roleIcon}>👨‍🏫</Text>
+                  <Text style={[styles.roleText, role === 'teacher' && styles.roleTextSelected]}>{t('auth.role.teacher')}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>{t('auth.register.fullName')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Juan Dela Cruz"
+                placeholder={t('auth.register.fullNamePlaceholder')}
                 placeholderTextColor="#718096"
                 value={name}
                 onChangeText={setName}
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.label}>Grade Level</Text>
-              <View style={styles.gradeGrid}>
-                {GRADE_OPTIONS.map((g) => (
-                  <TouchableOpacity
-                    key={g}
-                    style={[
-                      styles.gradeOption,
-                      grade === g && styles.gradeOptionSelected,
-                    ]}
-                    onPress={() => setGrade(g)}
-                    activeOpacity={0.7}
-                  >
-                    <Text
+            {role === 'student' && (
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>{t('auth.register.gradeLevel')}</Text>
+                <View style={styles.gradeGrid}>
+                  {GRADE_OPTIONS.map((g) => (
+                    <TouchableOpacity
+                      key={g}
                       style={[
-                        styles.gradeNum,
-                        grade === g && styles.gradeNumSelected,
+                        styles.gradeOption,
+                        grade === g && styles.gradeOptionSelected,
                       ]}
+                      onPress={() => setGrade(g)}
+                      activeOpacity={0.7}
                     >
-                      {g}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.gradeLabel,
-                        grade === g && styles.gradeLabelSelected,
-                      ]}
-                    >
-                      Grade
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                      <Text
+                        style={[
+                          styles.gradeNum,
+                          grade === g && styles.gradeNumSelected,
+                        ]}
+                      >
+                        {g}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.gradeLabel,
+                          grade === g && styles.gradeLabelSelected,
+                        ]}
+                      >
+                        Grade
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-            </View>
+            )}
+
+            {role === 'teacher' && (
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Teacher Code</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g., TCH-A3B8X9"
+                  placeholderTextColor="#718096"
+                  value={teacherCode}
+                  onChangeText={setTeacherCode}
+                  autoCapitalize="characters"
+                />
+                <Text style={styles.hint}>Ask your admin for a teacher code</Text>
+              </View>
+            )}
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Username</Text>
+              <Text style={styles.label}>{t('auth.register.username')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Pumili ng username"
+                placeholder={t('auth.register.usernamePlaceholder')}
                 placeholderTextColor="#718096"
                 value={username}
                 onChangeText={setUsername}
@@ -107,10 +150,10 @@ export default function RegisterScreen({
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('auth.register.password')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Gumawa ng password"
+                placeholder={t('auth.register.passwordPlaceholder')}
                 placeholderTextColor="#718096"
                 value={password}
                 onChangeText={setPassword}
@@ -124,12 +167,21 @@ export default function RegisterScreen({
               style={[styles.btnPrimary, loading && styles.btnPrimaryDisabled]}
               onPress={async () => {
                 if (!name.trim() || !username.trim() || !password.trim()) {
-                  Alert.alert('Error', 'Please fill in all fields');
+                  Alert.alert('Error', t('auth.register.errorEmpty'));
+                  return;
+                }
+                if (role === 'teacher' && !teacherCode.trim()) {
+                  Alert.alert('Error', 'Teacher code is required');
                   return;
                 }
                 setLoading(true);
                 try {
-                  const user = await registerUser(name.trim(), username.trim(), password, `Grade ${grade}`, 'student');
+                  let user: User;
+                  if (role === 'teacher') {
+                    user = await registerTeacher(name.trim(), username.trim(), password, teacherCode.trim().toUpperCase());
+                  } else {
+                    user = await registerUser(name.trim(), username.trim(), password, `Grade ${grade}`, 'student');
+                  }
                   onRegister(user);
                 } catch (e: any) {
                   Alert.alert('Registration Failed', e.message);
@@ -141,11 +193,11 @@ export default function RegisterScreen({
               disabled={loading}
             >
               <Text style={styles.btnPrimaryText}>
-                {loading ? 'Creating account...' : 'Gumawa ng Account'}
+                {loading ? 'Creating account...' : t('auth.register.registerButton')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onSwitchToLogin} activeOpacity={0.7}>
-              <Text style={styles.switchText}>May account na? Mag-login</Text>
+              <Text style={styles.switchText}>{t('auth.register.hasAccount')} {t('auth.register.login')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -215,6 +267,43 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1A535C',
     marginBottom: 6,
+  },
+  hint: {
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 12,
+    color: '#718096',
+    marginTop: 4,
+  },
+  roleRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  roleCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#F5E6D5',
+  },
+  roleCardSelected: {
+    borderColor: '#FF7E5F',
+    backgroundColor: '#FFF0EB',
+  },
+  roleIcon: {
+    fontSize: 20,
+  },
+  roleText: {
+    fontFamily: 'Fredoka_700Bold',
+    fontSize: 15,
+    color: '#4A5568',
+  },
+  roleTextSelected: {
+    color: '#E86548',
   },
   input: {
     backgroundColor: '#FEFCF9',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,23 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
+import { getDb } from '../services/database';
+import type { User } from '../services/auth';
 
-const SUBJECTS = [
-  { id: 'math', name: 'Mathematics', icon: '🔢' },
-  { id: 'science', name: 'Science', icon: '🔬' },
-  { id: 'english', name: 'English', icon: '📝' },
-  { id: 'filipino', name: 'Filipino', icon: '🇵🇭' },
-  { id: 'ap', name: 'Araling Panlipunan', icon: '🗺️' },
-];
+interface Subject {
+  id: number;
+  name: string;
+  icon: string;
+}
 
 export default function TeacherLessonCreatorScreen({
+  user,
   onBack,
   onSave,
 }: {
+  user: User;
   onBack: () => void;
   onSave: (lesson: {
     subject: string;
@@ -32,11 +35,60 @@ export default function TeacherLessonCreatorScreen({
     images: string[];
   }) => void;
 }) {
-  const [subject, setSubject] = useState('');
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjectId, setSubjectId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [language, setLanguage] = useState('fil');
+  const [gradeLevel, setGradeLevel] = useState(1);
   const [imageUrls, setImageUrls] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    loadSubjects();
+  }, []);
+
+  const loadSubjects = async () => {
+    const db = await getDb();
+    const rows = await db.getAllAsync<{ id: number; name: string; icon: string }>(
+      'SELECT id, name, icon FROM subjects ORDER BY subject_order'
+    );
+    setSubjects(rows);
+    if (rows.length > 0) setSubjectId(rows[0].id);
+  };
+
+  const handleSave = async () => {
+    if (!title.trim() || !content.trim() || !subjectId) {
+      Alert.alert('Error', 'Please fill in all required fields');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const db = await getDb();
+      const images = imageUrls.split('\n').filter(Boolean);
+
+      // Save lesson to database
+      await db.runAsync(
+        'INSERT INTO lessons (subject_id, title, content, language, chapter_number, grade_level, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [subjectId, title.trim(), content.trim(), language, 1, gradeLevel, user.id, Date.now()]
+      );
+
+      // Also save to QR for sharing
+      const subjectName = subjects.find(s => s.id === subjectId)?.name || 'Unknown';
+      onSave({
+        subject: subjectName,
+        title: title.trim(),
+        content: content.trim(),
+        language,
+        images,
+      });
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,26 +111,44 @@ export default function TeacherLessonCreatorScreen({
         >
           {/* Subject picker */}
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Subject</Text>
+            <Text style={styles.label}>Subject *</Text>
             <View style={styles.subjectGrid}>
-              {SUBJECTS.map((s) => (
+              {subjects.map((s) => (
                 <TouchableOpacity
                   key={s.id}
                   style={[
                     styles.subjectCard,
-                    subject === s.id && styles.subjectCardSelected,
+                    subjectId === s.id && styles.subjectCardSelected,
                   ]}
-                  onPress={() => setSubject(s.id)}
+                  onPress={() => setSubjectId(s.id)}
                   activeOpacity={0.7}
                 >
                   <Text style={styles.subjectIcon}>{s.icon}</Text>
                   <Text
                     style={[
                       styles.subjectName,
-                      subject === s.id && styles.subjectNameSelected,
+                      subjectId === s.id && styles.subjectNameSelected,
                     ]}
                   >
                     {s.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Grade Level */}
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Grade Level</Text>
+            <View style={styles.gradeRow}>
+              {[1, 2, 3, 4, 5, 6].map((g) => (
+                <TouchableOpacity
+                  key={g}
+                  style={[styles.gradeChip, gradeLevel === g && styles.gradeChipSelected]}
+                  onPress={() => setGradeLevel(g)}
+                >
+                  <Text style={[styles.gradeChipText, gradeLevel === g && styles.gradeChipTextSelected]}>
+                    {g}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -152,15 +222,12 @@ export default function TeacherLessonCreatorScreen({
 
           {/* Save */}
           <TouchableOpacity
-            style={[styles.btnSave, (!title || !content) && styles.btnSaveDisabled]}
-            onPress={() => {
-              if (!title || !content) return;
-              onSave({ subject, title, content, language, images: imageUrls.split('\n').filter(Boolean) });
-            }}
-            disabled={!title || !content}
+            style={[styles.btnSave, (saving || !title || !content || !subjectId) && styles.btnSaveDisabled]}
+            onPress={handleSave}
+            disabled={saving || !title || !content || !subjectId}
             activeOpacity={0.8}
           >
-            <Text style={styles.btnSaveText}>Save & Generate QR</Text>
+            <Text style={styles.btnSaveText}>{saving ? 'Saving...' : 'Save & Generate QR'}</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -256,6 +323,32 @@ const styles = StyleSheet.create({
     color: '#4A5568',
   },
   langChipTextSelected: {
+    color: '#E86548',
+  },
+  gradeRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  gradeChip: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#F5E6D5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gradeChipSelected: {
+    borderColor: '#FF7E5F',
+    backgroundColor: '#FFF0EB',
+  },
+  gradeChipText: {
+    fontFamily: 'Fredoka_700Bold',
+    fontSize: 16,
+    color: '#4A5568',
+  },
+  gradeChipTextSelected: {
     color: '#E86548',
   },
   input: {

@@ -176,6 +176,94 @@ export async function updateUserProfile(
   );
 }
 
+export async function validateTeacherCode(code: string): Promise<boolean> {
+  const db = await getDb();
+  const now = Date.now();
+  const row = await db.getFirstAsync<{
+    id: number;
+    used_by: number | null;
+    expires_at: number;
+  }>(
+    'SELECT id, used_by, expires_at FROM teacher_codes WHERE code = ?',
+    [code]
+  );
+
+  if (!row) return false;
+  if (row.used_by !== null) return false;
+  if (now > row.expires_at) return false;
+
+  return true;
+}
+
+export async function registerTeacher(
+  name: string,
+  username: string,
+  password: string,
+  code: string
+): Promise<User> {
+  const db = await getDb();
+
+  const isValid = await validateTeacherCode(code);
+  if (!isValid) {
+    throw new Error('Invalid or expired teacher code');
+  }
+
+  const existing = await db.getFirstAsync<{ id: number }>(
+    'SELECT id FROM users WHERE username = ?',
+    [username]
+  );
+  if (existing) {
+    throw new Error('Username already exists');
+  }
+
+  const passwordHash = await hashPassword(password);
+  const createdAt = Date.now();
+
+  const result = await db.runAsync(
+    'INSERT INTO users (name, username, password_hash, grade, role, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+    [name, username, passwordHash, '', 'teacher', createdAt]
+  );
+
+  await db.runAsync(
+    'INSERT INTO user_stats (user_id) VALUES (?)',
+    [result.lastInsertRowId]
+  );
+
+  // Mark code as used
+  await db.runAsync(
+    'UPDATE teacher_codes SET used_by = ? WHERE code = ?',
+    [result.lastInsertRowId, code]
+  );
+
+  return {
+    id: result.lastInsertRowId,
+    name,
+    username,
+    grade: '',
+    avatar: name.charAt(0).toUpperCase(),
+    role: 'teacher',
+  };
+}
+
+export async function generateTeacherCode(teacherId: number): Promise<string> {
+  const db = await getDb();
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = 'TCH-';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  const now = Date.now();
+  const expiresAt = now + 7 * 24 * 60 * 60 * 1000; // 7 days
+
+  await db.runAsync(
+    'INSERT INTO teacher_codes (code, created_by, created_at, expires_at) VALUES (?, ?, ?, ?)',
+    [code, teacherId, now, expiresAt]
+  );
+
+  return code;
+}
+
 export async function getLastSessionUser(): Promise<User | null> {
   try {
     const db = await getDb();

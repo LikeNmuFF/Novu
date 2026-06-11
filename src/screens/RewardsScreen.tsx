@@ -10,8 +10,10 @@ import {
   Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { getEarnedBadges, BADGES } from '../services/progress';
 import { getUserStats } from '../services/auth';
+import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
 interface BadgeData {
@@ -25,11 +27,14 @@ interface BadgeData {
 
 export default function RewardsScreen({
   user,
-  onBack,
+  onNavPress,
+  activeTab = 'rewards',
 }: {
   user: User;
-  onBack: () => void;
+  onNavPress: (screen: string) => void;
+  activeTab?: string;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
 
@@ -70,18 +75,11 @@ export default function RewardsScreen({
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
         <View style={[styles.header, { paddingTop: topInset }]}>
-          <TouchableOpacity
-            onPress={onBack}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          >
-            <Text style={styles.headerBack}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Rewards</Text>
-          <View style={{ width: 60 }} />
+          <Text style={styles.headerTitle}>{t('nav.rewards')}</Text>
         </View>
 
         {/* Streak Calendar */}
@@ -123,7 +121,7 @@ export default function RewardsScreen({
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>All Badges</Text>
+        <Text style={styles.sectionTitle}>{t('achievements.badges')}</Text>
 
         {/* Badge List */}
         {BADGES.map((badge) => {
@@ -221,6 +219,8 @@ export default function RewardsScreen({
           ))}
         </Animated.View>
       )}
+
+      <BottomNav activeTab={activeTab} onNavPress={onNavPress} />
     </SafeAreaView>
   );
 }
@@ -234,7 +234,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#718096' },
   headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
   streakCard: {
     marginHorizontal: 20,

@@ -11,27 +11,32 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Svg, { Path } from 'react-native-svg';
 import { getUserStats, updateUserProfile } from '../services/auth';
 import { getEarnedBadges } from '../services/progress';
 import { getDb } from '../services/database';
 import { createQRPackage } from '../utils/qr/package';
 import { QRContentType } from '../types/qr';
+import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
 export default function ProfileScreen({
   user,
-  onBack,
   onLogout,
   onSettings,
   onUserUpdate,
+  onNavPress,
+  activeTab = 'profile',
 }: {
   user: User;
-  onBack: () => void;
   onLogout: () => void;
   onSettings: () => void;
   onUserUpdate: (user: User) => void;
+  onNavPress: (screen: string) => void;
+  activeTab?: string;
 }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
 
@@ -97,18 +102,11 @@ export default function ProfileScreen({
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
         <View style={[styles.header, { paddingTop: topInset }]}>
-          <TouchableOpacity
-            onPress={onBack}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          >
-            <Text style={styles.headerBack}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <View style={{ width: 60 }} />
+          <Text style={styles.headerTitle}>{t('nav.profile')}</Text>
         </View>
 
         {/* Profile Card */}
@@ -160,7 +158,7 @@ export default function ProfileScreen({
             <View style={styles.menuIconWrap}>
               <Text style={styles.menuIcon}>✏️</Text>
             </View>
-            <Text style={styles.menuLabel}>Edit Profile</Text>
+            <Text style={styles.menuLabel}>{t('settings.editProfile')}</Text>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="#718096">
               <Path d="M9 18l6-6-6-6" />
             </Svg>
@@ -190,7 +188,7 @@ export default function ProfileScreen({
             <View style={styles.menuIconWrap}>
               <Text style={styles.menuIcon}>⚙️</Text>
             </View>
-            <Text style={styles.menuLabel}>Settings</Text>
+            <Text style={styles.menuLabel}>{t('nav.settings')}</Text>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="#718096">
               <Path d="M9 18l6-6-6-6" />
             </Svg>
@@ -204,7 +202,7 @@ export default function ProfileScreen({
           activeOpacity={0.7}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.logoutBtnText}>Logout</Text>
+          <Text style={styles.logoutBtnText}>{t('settings.logout')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -251,6 +249,8 @@ export default function ProfileScreen({
           </View>
         </View>
       </Modal>
+
+      <BottomNav activeTab={activeTab} onNavPress={onNavPress} />
     </SafeAreaView>
   );
 }
@@ -264,7 +264,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#718096' },
   headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
   profileCard: { alignItems: 'center', paddingVertical: 24, marginBottom: 16 },
   avatar: {
