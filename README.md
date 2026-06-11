@@ -448,7 +448,7 @@ We appreciate all the contributions made to LearnBasilan! Whether it's code, tra
 
 <table>
   <tr>
-    <td align="center">
+    <td align="center" >
       <a href="https://github.com/C000KED">
         <img src="https://github-readme-stats.vercel.app/api?username=C000KED&show_icons=true&theme=radical&include_all_commits=true" width="400" />
       </a>
