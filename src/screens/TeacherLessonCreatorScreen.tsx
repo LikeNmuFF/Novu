@@ -11,6 +11,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { getDb } from '../services/database';
 import type { User } from '../services/auth';
 
@@ -43,6 +44,7 @@ export default function TeacherLessonCreatorScreen({
   const [gradeLevel, setGradeLevel] = useState(1);
   const [imageUrls, setImageUrls] = useState('');
   const [saving, setSaving] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadSubjects();
@@ -59,7 +61,7 @@ export default function TeacherLessonCreatorScreen({
 
   const handleSave = async () => {
     if (!title.trim() || !content.trim() || !subjectId) {
-      Alert.alert('Error', 'Please fill in all required fields');
+      Alert.alert(t('alerts.error'), t('alerts.fillRequired'));
       return;
     }
 
@@ -84,7 +86,7 @@ export default function TeacherLessonCreatorScreen({
         images,
       });
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert(t('alerts.error'), e.message);
     } finally {
       setSaving(false);
     }

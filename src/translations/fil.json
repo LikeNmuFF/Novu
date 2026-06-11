@@ -475,5 +475,22 @@
     "voiceNotAvailable": "Hindi available ang text-to-speech para sa wikang ito.",
     "playing": "Nagpe-play...",
     "paused": "Naka-pause"
+  },
+  "alerts": {
+    "registrationFailed": "Nabigo ang Registration",
+    "codeRequired": "Kailangan ang teacher code",
+    "teacherCodeGenerated": "Nagawa na ang Teacher Code",
+    "shareCode": "I-share ang code na ito sa mga bagong guro:\n\n{{code}}\n\nMag-expire ang code sa 7 araw at magagamit lamang isang beses.",
+    "selectLesson": "Pumili ng lesson",
+    "addQuestion": "Magdagdag ng kumpletong tanong",
+    "quizSaved": "{{count}} na quiz question(s) ang na-save!",
+    "fillRequired": "Punan ang lahat ng kailangang field",
+    "qrGenerated": "Handa na i-share sa {{count}} na chunk(s)!",
+    "progressQRGenerated": "Na-generate na ang Progress QR!",
+    "nameEmpty": "Hindi dapat walang pangalan",
+    "profileUpdated": "Na-update na ang profile",
+    "profileUpdateFailed": "Nabigo ang pag-update ng profile",
+    "loginFailed": "Nabigo ang Login",
+    "error": "Error"
   }
 }

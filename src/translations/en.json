@@ -475,5 +475,22 @@
     "voiceNotAvailable": "Text-to-speech is not available for this language.",
     "playing": "Playing...",
     "paused": "Paused"
+  },
+  "alerts": {
+    "registrationFailed": "Registration Failed",
+    "codeRequired": "Teacher code is required",
+    "teacherCodeGenerated": "Teacher Code Generated",
+    "shareCode": "Share this code with new teachers:\n\n{{code}}\n\nThis code expires in 7 days and can only be used once.",
+    "selectLesson": "Please select a lesson",
+    "addQuestion": "Please add at least one complete question",
+    "quizSaved": "{{count}} quiz question(s) saved!",
+    "fillRequired": "Please fill in all required fields",
+    "qrGenerated": "Ready to share with {{count}} chunk(s)!",
+    "progressQRGenerated": "Progress QR Generated",
+    "nameEmpty": "Name cannot be empty",
+    "profileUpdated": "Profile updated",
+    "profileUpdateFailed": "Failed to update profile",
+    "loginFailed": "Login Failed",
+    "error": "Error"
   }
 }

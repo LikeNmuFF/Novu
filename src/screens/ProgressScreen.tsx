@@ -129,9 +129,9 @@ export default function ProgressScreen({
         })),
       };
       const qr = createQRPackage(qrData, QRContentType.Progress);
-      Alert.alert('Progress QR Generated', `Ready to share with ${qr.length} chunk(s)`);
+      Alert.alert(t('alerts.progressQRGenerated'), t('alerts.qrGenerated', { count: qr.length }));
     } catch {
-      Alert.alert('Error', 'Failed to generate QR');
+      Alert.alert(t('alerts.error'), t('errors.storage'));
     }
   };
 

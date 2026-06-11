@@ -66,16 +66,16 @@ export default function ProfileScreen({
 
   const handleSaveProfile = async () => {
     if (!editName.trim()) {
-      Alert.alert('Error', 'Name cannot be empty');
+      Alert.alert(t('alerts.error'), t('alerts.nameEmpty'));
       return;
     }
     try {
       await updateUserProfile(user.id, editName.trim(), editGrade.trim());
       onUserUpdate({ ...user, name: editName.trim(), grade: editGrade.trim() });
       setShowEditModal(false);
-      Alert.alert('Success', 'Profile updated');
+      Alert.alert(t('app.saved'), t('alerts.profileUpdated'));
     } catch {
-      Alert.alert('Error', 'Failed to update profile');
+      Alert.alert(t('alerts.error'), t('alerts.profileUpdateFailed'));
     }
   };
 
@@ -91,7 +91,7 @@ export default function ProfileScreen({
         lessons: completedCount,
       };
       const qr = createQRPackage(qrData, QRContentType.Progress);
-      Alert.alert('QR Generated', `Ready to share with ${qr.length} chunk(s)`);
+      Alert.alert(t('alerts.progressQRGenerated'), t('alerts.qrGenerated', { count: qr.length }));
     } catch {
       Alert.alert('Error', 'Failed to generate QR');
     }

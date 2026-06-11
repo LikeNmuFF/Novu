@@ -93,7 +93,7 @@ export default function LoginScreen({
                 const user = await loginUser(username.trim(), password);
                 onLogin(user);
               } catch (e: any) {
-                Alert.alert('Login Failed', e.message);
+                Alert.alert(t('alerts.loginFailed'), e.message);
               } finally {
                 setLoading(false);
               }

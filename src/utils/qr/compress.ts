@@ -1,6 +1,8 @@
 import pako from 'pako';
 import { crc32 } from './crc32';
 
+const MAX_DECOMPRESSED_SIZE = 1024 * 1024; // 1MB limit
+
 function toBase64(bytes: Uint8Array): string {
   const chars: string[] = [];
   for (let i = 0; i < bytes.length; i++) {
@@ -27,7 +29,17 @@ export function compressJSON<T>(data: T): { compressed: string; checksum: string
 
 export function decompressJSON<T>(compressed: string, expectedChecksum?: string): T {
   const binary = fromBase64(compressed);
+  
+  if (binary.length > MAX_DECOMPRESSED_SIZE * 10) {
+    throw new Error('Compressed data exceeds size limit');
+  }
+
   const jsonStr = pako.inflate(binary, { to: 'string' });
+  
+  if (jsonStr.length > MAX_DECOMPRESSED_SIZE) {
+    throw new Error('Decompressed data exceeds size limit');
+  }
+
   if (expectedChecksum) {
     const actualChecksum = crc32(jsonStr);
     if (actualChecksum !== expectedChecksum) {

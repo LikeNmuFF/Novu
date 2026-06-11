@@ -171,7 +171,7 @@ export default function RegisterScreen({
                   return;
                 }
                 if (role === 'teacher' && !teacherCode.trim()) {
-                  Alert.alert('Error', 'Teacher code is required');
+                  Alert.alert(t('alerts.error'), t('alerts.codeRequired'));
                   return;
                 }
                 setLoading(true);
@@ -184,7 +184,7 @@ export default function RegisterScreen({
                   }
                   onRegister(user);
                 } catch (e: any) {
-                  Alert.alert('Registration Failed', e.message);
+                  Alert.alert(t('alerts.registrationFailed'), e.message);
                 } finally {
                   setLoading(false);
                 }

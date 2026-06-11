@@ -11,6 +11,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { getDb } from '../services/database';
 import type { User } from '../services/auth';
 
@@ -49,6 +50,7 @@ export default function TeacherQuizCreatorScreen({
     { question: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '' },
   ]);
   const [saving, setSaving] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadSubjects();
@@ -101,13 +103,13 @@ export default function TeacherQuizCreatorScreen({
 
   const handleSave = async () => {
     if (!lessonId) {
-      Alert.alert('Error', 'Please select a lesson');
+      Alert.alert(t('alerts.error'), t('alerts.selectLesson'));
       return;
     }
 
     const validQuestions = questions.filter(q => q.question.trim() && q.options.every(o => o.trim()));
     if (validQuestions.length === 0) {
-      Alert.alert('Error', 'Please add at least one complete question');
+      Alert.alert(t('alerts.error'), t('alerts.addQuestion'));
       return;
     }
 
@@ -120,11 +122,11 @@ export default function TeacherQuizCreatorScreen({
           [lessonId, q.question.trim(), JSON.stringify(q.options), q.correctAnswer, q.explanation.trim()]
         );
       }
-      Alert.alert('Success', `${validQuestions.length} quiz question(s) saved!`, [
-        { text: 'OK', onPress: onSaved }
+      Alert.alert(t('app.saved'), t('alerts.quizSaved', { count: validQuestions.length }), [
+        { text: t('app.done'), onPress: onSaved }
       ]);
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert(t('alerts.error'), e.message);
     } finally {
       setSaving(false);
     }

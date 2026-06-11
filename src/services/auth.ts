@@ -10,13 +10,19 @@ export interface User {
   role: 'student' | 'teacher';
 }
 
+const ITERATIONS = 10000;
+
 async function hashPassword(password: string): Promise<string> {
-    const salt = Crypto.getRandomBytes(16);
+  const salt = Crypto.getRandomBytes(16);
   const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    saltHex + password
-  );
+  
+  let hash = password;
+  for (let i = 0; i < ITERATIONS; i++) {
+    hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      saltHex + hash
+    );
+  }
   return saltHex + ':' + hash;
 }
 
@@ -24,10 +30,14 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
   const parts = stored.split(':');
   if (parts.length !== 2) return false;
   const [saltHex, storedHash] = parts;
-  const hash = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    saltHex + password
-  );
+  
+  let hash = password;
+  for (let i = 0; i < ITERATIONS; i++) {
+    hash = await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      saltHex + hash
+    );
+  }
   return hash === storedHash;
 }
 

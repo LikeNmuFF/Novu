@@ -90,9 +90,9 @@ export default function TeacherDashboardScreen({
     try {
       const code = await generateTeacherCode(user.id);
       setGeneratedCode(code);
-      Alert.alert('Teacher Code Generated', `Share this code with new teachers:\n\n${code}\n\nThis code expires in 7 days and can only be used once.`);
+      Alert.alert(t('alerts.teacherCodeGenerated'), t('alerts.shareCode', { code }));
     } catch (e: any) {
-      Alert.alert('Error', e.message);
+      Alert.alert(t('alerts.error'), e.message);
     } finally {
       setLoadingCode(false);
     }

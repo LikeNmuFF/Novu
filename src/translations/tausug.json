@@ -1,1 +1,208 @@
-{}
+{
+  "app": {
+    "name": "LearnBasilan",
+    "tagline": "Offline Learning para ha Basilan",
+    "version": "v1.0",
+    "loading": "Naglo-load...",
+    "error": "Buga error",
+    "retry": "Sulay Pagduwa",
+    "ok": "Ok",
+    "cancel": "Kanselahin",
+    "save": "Save",
+    "delete": "Kukun",
+    "edit": "Edit",
+    "close": "Isara",
+    "back": "Bumalik",
+    "next": "Sunud",
+    "done": "Tapos Na",
+    "confirm": "Confirm",
+    "yes": "Ha",
+    "no": "Iyy",
+    "search": "Pangitaa...",
+    "noData": "Wala data",
+    "offline": "Wala internet",
+    "syncing": "Nagsisync...",
+    "saved": "Nasave na"
+  },
+  "nav": {
+    "home": "Home",
+    "learn": "Makasabut",
+    "rewards": "Gantimpala",
+    "progress": "Progreso",
+    "profile": "Profile",
+    "settings": "Mga Setting"
+  },
+  "splash": {
+    "welcome": "Marhay Ta Dumatung Ha LearnBasilan",
+    "subtitle": "Makasabut ha inyu kaugalian",
+    "loading": "Ginhahanda amon mga aralin..."
+  },
+  "language": {
+    "title": "Piliin Ha Iyo Wika",
+    "subtitle": "Piliin amon nga wipes mu paggamit",
+    "english": "English",
+    "filipino": "Filipino",
+    "chavacano": "Chavacano",
+    "yakan": "Yakan",
+    "tausug": "Tausug",
+    "continue": "Magpadayun",
+    "change": "I-change Ang Wika"
+  },
+  "onboarding": {
+    "title1": "Makasabut Ha Inyu Wika",
+    "desc1": "Makasabut gamit ang mga aralin ha inyu kaugalian — Filipino, Chavacano, Yakan, Tausug, o English.",
+    "title2": "Mga Quiz",
+    "desc2": "Sulayi inyu kahibalo gamit ang mga quiz ug mag-ganar XP ug mga badge.",
+    "title3": "QR Sharing",
+    "desc3": "I-share ang mga aralin ug quiz gamit ang QR codes."
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "username": "Username",
+      "password": "Password",
+      "loginButton": "Login",
+      "noAccount": "Wala account?",
+      "switchToRegister": "Mag-register dinhi",
+      "errorEmpty": "Pun-an ang tanan nga field",
+      "errorInvalid": "Username o password dili husto",
+      "errorGeneric": "Napakyas ang login. Sulayi pag-usab."
+    },
+    "register": {
+      "title": "Register",
+      "fullName": "Full Name",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Kumpirmahi Password",
+      "gradeLevel": "Grade Level",
+      "registerButton": "Register",
+      "hasAccount": "May account na?",
+      "switchToLogin": "Mag-login dinhi",
+      "roleStudent": "Student",
+      "roleTeacher": "Teacher",
+      "teacherCode": "Teacher Code",
+      "errorEmpty": "Pun-an ang tanan nga field",
+      "errorPasswordMismatch": "Dili magkapareho ang password",
+      "errorUsernameExists": "Mia na ang username",
+      "errorWeakPassword": "Ang password kinahanglan 6 ka karakter",
+      "errorGeneric": "Napakyas ang registration. Sulayi pag-usab."
+    }
+  },
+  "home": {
+    "greeting": "Kumusta, {{name}}!",
+    "continueLearning": "Magpadayon Pagkatuu",
+    "noLessons": "Wala pay aralin. Pili ka ug subject para magsugod.",
+    "subjects": "Mga Subject",
+    "lessonsCount": "{{count}} ka Aralin"
+  },
+  "subjects": {
+    "math": "Mathematics",
+    "science": "Science",
+    "english": "English",
+    "filipino": "Filipino",
+    "socialStudies": "Araling Panlipunan"
+  },
+  "subjectDetail": {
+    "chapters": "Mga Chapter",
+    "lessons": "Mga Aralin",
+    "passRequired": "Pasahi ang quiz para mabuksan ang sunud nga chapter"
+  },
+  "lessons": {
+    "startQuiz": "Sugodi Ang Quiz",
+    "readAloud": "Basa Halting",
+    "lesson": "Aralin {{number}}"
+  },
+  "quiz": {
+    "questionOf": "Question {{current}} sang {{total}}",
+    "correct": "Sakto!",
+    "incorrect": "Dili Sakto!",
+    "explanation": "Pagpatin-aw:",
+    "score": "Imo Score",
+    "passed": "PASA!",
+    "failed": "NAPAKYAS",
+    "tryAgain": "Sulayi Pag-usab",
+    "continue": "Magpadayon",
+    "reviewAnswers": "Tingali Mga Tubag",
+    "noQuizzes": "Wala pay quiz."
+  },
+  "rewards": {
+    "title": "Gantimpala",
+    "badges": "Mga Badge",
+    "noBadges": "Wala pay badge. Makatuu pa!"
+  },
+  "progress": {
+    "title": "Progreso",
+    "overview": "Overview",
+    "subjects": "Mga Subject"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "I-edit Ang Profile",
+    "settings": "Mga Setting",
+    "logout": "Logout",
+    "lessonsCompleted": "Mga Aralin nga Natapos",
+    "quizAverage": "Average Quiz"
+  },
+  "teacher": {
+    "dashboard": {
+      "title": "Teacher Dashboard",
+      "totalStudents": "Tanang Students",
+      "averageScore": "Average Score",
+      "lessonsCreated": "Mga Aralin nga Nahimo",
+      "quizzesCreated": "Mga Quiz nga Nahimo",
+      "generateCode": "Maggawa ug Teacher Code"
+    },
+    "code": {
+      "title": "Teacher Code",
+      "generated": "Nahimo na ang Teacher Code!",
+      "expires": "Mopalo sa 7 ka adlaw"
+    },
+    "createLesson": {
+      "title": "Maggawa ug Aralin"
+    },
+    "createQuiz": {
+      "title": "Maggawa ug Quiz"
+    }
+  },
+  "qr": {
+    "scan": "I-scan Ang QR Code",
+    "generate": "Maggawa ug QR",
+    "success": "Naproseso na ang QR Code!",
+    "error": "Dili husto ang QR Code"
+  },
+  "settings": {
+    "title": "Mga Setting",
+    "language": "Wika",
+    "darkMode": "Dark Mode",
+    "textSize": "Pagdako Text",
+    "readAloud": "Basa Halting",
+    "about": "Mahitungod Sa App",
+    "resetData": "Kukun Tanang Data",
+    "resetDataConfirm": "Mabubura ang tanan nga aralin, quiz, ug progreso. Sigurado ka?"
+  },
+  "errors": {
+    "database": "Database error. I-restart ang app.",
+    "notFound": "Wala ang sulod.",
+    "permission": "Wala permiso.",
+    "camera": "Kinahanglan ang access sa camera.",
+    "storage": "Storage error. Sulayi pag-usab.",
+    "unknown": "Nahitabo ang usa ka dili kilala nga error."
+  },
+  "alerts": {
+    "registrationFailed": "Napakyas Ang Registration",
+    "codeRequired": "Teacher code required",
+    "teacherCodeGenerated": "Nahimo Na Ang Teacher Code",
+    "shareCode": "I-share ang code sa mga bag-ong teacher:\n\n{{code}}\n\nMopalo sa 7 ka adlaw ug makagamit lang ug usa ka beses.",
+    "selectLesson": "Pili ka ug lesson",
+    "addQuestion": "Magdugang ug usa ka kompleto nga pangutana",
+    "quizSaved": "{{count}} ka quiz question(s) nasave!",
+    "fillRequired": "Pun-an ang tanan nga required nga field",
+    "qrGenerated": "Andam na i-share sa {{count}} ka chunk(s)!",
+    "progressQRGenerated": "Nahimo Na Ang Progress QR!",
+    "nameEmpty": "Dili pwede walang ngalan",
+    "profileUpdated": "Na-update na ang profile",
+    "profileUpdateFailed": "Napakyas sa pag-update profile",
+    "loginFailed": "Napakyas Ang Login",
+    "error": "Error"
+  }
+}

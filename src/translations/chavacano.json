@@ -1,1 +1,208 @@
-{}
+{
+  "app": {
+    "name": "LearnBasilan",
+    "tagline": "Offline Learning para sa Basilan",
+    "version": "v1.0",
+    "loading": "Naglo-load...",
+    "error": "Hay error",
+    "retry": "Intentar de Nuevo",
+    "ok": "Sige",
+    "cancel": "Cancelar",
+    "save": "Save",
+    "delete": "Bura",
+    "edit": "Edit",
+    "close": "Cierra",
+    "back": "Volve",
+    "next": "Siguiente",
+    "done": "Ya Acabado",
+    "confirm": "Confirma",
+    "yes": "Sí",
+    "no": "No",
+    "search": "Busca...",
+    "noData": "Wala data",
+    "offline": "No tiene internet",
+    "syncing": "Nagsisync...",
+    "saved": "Ya save con exito"
+  },
+  "nav": {
+    "home": "Home",
+    "learn": "Aprende",
+    "rewards": "Recompensa",
+    "progress": "Progreso",
+    "profile": "Profile",
+    "settings": "Mga Setting"
+  },
+  "splash": {
+    "welcome": "Bienvenido sa LearnBasilan",
+    "subtitle": "Aprende con tu mismo idioma",
+    "loading": "Preparando tus aralin..."
+  },
+  "language": {
+    "title": "Escoge tu Idioma",
+    "subtitle": "Escoge el idioma que tu quiere",
+    "english": "English",
+    "filipino": "Filipino",
+    "chavacano": "Chavacano",
+    "yakan": "Yakan",
+    "tausug": "Tausug",
+    "continue": "Continue",
+    "change": "Cambia el Idioma"
+  },
+  "onboarding": {
+    "title1": "Aprende en tu Idioma",
+    "desc1": "Aprende con mga aralin en tu mismo idioma — Filipino, Chavacano, Yakan, Tausug, o English.",
+    "title2": "Quizzes Interesante",
+    "desc2": "Pide tus conocimiento con mga quiz y gana XP y mga badge.",
+    "title3": "QR Sharing",
+    "desc3": "Comparte mga aralin y quiz con otros students gamit QR codes."
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "username": "Username",
+      "password": "Password",
+      "loginButton": "Login",
+      "noAccount": "No tiene account?",
+      "switchToRegister": "Registra aqui",
+      "errorEmpty": "Llena todo el campo",
+      "errorInvalid": "Username o password no valido",
+      "errorGeneric": "Fallo el login. Intentar de nuevo."
+    },
+    "register": {
+      "title": "Registra",
+      "fullName": "Full Name",
+      "username": "Username",
+      "password": "Password",
+      "confirmPassword": "Confirma Password",
+      "gradeLevel": "Grade Level",
+      "registerButton": "Registra",
+      "hasAccount": "Ya tiene account?",
+      "switchToLogin": "Login aqui",
+      "roleStudent": "Student",
+      "roleTeacher": "Teacher",
+      "teacherCode": "Teacher Code",
+      "errorEmpty": "Llena todo el campo",
+      "errorPasswordMismatch": "Password no magkasing",
+      "errorUsernameExists": "Ya existe el username",
+      "errorWeakPassword": "Password debe ser 6 characters mas",
+      "errorGeneric": "Fallo el registration. Intentar de nuevo."
+    }
+  },
+  "home": {
+    "greeting": "Hola, {{name}}!",
+    "continueLearning": "Continue Aprende",
+    "noLessons": "Wala pa aralin. Escoge un subject para empezar.",
+    "subjects": "Mga Subject",
+    "lessonsCount": "{{count}} mga Aralin"
+  },
+  "subjects": {
+    "math": "Mathematics",
+    "science": "Science",
+    "english": "English",
+    "filipino": "Filipino",
+    "socialStudies": "Araling Panlipunan"
+  },
+  "subjectDetail": {
+    "chapters": "Mga Chapters",
+    "lessons": "Mga Aralin",
+    "passRequired": "Pasa el quiz para abrir el siguiente chapter"
+  },
+  "lessons": {
+    "startQuiz": "Empieza el Quiz",
+    "readAloud": "Lee Alto",
+    "lesson": "Aralin {{number}}"
+  },
+  "quiz": {
+    "questionOf": "Question {{current}} de {{total}}",
+    "correct": "Correcto!",
+    "incorrect": "Incorrecto!",
+    "explanation": "Explicacion:",
+    "score": "Tu Score",
+    "passed": "PASSED!",
+    "failed": "FAILED",
+    "tryAgain": "Intentar de Nuevo",
+    "continue": "Continue",
+    "reviewAnswers": "Revisa mga Sagot",
+    "noQuizzes": "Wala pa quiz."
+  },
+  "rewards": {
+    "title": "Recompensa",
+    "badges": "Mga Badge",
+    "noBadges": "Wala pa badges. Aprende mas para ganar!"
+  },
+  "progress": {
+    "title": "Progreso",
+    "overview": "Overview",
+    "subjects": "Mga Subject"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "settings": "Mga Setting",
+    "logout": "Logout",
+    "lessonsCompleted": "Mga Aralin na Acabado",
+    "quizAverage": "Average Quiz"
+  },
+  "teacher": {
+    "dashboard": {
+      "title": "Teacher Dashboard",
+      "totalStudents": "Total Students",
+      "averageScore": "Average Score",
+      "lessonsCreated": "Mga Aralin na Nagawa",
+      "quizzesCreated": "Mga Quiz na Nagawa",
+      "generateCode": "Genera Teacher Code"
+    },
+    "code": {
+      "title": "Teacher Code",
+      "generated": "Ya generá el Teacher Code!",
+      "expires": "Expira en 7 days"
+    },
+    "createLesson": {
+      "title": "Crea Aralin"
+    },
+    "createQuiz": {
+      "title": "Crea Quiz"
+    }
+  },
+  "qr": {
+    "scan": "Scan QR Code",
+    "generate": "Genera QR",
+    "success": "Ya procesa el QR Code!",
+    "error": "QR Code no valido"
+  },
+  "settings": {
+    "title": "Mga Setting",
+    "language": "Idioma",
+    "darkMode": "Dark Mode",
+    "textSize": "Tamaño Texto",
+    "readAloud": "Lee Alto",
+    "about": "Sobre la App",
+    "resetData": "Bura Todo Data",
+    "resetDataConfirm": "Mabubura todo el aralin, quiz, y progreso. Seguro ka?"
+  },
+  "errors": {
+    "database": "Database error. Reinicia el app.",
+    "notFound": "Wala el contenido.",
+    "permission": "Wala permiso.",
+    "camera": "Necesita access camera.",
+    "storage": "Storage error. Intentar de nuevo.",
+    "unknown": "Hay error na di kilala."
+  },
+  "alerts": {
+    "registrationFailed": "Fallo el Registration",
+    "codeRequired": "Teacher code required",
+    "teacherCodeGenerated": "Ya Genera el Teacher Code",
+    "shareCode": "Share el code con mga nuevo teacher:\n\n{{code}}\n\nExpira en 7 days y puede usar una bes lang.",
+    "selectLesson": "Escoge un lesson",
+    "addQuestion": "Agrega al menos una question completa",
+    "quizSaved": "{{count}} quiz question(s) ya save!",
+    "fillRequired": "Llena todo el campo required",
+    "qrGenerated": "Ready para share con {{count}} chunk(s)!",
+    "progressQRGenerated": "Ya Genera el Progress QR!",
+    "nameEmpty": "Nombre no puede ser vacio",
+    "profileUpdated": "Ya update el profile",
+    "profileUpdateFailed": "Fallo el update profile",
+    "loginFailed": "Fallo el Login",
+    "error": "Error"
+  }
+}
