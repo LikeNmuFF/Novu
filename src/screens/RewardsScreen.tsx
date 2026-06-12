@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { getEarnedBadges, BADGES } from '../services/progress';
 import { getUserStats } from '../services/auth';
+import { useTheme } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
@@ -36,6 +37,8 @@ export default function RewardsScreen({
 }) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const { colors } = theme;
   const topInset = Math.max(insets.top, 16);
 
   const [earned, setEarned] = useState<BadgeData[]>([]);
@@ -71,7 +74,7 @@ export default function RewardsScreen({
   const streakDays = Math.min(stats.streak, 7);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
@@ -79,14 +82,14 @@ export default function RewardsScreen({
       >
         {/* Header */}
         <View style={[styles.header, { paddingTop: topInset }]}>
-          <Text style={styles.headerTitle}>{t('nav.rewards')}</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{t('nav.rewards')}</Text>
         </View>
 
         {/* Streak Calendar */}
-        <View style={styles.streakCard}>
+        <View style={[styles.streakCard, { backgroundColor: colors.surface }]}>
           <View style={styles.streakHeader}>
-            <Text style={styles.streakTitle}>🔥 Streak</Text>
-            <Text style={styles.streakCount}>{stats.streak} days</Text>
+            <Text style={[styles.streakTitle, { color: colors.text }]}>🔥 Streak</Text>
+            <Text style={[styles.streakCount, { color: colors.coral }]}>{stats.streak} days</Text>
           </View>
           <View style={styles.streakGrid}>
             {days.map((day, i) => (
@@ -94,10 +97,10 @@ export default function RewardsScreen({
                 key={i}
                 style={[
                   styles.streakDay,
-                  i < streakDays && styles.streakDayActive,
+                  { backgroundColor: i < streakDays ? colors.coral : colors.surface },
                 ]}
               >
-                <Text style={[styles.streakDayText, i < streakDays && styles.streakDayTextActive]}>
+                <Text style={[styles.streakDayText, { color: colors.textMuted }, i < streakDays && styles.streakDayTextActive]}>
                   {day}
                 </Text>
               </View>
@@ -107,21 +110,21 @@ export default function RewardsScreen({
 
         {/* Stats Row */}
         <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{earned.length}</Text>
-            <Text style={styles.statLabel}>Earned</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.statNum, { color: colors.coral }]}>{earned.length}</Text>
+            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Earned</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{BADGES.length - earned.length}</Text>
-            <Text style={styles.statLabel}>Remaining</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.statNum, { color: colors.coral }]}>{BADGES.length - earned.length}</Text>
+            <Text style={[styles.statLabel, { color: colors.textMuted }]}>Remaining</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statNum}>{stats.xp}</Text>
-            <Text style={styles.statLabel}>XP</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.statNum, { color: colors.coral }]}>{stats.xp}</Text>
+            <Text style={[styles.statLabel, { color: colors.textMuted }]}>XP</Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>{t('achievements.badges')}</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('achievements.badges')}</Text>
 
         {/* Badge List */}
         {BADGES.map((badge) => {
@@ -130,27 +133,27 @@ export default function RewardsScreen({
           return (
             <TouchableOpacity
               key={badge.id}
-              style={[styles.badgeCard, isEarned && styles.badgeCardEarned]}
+              style={[styles.badgeCard, { backgroundColor: colors.surface, borderColor: isEarned ? colors.gold : 'transparent' }, isEarned && styles.badgeCardEarned]}
               onPress={() => setSelectedBadge({ ...badge, earnedAt: earnedBadge?.earnedAt ?? 0 })}
               activeOpacity={0.7}
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
-              <View style={[styles.badgeIconWrap, isEarned && styles.badgeIconWrapEarned]}>
+              <View style={[styles.badgeIconWrap, { backgroundColor: colors.border }, isEarned && { backgroundColor: colors.gold + '30' }]}>
                 <Text style={[styles.badgeIcon, !isEarned && styles.badgeIconLocked]}>
                   {isEarned ? badge.icon : '🔒'}
                 </Text>
               </View>
               <View style={styles.badgeInfo}>
-                <Text style={[styles.badgeName, !isEarned && styles.badgeNameLocked]}>
+                <Text style={[styles.badgeName, { color: isEarned ? colors.text : colors.textMuted }]}>
                   {badge.name}
                 </Text>
-                <Text style={styles.badgeDesc}>{badge.description}</Text>
+                <Text style={[styles.badgeDesc, { color: colors.textMuted }]}>{badge.description}</Text>
               </View>
               <View style={styles.badgeXpWrap}>
-                <Text style={[styles.badgeXp, isEarned && styles.badgeXpEarned]}>
+                <Text style={[styles.badgeXp, { color: isEarned ? colors.gold : colors.textMuted }]}>
                   +{badge.xp}
                 </Text>
-                <Text style={styles.badgeXpLabel}>XP</Text>
+                <Text style={[styles.badgeXpLabel, { color: colors.textMuted }]}>XP</Text>
               </View>
             </TouchableOpacity>
           );
@@ -165,33 +168,33 @@ export default function RewardsScreen({
         onRequestClose={() => setSelectedBadge(null)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             {selectedBadge && (
               <>
-                <View style={styles.modalBadgeIcon}>
+                <View style={[styles.modalBadgeIcon, { backgroundColor: colors.border }]}>
                   <Text style={styles.modalBadgeEmoji}>
                     {earnedIds.has(selectedBadge.id) ? selectedBadge.icon : '🔒'}
                   </Text>
                 </View>
-                <Text style={styles.modalBadgeName}>{selectedBadge.name}</Text>
-                <Text style={styles.modalBadgeDesc}>{selectedBadge.description}</Text>
+                <Text style={[styles.modalBadgeName, { color: colors.text }]}>{selectedBadge.name}</Text>
+                <Text style={[styles.modalBadgeDesc, { color: colors.textMuted }]}>{selectedBadge.description}</Text>
                 <View style={styles.modalXpRow}>
-                  <Text style={styles.modalXp}>+{selectedBadge.xp} XP</Text>
+                  <Text style={[styles.modalXp, { color: colors.gold }]}>+{selectedBadge.xp} XP</Text>
                   {earnedIds.has(selectedBadge.id) && selectedBadge.earnedAt > 0 && (
-                    <Text style={styles.modalEarnedDate}>
+                    <Text style={[styles.modalEarnedDate, { color: colors.green }]}>
                       Earned {new Date(selectedBadge.earnedAt).toLocaleDateString()}
                     </Text>
                   )}
                 </View>
                 {!earnedIds.has(selectedBadge.id) && (
-                  <Text style={styles.modalRequirement}>Complete the requirement to unlock</Text>
+                  <Text style={[styles.modalRequirement, { color: colors.textMuted }]}>Complete the requirement to unlock</Text>
                 )}
                 <TouchableOpacity
-                  style={styles.modalCloseBtn}
+                  style={[styles.modalCloseBtn, { backgroundColor: colors.border }]}
                   onPress={() => setSelectedBadge(null)}
                   hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 >
-                  <Text style={styles.modalCloseBtnText}>Close</Text>
+                  <Text style={[styles.modalCloseBtnText, { color: colors.coral }]}>Close</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -226,7 +229,7 @@ export default function RewardsScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -234,10 +237,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
+  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
   streakCard: {
     marginHorizontal: 20,
-    backgroundColor: '#FFF0EB',
     borderRadius: 18,
     padding: 16,
     marginBottom: 16,
@@ -248,19 +250,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  streakTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C' },
-  streakCount: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#E86548' },
+  streakTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
+  streakCount: { fontFamily: 'Nunito_700Bold', fontSize: 14 },
   streakGrid: { flexDirection: 'row', justifyContent: 'space-between' },
   streakDay: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  streakDayActive: { backgroundColor: '#E86548' },
-  streakDayText: { fontFamily: 'Nunito_700Bold', fontSize: 12, color: '#718096' },
+  streakDayActive: { },
+  streakDayText: { fontFamily: 'Nunito_700Bold', fontSize: 12 },
   streakDayTextActive: { color: '#FFFFFF' },
   statsRow: {
     flexDirection: 'row',
@@ -270,7 +271,6 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 14,
     alignItems: 'center',
@@ -280,19 +280,17 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  statNum: { fontFamily: 'Fredoka_700Bold', fontSize: 24, color: '#FF7E5F' },
-  statLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 2 },
+  statNum: { fontFamily: 'Fredoka_700Bold', fontSize: 24 },
+  statLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, marginTop: 2 },
   sectionTitle: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 20,
-    color: '#1A535C',
     paddingHorizontal: 20,
     marginBottom: 12,
   },
   badgeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 14,
     marginHorizontal: 20,
@@ -305,28 +303,26 @@ const styles = StyleSheet.create({
   },
   badgeCardEarned: {
     borderWidth: 2,
-    borderColor: '#FFD93D',
   },
   badgeIconWrap: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F5F0EB',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
-  badgeIconWrapEarned: { backgroundColor: '#FFF8E0' },
+  badgeIconWrapEarned: { },
   badgeIcon: { fontSize: 24 },
   badgeIconLocked: { opacity: 0.4 },
   badgeInfo: { flex: 1 },
-  badgeName: { fontFamily: 'Fredoka_700Bold', fontSize: 15, color: '#1A535C' },
-  badgeNameLocked: { color: '#718096' },
-  badgeDesc: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 2 },
+  badgeName: { fontFamily: 'Fredoka_700Bold', fontSize: 15 },
+  badgeNameLocked: { },
+  badgeDesc: { fontFamily: 'Nunito_400Regular', fontSize: 12, marginTop: 2 },
   badgeXpWrap: { alignItems: 'center' },
-  badgeXp: { fontFamily: 'Nunito_700Bold', fontSize: 13, color: '#718096' },
-  badgeXpEarned: { color: '#FFD93D' },
-  badgeXpLabel: { fontFamily: 'Nunito_400Regular', fontSize: 10, color: '#718096' },
+  badgeXp: { fontFamily: 'Nunito_700Bold', fontSize: 13 },
+  badgeXpEarned: { },
+  badgeXpLabel: { fontFamily: 'Nunito_400Regular', fontSize: 10 },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -335,7 +331,6 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 28,
     alignItems: 'center',
@@ -346,25 +341,23 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#FFF8E0',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
   modalBadgeEmoji: { fontSize: 40 },
-  modalBadgeName: { fontFamily: 'Fredoka_700Bold', fontSize: 20, color: '#1A535C', marginBottom: 8 },
-  modalBadgeDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20, marginBottom: 16 },
+  modalBadgeName: { fontFamily: 'Fredoka_700Bold', fontSize: 20, marginBottom: 8 },
+  modalBadgeDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, textAlign: 'center', lineHeight: 20, marginBottom: 16 },
   modalXpRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
-  modalXp: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#FFD93D' },
-  modalEarnedDate: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#6BCB77' },
-  modalRequirement: { fontFamily: 'Nunito_400Regular', fontSize: 13, color: '#718096', marginBottom: 16 },
+  modalXp: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
+  modalEarnedDate: { fontFamily: 'Nunito_400Regular', fontSize: 12 },
+  modalRequirement: { fontFamily: 'Nunito_400Regular', fontSize: 13, marginBottom: 16 },
   modalCloseBtn: {
-    backgroundColor: '#FFF0EB',
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 999,
   },
-  modalCloseBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#E86548' },
+  modalCloseBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14 },
   confettiOverlay: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 1000,

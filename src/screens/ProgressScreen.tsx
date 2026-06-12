@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
 import QRCode from 'react-native-qrcode-svg';
+import { useTheme } from '../context/ThemeContext';
 import { getDb } from '../services/database';
 import { getUserStats } from '../services/auth';
 import { createQRPackage } from '../utils/qr/package';
@@ -45,6 +46,8 @@ export default function ProgressScreen({
 }) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const { colors } = theme;
   const topInset = Math.max(insets.top, 16);
 
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
@@ -144,44 +147,66 @@ export default function ProgressScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
         contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7E5F" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.coral} />
         }
       >
         {/* Header */}
         <View style={[styles.header, { paddingTop: topInset }]}>
-          <Text style={styles.headerTitle}>{t('progress.title')}</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>{t('progress.title')}</Text>
         </View>
 
         {/* Overview Card */}
-        <View style={styles.overviewCard}>
+        <View style={{
+          marginHorizontal: 20,
+          backgroundColor: colors.surface,
+          borderRadius: 18,
+          padding: 18,
+          marginBottom: 16,
+          shadowColor: colors.text,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          elevation: 2,
+        }}>
           <View style={styles.overviewRow}>
             <View style={styles.overviewItem}>
-              <Text style={styles.overviewNum}>{totalCompleted}</Text>
-              <Text style={styles.overviewLabel}>Completed</Text>
+              <Text style={[styles.overviewNum, { color: colors.coral }]}>{totalCompleted}</Text>
+              <Text style={[styles.overviewLabel, { color: colors.textMuted }]}>Completed</Text>
             </View>
-            <View style={styles.overviewDivider} />
+            <View style={[styles.overviewDivider, { backgroundColor: colors.border }]} />
             <View style={styles.overviewItem}>
-              <Text style={styles.overviewNum}>{totalLessons}</Text>
-              <Text style={styles.overviewLabel}>Total</Text>
+              <Text style={[styles.overviewNum, { color: colors.coral }]}>{totalLessons}</Text>
+              <Text style={[styles.overviewLabel, { color: colors.textMuted }]}>Total</Text>
             </View>
-            <View style={styles.overviewDivider} />
+            <View style={[styles.overviewDivider, { backgroundColor: colors.border }]} />
             <View style={styles.overviewItem}>
-              <Text style={styles.overviewNum}>{overallAvg}%</Text>
-              <Text style={styles.overviewLabel}>Average</Text>
+              <Text style={[styles.overviewNum, { color: colors.coral }]}>{overallAvg}%</Text>
+              <Text style={[styles.overviewLabel, { color: colors.textMuted }]}>Average</Text>
             </View>
           </View>
         </View>
 
         {/* XP History Chart */}
         {xpHistory.length > 0 && (
-          <View style={styles.chartCard}>
-            <Text style={styles.chartTitle}>📊 Quiz Scores</Text>
+          <View style={{
+            marginHorizontal: 20,
+            backgroundColor: colors.surface,
+            borderRadius: 18,
+            padding: 16,
+            marginBottom: 16,
+            shadowColor: colors.text,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 8,
+            elevation: 2,
+          }}>
+            <Text style={[styles.chartTitle, { color: colors.text, marginBottom: 12 }]}>📊 Quiz Scores</Text>
             <LineChart
               data={{
                 labels: xpHistory.map((_, i) => `${i + 1}`),
@@ -190,16 +215,16 @@ export default function ProgressScreen({
               width={screenWidth - 72}
               height={140}
               chartConfig={{
-                backgroundColor: '#FFFFFF',
-                backgroundGradientFrom: '#FFFFFF',
-                backgroundGradientTo: '#FFFFFF',
+                backgroundColor: colors.surface,
+                backgroundGradientFrom: colors.surface,
+                backgroundGradientTo: colors.surface,
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(255, 126, 95, ${opacity})`,
-                labelColor: () => '#718096',
+                labelColor: () => colors.textMuted,
                 propsForDots: {
                   r: '5',
                   strokeWidth: '2',
-                  stroke: '#FF7E5F',
+                  stroke: colors.coral,
                 },
               }}
               bezier
@@ -211,37 +236,70 @@ export default function ProgressScreen({
         {/* Weak Areas */}
         {weakAreas.length > 0 && (
           <View style={styles.weakSection}>
-            <Text style={styles.weakTitle}>⚠️ Areas to Improve</Text>
+            <Text style={[styles.weakTitle, { color: '#E86548', marginBottom: 10 }]}>⚠️ Areas to Improve</Text>
             {weakAreas.map((subj) => (
-              <View key={subj.name} style={styles.weakCard}>
+              <View key={subj.name} style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: colors.surface,
+                borderRadius: 14,
+                padding: 12,
+                marginBottom: 8,
+              }}>
                 <Text style={styles.weakIcon}>{subj.icon}</Text>
                 <View style={styles.weakInfo}>
-                  <Text style={styles.weakName}>{subj.name}</Text>
-                  <Text style={styles.weakScore}>{subj.avgScore}% average</Text>
+                  <Text style={[styles.weakName, { color: colors.text }]}>{subj.name}</Text>
+                  <Text style={[styles.weakScore, { color: '#E86548', marginTop: 1 }]}>{subj.avgScore}% average</Text>
                 </View>
-                <View style={styles.weakBadge}>
-                  <Text style={styles.weakBadgeText}>Needs Work</Text>
+                <View style={{
+                  backgroundColor: '#E86548',
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 999,
+                }}>
+                  <Text style={[styles.weakBadgeText, { color: '#FFFFFF' }]}>Needs Work</Text>
                 </View>
               </View>
             ))}
           </View>
         )}
 
-        <Text style={styles.sectionTitle}>By Subject</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>By Subject</Text>
 
         {/* Subject Progress */}
         {subjectProgress.map((subj) => {
           const pct = subj.total > 0 ? Math.round((subj.completed / subj.total) * 100) : 0;
           return (
-            <View key={subj.name} style={styles.subjectCard}>
+            <View key={subj.name} style={{
+              marginHorizontal: 20,
+              backgroundColor: colors.surface,
+              borderRadius: 16,
+              padding: 16,
+              marginBottom: 10,
+              shadowColor: colors.text,
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08,
+              shadowRadius: 8,
+              elevation: 2,
+            }}>
               <View style={styles.subjectHeader}>
                 <Text style={styles.subjectIcon}>{subj.icon}</Text>
-                <Text style={styles.subjectName}>{subj.name}</Text>
-                <Text style={[styles.subjectPct, subj.avgScore < 50 && styles.subjectPctWeak]}>
+                <Text style={[styles.subjectName, { color: colors.text, flex: 1 }]}>{subj.name}</Text>
+                <Text style={{
+                  fontFamily: 'Nunito_700Bold',
+                  fontSize: 14,
+                  color: subj.avgScore < 50 ? '#E86548' : colors.coral,
+                }}>
                   {pct}%
                 </Text>
               </View>
-              <View style={styles.progressBar}>
+              <View style={{
+                height: 6,
+                backgroundColor: colors.border,
+                borderRadius: 999,
+                overflow: 'hidden',
+                marginBottom: 6,
+              }}>
                 <View
                   style={[
                     styles.progressFill,
@@ -249,7 +307,7 @@ export default function ProgressScreen({
                   ]}
                 />
               </View>
-              <Text style={styles.subjectDetail}>
+              <Text style={[styles.subjectDetail, { color: colors.textMuted }]}>
                 {subj.completed}/{subj.total} lessons • {subj.avgScore}% avg
               </Text>
             </View>
@@ -258,12 +316,24 @@ export default function ProgressScreen({
 
         {/* Export QR Button */}
         <TouchableOpacity
-          style={styles.exportBtn}
+          style={{
+            marginHorizontal: 20,
+            backgroundColor: colors.teal,
+            paddingVertical: 14,
+            borderRadius: 16,
+            alignItems: 'center',
+            marginTop: 8,
+            shadowColor: colors.teal,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 12,
+            elevation: 4,
+          }}
           onPress={handleExportQR}
           activeOpacity={0.7}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.exportBtnText}>📤 Export Progress QR</Text>
+          <Text style={{ fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#FFFFFF' }}>📤 Export Progress QR</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -272,26 +342,42 @@ export default function ProgressScreen({
       {/* QR Display Modal */}
       <Modal visible={showQRModal} transparent animationType="fade" onRequestClose={() => setShowQRModal(false)}>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={{
+            backgroundColor: colors.surface,
+            borderRadius: 24,
+            padding: 24,
+            width: '100%',
+            maxWidth: 400,
+            alignItems: 'center',
+          }}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>📤 Share Progress</Text>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>📤 Share Progress</Text>
               <TouchableOpacity onPress={() => setShowQRModal(false)}>
-                <Text style={styles.modalClose}>✕</Text>
+                <Text style={[styles.modalClose, { color: colors.textMuted }]}>✕</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.modalStudentInfo}>
-              <Text style={styles.modalStudentName}>{user.name}</Text>
-              <Text style={styles.modalStudentGrade}>{user.grade}</Text>
+              <Text style={[styles.modalStudentName, { color: colors.text }]}>{user.name}</Text>
+              <Text style={[styles.modalStudentGrade, { color: colors.textMuted, marginTop: 2 }]}>{user.grade}</Text>
             </View>
 
             <View style={styles.modalQRWrapper}>
-              <View style={styles.modalQRCard}>
+              <View style={{
+                backgroundColor: colors.surface,
+                borderRadius: 20,
+                padding: 12,
+                shadowColor: colors.text,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.12,
+                shadowRadius: 16,
+                elevation: 6,
+              }}>
                 <QRCode
                   value={JSON.stringify(qrChunks[currentChunk])}
                   size={QR_SIZE}
-                  backgroundColor="#FFFFFF"
-                  color="#1A535C"
+                  backgroundColor={colors.surface}
+                  color={colors.text}
                 />
               </View>
             </View>
@@ -299,26 +385,40 @@ export default function ProgressScreen({
             {qrChunks.length > 1 && (
               <View style={styles.modalChunkNav}>
                 <TouchableOpacity
-                  style={[styles.modalChunkBtn, currentChunk === 0 && styles.modalChunkBtnDisabled]}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: colors.border,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
                   onPress={() => setCurrentChunk(Math.max(0, currentChunk - 1))}
                   disabled={currentChunk === 0}
                 >
-                  <Text style={styles.modalChunkBtnText}>←</Text>
+                  <Text style={[styles.modalChunkBtnText, { color: colors.text }]}>←</Text>
                 </TouchableOpacity>
-                <Text style={styles.modalChunkCount}>
+                <Text style={[styles.modalChunkCount, { color: colors.text }]}>
                   {currentChunk + 1} / {qrChunks.length}
                 </Text>
                 <TouchableOpacity
-                  style={[styles.modalChunkBtn, currentChunk === qrChunks.length - 1 && styles.modalChunkBtnDisabled]}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: colors.border,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
                   onPress={() => setCurrentChunk(Math.min(qrChunks.length - 1, currentChunk + 1))}
                   disabled={currentChunk === qrChunks.length - 1}
                 >
-                  <Text style={styles.modalChunkBtnText}>→</Text>
+                  <Text style={[styles.modalChunkBtnText, { color: colors.text }]}>→</Text>
                 </TouchableOpacity>
               </View>
             )}
 
-            <Text style={styles.modalHint}>
+            <Text style={[styles.modalHint, { color: colors.textMuted }]}>
               {qrChunks.length > 1
                 ? `Show each QR code one by one. Teacher scans all ${qrChunks.length} codes.`
                 : 'Show this QR code to your teacher to share your progress.'}
@@ -331,7 +431,6 @@ export default function ProgressScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -339,84 +438,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
   },
-  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
-  overviewCard: {
-    marginHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 16,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
+  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
   overviewRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   overviewItem: { alignItems: 'center' },
-  overviewNum: { fontFamily: 'Fredoka_700Bold', fontSize: 24, color: '#FF7E5F' },
-  overviewLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 2 },
-  overviewDivider: { width: 1, height: 36, backgroundColor: '#F5E6D5' },
-  chartCard: {
-    marginHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  chartTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C', marginBottom: 12 },
+  overviewNum: { fontFamily: 'Fredoka_700Bold', fontSize: 24 },
+  overviewLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, marginTop: 2 },
+  overviewDivider: { width: 1, height: 36 },
   chart: { borderRadius: 12 },
+  chartTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
   weakSection: {
     marginHorizontal: 20,
     marginBottom: 20,
   },
-  weakTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#E86548', marginBottom: 10 },
-  weakCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF0EB',
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 8,
-  },
+  weakTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
   weakIcon: { fontSize: 20, marginRight: 10 },
   weakInfo: { flex: 1 },
-  weakName: { fontFamily: 'Fredoka_700Bold', fontSize: 14, color: '#1A535C' },
-  weakScore: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#E86548', marginTop: 1 },
-  weakBadge: {
-    backgroundColor: '#E86548',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  weakBadgeText: { fontFamily: 'Nunito_700Bold', fontSize: 10, color: '#FFFFFF' },
+  weakName: { fontFamily: 'Fredoka_700Bold', fontSize: 14 },
+  weakScore: { fontFamily: 'Nunito_400Regular', fontSize: 12 },
+  weakBadgeText: { fontFamily: 'Nunito_700Bold', fontSize: 10 },
   sectionTitle: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 20,
-    color: '#1A535C',
     paddingHorizontal: 20,
     marginBottom: 12,
-  },
-  subjectCard: {
-    marginHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 10,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
   },
   subjectHeader: {
     flexDirection: 'row',
@@ -424,46 +472,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subjectIcon: { fontSize: 20, marginRight: 10 },
-  subjectName: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C', flex: 1 },
-  subjectPct: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#FF7E5F' },
-  subjectPctWeak: { color: '#E86548' },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#F5E6D5',
-    borderRadius: 999,
-    overflow: 'hidden',
-    marginBottom: 6,
-  },
+  subjectName: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
+  subjectDetail: { fontFamily: 'Nunito_400Regular', fontSize: 13 },
   progressFill: { height: '100%', borderRadius: 999 },
-  subjectDetail: { fontFamily: 'Nunito_400Regular', fontSize: 13, color: '#718096' },
-  exportBtn: {
-    marginHorizontal: 20,
-    backgroundColor: '#2EC4B6',
-    paddingVertical: 14,
-    borderRadius: 16,
-    alignItems: 'center',
-    marginTop: 8,
-    shadowColor: '#2EC4B6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  exportBtnText: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#FFFFFF' },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
-    width: '100%',
-    maxWidth: 400,
-    alignItems: 'center',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -472,43 +489,24 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 16,
   },
-  modalTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20, color: '#1A535C' },
-  modalClose: { fontFamily: 'Nunito_700Bold', fontSize: 20, color: '#718096' },
+  modalTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20 },
+  modalClose: { fontFamily: 'Nunito_700Bold', fontSize: 20 },
   modalStudentInfo: { alignItems: 'center', marginBottom: 20 },
-  modalStudentName: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
-  modalStudentGrade: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096', marginTop: 2 },
+  modalStudentName: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
+  modalStudentGrade: { fontFamily: 'Nunito_400Regular', fontSize: 14 },
   modalQRWrapper: { marginBottom: 16, alignItems: 'center' },
-  modalQRCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 12,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
-  },
   modalChunkNav: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
     marginBottom: 16,
   },
-  modalChunkBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F5E6D5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   modalChunkBtnDisabled: { opacity: 0.4 },
-  modalChunkBtnText: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
-  modalChunkCount: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C' },
+  modalChunkBtnText: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
+  modalChunkCount: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
   modalHint: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 13,
-    color: '#718096',
     textAlign: 'center',
     lineHeight: 18,
   },

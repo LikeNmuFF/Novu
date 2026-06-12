@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../context/ThemeContext';
 
@@ -47,6 +48,7 @@ export default function SettingsScreen({
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { colors } = theme;
 

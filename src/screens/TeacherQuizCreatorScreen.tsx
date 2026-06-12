@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDb } from '../services/database';
 import type { User } from '../services/auth';
+import { useTheme } from '../context/ThemeContext';
 
 interface Subject {
   id: number;
@@ -52,6 +53,9 @@ export default function TeacherQuizCreatorScreen({
   ]);
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const { colors } = theme;
+  const styles = createStyles(colors);
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
 
@@ -218,7 +222,7 @@ export default function TeacherQuizCreatorScreen({
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your question"
-                  placeholderTextColor="#718096"
+                  placeholderTextColor={colors.textLight}
                   value={q.question}
                   onChangeText={(v) => updateQuestion(qi, 'question', v)}
                 />
@@ -236,7 +240,7 @@ export default function TeacherQuizCreatorScreen({
                     <TextInput
                       style={styles.optionInput}
                       placeholder={`Option ${String.fromCharCode(65 + oi)}`}
-                      placeholderTextColor="#718096"
+                      placeholderTextColor={colors.textLight}
                       value={opt}
                       onChangeText={(v) => updateOption(qi, oi, v)}
                     />
@@ -246,7 +250,7 @@ export default function TeacherQuizCreatorScreen({
                 <TextInput
                   style={[styles.input, styles.explanationInput]}
                   placeholder="Explanation (optional)"
-                  placeholderTextColor="#718096"
+                  placeholderTextColor={colors.textLight}
                   value={q.explanation}
                   onChangeText={(v) => updateQuestion(qi, 'explanation', v)}
                 />
@@ -269,186 +273,198 @@ export default function TeacherQuizCreatorScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  headerBack: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 16,
-    color: '#718096',
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#1A535C',
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 15,
-    color: '#1A535C',
-    marginBottom: 8,
-  },
-  pickerRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  pickerChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  pickerChipSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  pickerIcon: {
-    fontSize: 16,
-  },
-  pickerText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 13,
-    color: '#4A5568',
-  },
-  pickerTextSelected: {
-    color: '#E86548',
-  },
-  emptyText: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: '#718096',
-    fontStyle: 'italic',
-  },
-  questionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  addBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#2EC4B6',
-    borderRadius: 8,
-  },
-  addBtnText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 12,
-    color: '#FFFFFF',
-  },
-  questionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  questionTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  questionNum: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#FF7E5F',
-  },
-  removeBtn: {
-    fontSize: 18,
-    color: '#E53E3E',
-    fontWeight: '700',
-  },
-  input: {
-    backgroundColor: '#FEFCF9',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderRadius: 12,
-    padding: 12,
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 15,
-    color: '#1A535C',
-    marginBottom: 10,
-  },
-  optionLabel: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 12,
-    color: '#718096',
-    marginBottom: 6,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-    padding: 8,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  optionRowCorrect: {
-    borderColor: '#6BCB77',
-    backgroundColor: '#E0F5E6',
-  },
-  optionLetter: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 14,
-    color: '#718096',
-    width: 24,
-    textAlign: 'center',
-  },
-  optionLetterCorrect: {
-    color: '#2D8A4E',
-  },
-  optionInput: {
-    flex: 1,
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: '#1A535C',
-  },
-  explanationInput: {
-    minHeight: 50,
-  },
-  btnSave: {
-    backgroundColor: '#FF7E5F',
-    paddingVertical: 16,
-    borderRadius: 9999,
-    alignItems: 'center',
-    marginTop: 8,
-    shadowColor: '#FF7E5F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  btnSaveDisabled: {
-    opacity: 0.5,
-  },
-  btnSaveText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-});
+const createStyles = (colors: {
+  background: string;
+  surface: string;
+  text: string;
+  textMuted: string;
+  textLight: string;
+  border: string;
+  coral: string;
+  teal: string;
+  gold: string;
+  green: string;
+}) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    headerBack: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 16,
+      color: colors.textLight,
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.text,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 40,
+    },
+    formGroup: {
+      marginBottom: 20,
+    },
+    label: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 15,
+      color: colors.text,
+      marginBottom: 8,
+    },
+    pickerRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    pickerChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    pickerChipSelected: {
+      borderColor: colors.coral,
+      backgroundColor: colors.border,
+    },
+    pickerIcon: {
+      fontSize: 16,
+    },
+    pickerText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    pickerTextSelected: {
+      color: colors.coral,
+    },
+    emptyText: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 14,
+      color: colors.textLight,
+      fontStyle: 'italic',
+    },
+    questionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    addBtn: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: colors.teal,
+      borderRadius: 8,
+    },
+    addBtnText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 12,
+      color: '#FFFFFF',
+    },
+    questionCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    questionTop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    questionNum: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.coral,
+    },
+    removeBtn: {
+      fontSize: 18,
+      color: '#E53E3E',
+      fontWeight: '700',
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 12,
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 15,
+      color: colors.text,
+      marginBottom: 10,
+    },
+    optionLabel: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 12,
+      color: colors.textLight,
+      marginBottom: 6,
+    },
+    optionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 8,
+      padding: 8,
+      borderRadius: 10,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    optionRowCorrect: {
+      borderColor: colors.green,
+      backgroundColor: colors.surface,
+    },
+    optionLetter: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 14,
+      color: colors.textLight,
+      width: 24,
+      textAlign: 'center',
+    },
+    optionLetterCorrect: {
+      color: colors.green,
+    },
+    optionInput: {
+      flex: 1,
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 14,
+      color: colors.text,
+    },
+    explanationInput: {
+      minHeight: 50,
+    },
+    btnSave: {
+      backgroundColor: colors.coral,
+      paddingVertical: 16,
+      borderRadius: 9999,
+      alignItems: 'center',
+      marginTop: 8,
+      shadowColor: colors.coral,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    btnSaveDisabled: {
+      opacity: 0.5,
+    },
+    btnSaveText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: '#FFFFFF',
+    },
+  });

@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { registerUser, registerTeacher } from '../services/auth';
 import type { User } from '../services/auth';
+import { useTheme } from '../context/ThemeContext';
 
 const GRADE_OPTIONS = [1, 2, 3, 4, 5, 6];
 
@@ -32,6 +33,10 @@ export default function RegisterScreen({
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const [teacherCode, setTeacherCode] = useState('');
+  const { theme } = useTheme();
+  const { colors } = theme;
+
+  const styles = makeStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,7 +85,7 @@ export default function RegisterScreen({
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.fullNamePlaceholder')}
-                placeholderTextColor="#718096"
+                placeholderTextColor={colors.textLight}
                 value={name}
                 onChangeText={setName}
               />
@@ -128,7 +133,7 @@ export default function RegisterScreen({
                 <TextInput
                   style={styles.input}
                   placeholder="e.g., TCH-A3B8X9"
-                  placeholderTextColor="#718096"
+                  placeholderTextColor={colors.textLight}
                   value={teacherCode}
                   onChangeText={setTeacherCode}
                   autoCapitalize="characters"
@@ -142,7 +147,7 @@ export default function RegisterScreen({
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.usernamePlaceholder')}
-                placeholderTextColor="#718096"
+                placeholderTextColor={colors.textLight}
                 value={username}
                 onChangeText={setUsername}
                 autoCapitalize="none"
@@ -154,7 +159,7 @@ export default function RegisterScreen({
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.passwordPlaceholder')}
-                placeholderTextColor="#718096"
+                placeholderTextColor={colors.textLight}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -206,180 +211,182 @@ export default function RegisterScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-    paddingHorizontal: 20,
-  },
-  illustration: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#E8F8F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginTop: 24,
-    marginBottom: 12,
-    position: 'relative',
-  },
-  illustrationEmoji: {
-    fontSize: 64,
-  },
-  illustrationRing: {
-    position: 'absolute',
-    top: -6,
-    left: -6,
-    right: -6,
-    bottom: -6,
-    borderRadius: 76,
-    borderWidth: 3,
-    borderColor: '#7DDAD0',
-    borderStyle: 'dashed',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 28,
-    color: '#1A535C',
-  },
-  headerAccent: {
-    color: '#FF7E5F',
-  },
-  headerSub: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 15,
-    color: '#4A5568',
-    marginTop: 4,
-  },
-  form: {
-    gap: 4,
-  },
-  formGroup: {
-    marginBottom: 14,
-  },
-  label: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 15,
-    color: '#1A535C',
-    marginBottom: 6,
-  },
-  hint: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 12,
-    color: '#718096',
-    marginTop: 4,
-  },
-  roleRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  roleCard: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: 14,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  roleCardSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  roleIcon: {
-    fontSize: 20,
-  },
-  roleText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 15,
-    color: '#4A5568',
-  },
-  roleTextSelected: {
-    color: '#E86548',
-  },
-  input: {
-    backgroundColor: '#FEFCF9',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderRadius: 12,
-    padding: 14,
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  gradeGrid: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  gradeOption: {
-    flex: 1,
-    minWidth: '30%',
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  gradeOptionSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  gradeNum: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 24,
-    color: '#4A5568',
-  },
-  gradeNumSelected: {
-    color: '#E86548',
-  },
-  gradeLabel: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 12,
-    color: '#718096',
-  },
-  gradeLabelSelected: {
-    color: '#E86548',
-    fontWeight: '700',
-  },
-  btnGroup: {
-    paddingVertical: 16,
-    gap: 12,
-  },
-  btnPrimary: {
-    backgroundColor: '#FF7E5F',
-    paddingVertical: 16,
-    borderRadius: 9999,
-    alignItems: 'center',
-    shadowColor: '#FF7E5F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  btnPrimaryDisabled: {
-    backgroundColor: '#FFB5A0',
-    shadowOpacity: 0.1,
-  },
-  btnPrimaryText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-  switchText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 14,
-    color: '#718096',
-    textAlign: 'center',
-    paddingVertical: 10,
-  },
-});
+function makeStyles(colors: any) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 20,
+    },
+    illustration: {
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: `${colors.teal}1A`,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginTop: 24,
+      marginBottom: 12,
+      position: 'relative',
+    },
+    illustrationEmoji: {
+      fontSize: 64,
+    },
+    illustrationRing: {
+      position: 'absolute',
+      top: -6,
+      left: -6,
+      right: -6,
+      bottom: -6,
+      borderRadius: 76,
+      borderWidth: 3,
+      borderColor: colors.teal,
+      borderStyle: 'dashed',
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 28,
+      color: colors.text,
+    },
+    headerAccent: {
+      color: colors.coral,
+    },
+    headerSub: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 15,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    form: {
+      gap: 4,
+    },
+    formGroup: {
+      marginBottom: 14,
+    },
+    label: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 15,
+      color: colors.text,
+      marginBottom: 6,
+    },
+    hint: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 12,
+      color: colors.textLight,
+      marginTop: 4,
+    },
+    roleRow: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    roleCard: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      padding: 14,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    roleCardSelected: {
+      borderColor: colors.coral,
+      backgroundColor: `${colors.coral}1A`,
+    },
+    roleIcon: {
+      fontSize: 20,
+    },
+    roleText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 15,
+      color: colors.textMuted,
+    },
+    roleTextSelected: {
+      color: colors.coral,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 14,
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 16,
+      color: colors.text,
+    },
+    gradeGrid: {
+      flexDirection: 'row',
+      gap: 8,
+      flexWrap: 'wrap',
+    },
+    gradeOption: {
+      flex: 1,
+      minWidth: '30%',
+      padding: 12,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 12,
+      alignItems: 'center',
+    },
+    gradeOptionSelected: {
+      borderColor: colors.coral,
+      backgroundColor: `${colors.coral}1A`,
+    },
+    gradeNum: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 24,
+      color: colors.textMuted,
+    },
+    gradeNumSelected: {
+      color: colors.coral,
+    },
+    gradeLabel: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 12,
+      color: colors.textLight,
+    },
+    gradeLabelSelected: {
+      color: colors.coral,
+      fontWeight: '700',
+    },
+    btnGroup: {
+      paddingVertical: 16,
+      gap: 12,
+    },
+    btnPrimary: {
+      backgroundColor: colors.coral,
+      paddingVertical: 16,
+      borderRadius: 9999,
+      alignItems: 'center',
+      shadowColor: colors.coral,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    btnPrimaryDisabled: {
+      backgroundColor: `${colors.coral}99`,
+      shadowOpacity: 0.1,
+    },
+    btnPrimaryText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.surface,
+    },
+    switchText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 14,
+      color: colors.textLight,
+      textAlign: 'center',
+      paddingVertical: 10,
+    },
+  });
+}

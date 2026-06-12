@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Speech from 'expo-speech';
+import { useTheme } from '../context/ThemeContext';
 
 export interface LessonView {
   id: number;
@@ -35,6 +36,8 @@ export default function LessonViewerScreen({
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
   const bottomInset = insets.bottom;
+  const { theme } = useTheme();
+  const { colors } = theme;
 
   const [speaking, setSpeaking] = useState(false);
 
@@ -72,7 +75,7 @@ export default function LessonViewerScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={[styles.hero, { backgroundColor: lesson.subjectColor, paddingTop: topInset + 24 }]}>
@@ -103,19 +106,23 @@ export default function LessonViewerScreen({
 
           {/* Read Aloud Button */}
           <TouchableOpacity
-            style={[styles.readAloudBtn, speaking && styles.readAloudBtnActive]}
+            style={[
+              styles.readAloudBtn,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+              speaking && { backgroundColor: colors.coral + '15', borderColor: colors.coral },
+            ]}
             onPress={toggleReadAloud}
             activeOpacity={0.7}
           >
             <Text style={styles.readAloudIcon}>{speaking ? '⏹' : '🔊'}</Text>
-            <Text style={[styles.readAloudText, speaking && styles.readAloudTextActive]}>
+            <Text style={[styles.readAloudText, { color: colors.text }, speaking && { color: colors.coral }]}>
               {speaking ? ' Stop Reading' : ' Read Aloud'}
             </Text>
           </TouchableOpacity>
 
           {/* Lesson Text */}
-          <View style={styles.lessonText}>
-            <Text style={styles.lessonContent}>{lesson.content}</Text>
+          <View style={[styles.lessonText, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.lessonContent, { color: colors.text }]}>{lesson.content}</Text>
           </View>
         </View>
 
@@ -123,9 +130,9 @@ export default function LessonViewerScreen({
       </ScrollView>
 
       {/* Take Quiz CTA */}
-      <View style={[styles.bottomCta, { paddingBottom: bottomInset + 12 }]}>
+      <View style={[styles.bottomCta, { paddingBottom: bottomInset + 12, backgroundColor: colors.background }]}>
         <TouchableOpacity
-          style={styles.quizBtn}
+          style={[styles.quizBtn, { backgroundColor: colors.coral }]}
           onPress={onTakeQuiz}
           activeOpacity={0.8}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -138,7 +145,7 @@ export default function LessonViewerScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
+  container: { flex: 1 },
   hero: {
     paddingBottom: 28,
     paddingHorizontal: 20,
@@ -160,25 +167,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 999,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#F5E6D5',
     shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
     elevation: 2,
   },
-  readAloudBtnActive: { backgroundColor: '#FFF0EB', borderColor: '#FF7E5F' },
   readAloudIcon: { fontSize: 18 },
-  readAloudText: { fontFamily: 'Nunito_700Bold', fontSize: 15, color: '#1A535C', marginLeft: 6 },
-  readAloudTextActive: { color: '#E86548' },
+  readAloudText: { fontFamily: 'Nunito_700Bold', fontSize: 15, marginLeft: 6 },
   lessonText: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 20,
     shadowColor: '#1A535C',
@@ -191,7 +193,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
     fontSize: 16,
     lineHeight: 26,
-    color: '#1A535C',
   },
   bottomCta: {
     position: 'absolute',
@@ -199,10 +200,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: '#FFF8F0',
   },
   quizBtn: {
-    backgroundColor: '#FF7E5F',
     paddingVertical: 16,
     borderRadius: 999,
     alignItems: 'center',

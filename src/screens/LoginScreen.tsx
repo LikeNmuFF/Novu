@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loginUser } from '../services/auth';
 import type { User } from '../services/auth';
+import { useTheme } from '../context/ThemeContext';
 
 export default function LoginScreen({
   onLogin,
@@ -28,6 +29,10 @@ export default function LoginScreen({
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
+  const { colors } = theme;
+
+  const styles = makeStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +58,7 @@ export default function LoginScreen({
             <TextInput
               style={styles.input}
               placeholder={t('auth.login.usernamePlaceholder')}
-              placeholderTextColor="#718096"
+              placeholderTextColor={colors.textLight}
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
@@ -65,7 +70,7 @@ export default function LoginScreen({
             <TextInput
               style={styles.input}
               placeholder={t('auth.login.passwordPlaceholder')}
-              placeholderTextColor="#718096"
+              placeholderTextColor={colors.textLight}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -117,148 +122,150 @@ export default function LoginScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-    paddingHorizontal: 20,
-  },
-  illustration: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#E8F8F6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 16,
-    position: 'relative',
-  },
-  illustrationEmoji: {
-    fontSize: 64,
-  },
-  illustrationRing: {
-    position: 'absolute',
-    top: -6,
-    left: -6,
-    right: -6,
-    bottom: -6,
-    borderRadius: 76,
-    borderWidth: 3,
-    borderColor: '#7DDAD0',
-    borderStyle: 'dashed',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 28,
-    color: '#1A535C',
-  },
-  headerAccent: {
-    color: '#FF7E5F',
-  },
-  headerSub: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 15,
-    color: '#4A5568',
-    marginTop: 4,
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  formGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 15,
-    color: '#1A535C',
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: '#FEFCF9',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderRadius: 12,
-    padding: 14,
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  formRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    backgroundColor: '#FF7E5F',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxMark: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  checkboxLabel: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: '#4A5568',
-  },
-  forgotLink: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 13,
-    color: '#2EC4B6',
-  },
-  btnGroup: {
-    paddingVertical: 16,
-    gap: 12,
-  },
-  btnPrimary: {
-    backgroundColor: '#FF7E5F',
-    paddingVertical: 16,
-    borderRadius: 9999,
-    alignItems: 'center',
-    shadowColor: '#FF7E5F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  btnPrimaryDisabled: {
-    backgroundColor: '#FFB5A0',
-    shadowOpacity: 0.1,
-  },
-  btnPrimaryText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-  btnSecondary: {
-    paddingVertical: 14,
-    borderRadius: 9999,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    backgroundColor: '#FFFFFF',
-  },
-  btnSecondaryText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 15,
-    color: '#1A535C',
-  },
-});
+function makeStyles(colors: any) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 20,
+    },
+    illustration: {
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: `${colors.teal}1A`,
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginBottom: 16,
+      position: 'relative',
+    },
+    illustrationEmoji: {
+      fontSize: 64,
+    },
+    illustrationRing: {
+      position: 'absolute',
+      top: -6,
+      left: -6,
+      right: -6,
+      bottom: -6,
+      borderRadius: 76,
+      borderWidth: 3,
+      borderColor: colors.teal,
+      borderStyle: 'dashed',
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 28,
+      color: colors.text,
+    },
+    headerAccent: {
+      color: colors.coral,
+    },
+    headerSub: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 15,
+      color: colors.textMuted,
+      marginTop: 4,
+    },
+    form: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    formGroup: {
+      marginBottom: 16,
+    },
+    label: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 15,
+      color: colors.text,
+      marginBottom: 6,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 14,
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 16,
+      color: colors.text,
+    },
+    formRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 4,
+      marginBottom: 8,
+    },
+    checkboxRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderRadius: 4,
+      backgroundColor: colors.coral,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    checkboxMark: {
+      color: colors.surface,
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    checkboxLabel: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    forgotLink: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 13,
+      color: colors.teal,
+    },
+    btnGroup: {
+      paddingVertical: 16,
+      gap: 12,
+    },
+    btnPrimary: {
+      backgroundColor: colors.coral,
+      paddingVertical: 16,
+      borderRadius: 9999,
+      alignItems: 'center',
+      shadowColor: colors.coral,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    btnPrimaryDisabled: {
+      backgroundColor: `${colors.coral}99`,
+      shadowOpacity: 0.1,
+    },
+    btnPrimaryText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.surface,
+    },
+    btnSecondary: {
+      paddingVertical: 14,
+      borderRadius: 9999,
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+    },
+    btnSecondaryText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 15,
+      color: colors.text,
+    },
+  });
+}

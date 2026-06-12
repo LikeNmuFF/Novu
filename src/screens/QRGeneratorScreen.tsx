@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { QRChunkMeta, QRContentType } from '../types/qr';
 import { createQRPackage } from '../utils/qr/package';
+import { useTheme } from '../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 const QR_SIZE = width - 80;
@@ -29,6 +30,8 @@ export default function QRGeneratorScreen({
   onBack: () => void;
   onShareAnother: () => void;
 }) {
+  const { theme } = useTheme();
+  const { colors } = theme;
   const [chunks] = useState<QRChunkMeta[]>(() => createQRPackage(content, contentType));
   const [currentChunk, setCurrentChunk] = useState(0);
   const insets = useSafeAreaInsets();
@@ -39,13 +42,13 @@ export default function QRGeneratorScreen({
   const chunkData = JSON.stringify(chunk);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
-          <Text style={styles.headerBack}>← Back</Text>
+          <Text style={[styles.headerBack, { color: colors.textLight }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Share via QR</Text>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Share via QR</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -54,22 +57,22 @@ export default function QRGeneratorScreen({
         showsVerticalScrollIndicator={false}
       >
         {/* Content Info */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoLabel}>Sharing</Text>
-          <Text style={styles.infoTitle}>{title}</Text>
-          <View style={styles.infoBadge}>
-            <Text style={styles.infoBadgeText}>{contentType.toUpperCase()}</Text>
+        <View style={[styles.infoCard, { backgroundColor: colors.surface, shadowColor: colors.text }]}>
+          <Text style={[styles.infoLabel, { color: colors.textLight }]}>Sharing</Text>
+          <Text style={[styles.infoTitle, { color: colors.text }]}>{title}</Text>
+          <View style={[styles.infoBadge, { backgroundColor: colors.coral + '20' }]}>
+            <Text style={[styles.infoBadgeText, { color: colors.coral }]}>{contentType.toUpperCase()}</Text>
           </View>
         </View>
 
         {/* QR Code */}
         <View style={styles.qrWrapper}>
-          <View style={styles.qrCard}>
+          <View style={[styles.qrCard, { backgroundColor: colors.surface, shadowColor: colors.text }]}>
             <QRCode
               value={chunkData}
               size={QR_SIZE}
-              backgroundColor="#FFFFFF"
-              color="#1A535C"
+              backgroundColor={colors.surface}
+              color={colors.text}
             />
           </View>
         </View>
@@ -78,16 +81,16 @@ export default function QRGeneratorScreen({
         {isMultiChunk && (
           <View style={styles.chunkNav}>
             <TouchableOpacity
-              style={[styles.chunkArrow, currentChunk === 0 && styles.chunkArrowDisabled]}
+              style={[styles.chunkArrow, { backgroundColor: colors.surface, shadowColor: colors.text }, currentChunk === 0 && styles.chunkArrowDisabled]}
               onPress={() => setCurrentChunk(Math.max(0, currentChunk - 1))}
               disabled={currentChunk === 0}
             >
-              <Text style={[styles.chunkArrowText, currentChunk === 0 && styles.chunkArrowTextDisabled]}>←</Text>
+              <Text style={[styles.chunkArrowText, { color: colors.text }, currentChunk === 0 && [styles.chunkArrowTextDisabled, { color: colors.textLight }]]}>←</Text>
             </TouchableOpacity>
 
             <View style={styles.chunkInfo}>
-              <Text style={styles.chunkLabel}>QR Code</Text>
-              <Text style={styles.chunkCount}>
+              <Text style={[styles.chunkLabel, { color: colors.textLight }]}>QR Code</Text>
+              <Text style={[styles.chunkCount, { color: colors.text }]}>
                 {currentChunk + 1} of {chunks.length}
               </Text>
               <View style={styles.chunkDots}>
@@ -96,7 +99,8 @@ export default function QRGeneratorScreen({
                     key={i}
                     style={[
                       styles.chunkDot,
-                      i === currentChunk && styles.chunkDotActive,
+                      { backgroundColor: colors.border },
+                      i === currentChunk && [styles.chunkDotActive, { backgroundColor: colors.coral }],
                     ]}
                   />
                 ))}
@@ -104,11 +108,11 @@ export default function QRGeneratorScreen({
             </View>
 
             <TouchableOpacity
-              style={[styles.chunkArrow, currentChunk === chunks.length - 1 && styles.chunkArrowDisabled]}
+              style={[styles.chunkArrow, { backgroundColor: colors.surface, shadowColor: colors.text }, currentChunk === chunks.length - 1 && styles.chunkArrowDisabled]}
               onPress={() => setCurrentChunk(Math.min(chunks.length - 1, currentChunk + 1))}
               disabled={currentChunk === chunks.length - 1}
             >
-              <Text style={[styles.chunkArrowText, currentChunk === chunks.length - 1 && styles.chunkArrowTextDisabled]}>→</Text>
+              <Text style={[styles.chunkArrowText, { color: colors.text }, currentChunk === chunks.length - 1 && [styles.chunkArrowTextDisabled, { color: colors.textLight }]]}>→</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -116,14 +120,14 @@ export default function QRGeneratorScreen({
         {/* Single chunk info */}
         {!isMultiChunk && (
           <View style={styles.singleInfo}>
-            <Text style={styles.singleInfoText}>This content fits in one QR code</Text>
+            <Text style={[styles.singleInfoText, { color: colors.textLight }]}>This content fits in one QR code</Text>
           </View>
         )}
 
         {/* Instructions */}
-        <View style={styles.instructions}>
-          <Text style={styles.instructionsTitle}>How to share:</Text>
-          <Text style={styles.instructionsText}>
+        <View style={[styles.instructions, { backgroundColor: colors.teal + '15' }]}>
+          <Text style={[styles.instructionsTitle, { color: colors.text }]}>How to share:</Text>
+          <Text style={[styles.instructionsText, { color: colors.textMuted }]}>
             {isMultiChunk
               ? `Show each QR code one by one. The student scans all ${chunks.length} codes in order to receive the complete content.`
               : 'Let the student scan this QR code using their LearnBasilan app.'}
@@ -133,8 +137,8 @@ export default function QRGeneratorScreen({
 
       {/* Bottom actions */}
       <View style={styles.bottomActions}>
-        <TouchableOpacity style={styles.btnSecondary} onPress={onShareAnother}>
-          <Text style={styles.btnSecondaryText}>Share Another</Text>
+        <TouchableOpacity style={[styles.btnSecondary, { backgroundColor: colors.surface, borderColor: colors.border }]} onPress={onShareAnother}>
+          <Text style={[styles.btnSecondaryText, { color: colors.text }]}>Share Another</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -144,7 +148,6 @@ export default function QRGeneratorScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8F0',
   },
   header: {
     flexDirection: 'row',
@@ -156,12 +159,10 @@ const styles = StyleSheet.create({
   headerBack: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 16,
-    color: '#718096',
   },
   headerTitle: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 18,
-    color: '#1A535C',
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -169,13 +170,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 20,
     width: '100%',
     alignItems: 'center',
     marginBottom: 24,
-    shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -184,14 +183,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 13,
-    color: '#718096',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   infoTitle: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 22,
-    color: '#1A535C',
     marginTop: 4,
     textAlign: 'center',
   },
@@ -199,13 +196,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    backgroundColor: '#FFF0EB',
     borderRadius: 999,
   },
   infoBadgeText: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 12,
-    color: '#E86548',
     letterSpacing: 1,
   },
   qrWrapper: {
@@ -213,10 +208,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   qrCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 16,
-    shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.12,
     shadowRadius: 30,
@@ -232,10 +225,8 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -246,12 +237,9 @@ const styles = StyleSheet.create({
   },
   chunkArrowText: {
     fontSize: 20,
-    color: '#1A535C',
     fontFamily: 'Fredoka_700Bold',
   },
-  chunkArrowTextDisabled: {
-    color: '#718096',
-  },
+  chunkArrowTextDisabled: {},
   chunkInfo: {
     alignItems: 'center',
     gap: 6,
@@ -259,14 +247,12 @@ const styles = StyleSheet.create({
   chunkLabel: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 12,
-    color: '#718096',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   chunkCount: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 20,
-    color: '#1A535C',
   },
   chunkDots: {
     flexDirection: 'row',
@@ -276,10 +262,8 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#F5E6D5',
   },
   chunkDotActive: {
-    backgroundColor: '#FF7E5F',
     width: 20,
   },
   singleInfo: {
@@ -288,11 +272,9 @@ const styles = StyleSheet.create({
   singleInfoText: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 14,
-    color: '#718096',
     textAlign: 'center',
   },
   instructions: {
-    backgroundColor: '#E8F8F6',
     borderRadius: 16,
     padding: 20,
     width: '100%',
@@ -300,13 +282,11 @@ const styles = StyleSheet.create({
   instructionsTitle: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 16,
-    color: '#1A535C',
     marginBottom: 6,
   },
   instructionsText: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 14,
-    color: '#4A5568',
     lineHeight: 20,
   },
   bottomActions: {
@@ -316,16 +296,13 @@ const styles = StyleSheet.create({
     right: 20,
   },
   btnSecondary: {
-    backgroundColor: '#FFFFFF',
     paddingVertical: 16,
     borderRadius: 9999,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#F5E6D5',
   },
   btnSecondaryText: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 16,
-    color: '#1A535C',
   },
 });

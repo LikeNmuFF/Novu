@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { getDb } from '../services/database';
 import { getChaptersForSubject, getSubjectProgress, ChapterStatus } from '../services/progress';
+import { useTheme } from '../context/ThemeContext';
 
 function ProgressRing({
   progress,
@@ -68,6 +69,8 @@ export default function SubjectDetailScreen({
 }) {
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
+  const { theme } = useTheme();
+  const { colors } = theme;
 
   const [subject, setSubject] = useState<{
     name: string; icon: string; color: string;
@@ -104,7 +107,7 @@ export default function SubjectDetailScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
@@ -150,7 +153,8 @@ export default function SubjectDetailScreen({
               key={ch.id}
               style={[
                 styles.chapterItem,
-                ch.status === 'unlocked' && styles.chapterItemUnlocked,
+                { backgroundColor: colors.surface },
+                ch.status === 'unlocked' && [styles.chapterItemUnlocked, { borderColor: colors.coral }],
                 ch.status === 'locked' && styles.chapterItemLocked,
               ]}
               activeOpacity={ch.status === 'locked' ? 1 : 0.7}
@@ -159,10 +163,10 @@ export default function SubjectDetailScreen({
               }}
               hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
-              <View style={styles.chapterNumber}>
-                <Text style={styles.chapterNumberText}>{index + 1}</Text>
+              <View style={[styles.chapterNumber, { backgroundColor: colors.border }]}>
+                <Text style={[styles.chapterNumberText, { color: colors.textMuted }]}>{index + 1}</Text>
               </View>
-              <View style={styles.chapterStatusBadge}>
+              <View style={[styles.chapterStatusBadge, { backgroundColor: colors.surface }]}>
                 <Text style={styles.chapterStatusText}>
                   {ch.status === 'completed' ? '✅' : ch.status === 'unlocked' ? '📖' : '🔒'}
                 </Text>
@@ -170,17 +174,16 @@ export default function SubjectDetailScreen({
               <View style={styles.chapterInfo}>
                 <Text style={[
                   styles.chapterTitle,
-                  ch.status === 'unlocked' && styles.chapterTitleUnlocked,
-                  ch.status === 'locked' && styles.chapterTitleLocked,
+                  { color: ch.status === 'unlocked' ? colors.coral : ch.status === 'locked' ? colors.textLight : colors.text },
                 ]}>
                   {ch.title}
                 </Text>
-                <Text style={styles.chapterMeta}>
+                <Text style={[styles.chapterMeta, { color: colors.textLight }]}>
                   {statusMeta(ch.status, ch.score)}
                 </Text>
               </View>
               {ch.status !== 'locked' && (
-                <Text style={styles.chapterArrow}>→</Text>
+                <Text style={[styles.chapterArrow, { color: colors.textLight }]}>→</Text>
               )}
             </TouchableOpacity>
           ))}
@@ -191,7 +194,7 @@ export default function SubjectDetailScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
+  container: { flex: 1 },
   hero: {
     marginBottom: 20,
     paddingBottom: 28,
@@ -220,7 +223,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     padding: 16,
-    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 2 },
@@ -228,23 +230,22 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  chapterItemUnlocked: { borderWidth: 2, borderColor: '#FFA68F' },
+  chapterItemUnlocked: { borderWidth: 2 },
   chapterItemLocked: { opacity: 0.6 },
   chapterNumber: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#F5E6D5',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  chapterNumberText: { fontFamily: 'Nunito_700Bold', fontSize: 12, color: '#4A5568' },
-  chapterStatusBadge: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F4EF' },
+  chapterNumberText: { fontFamily: 'Nunito_700Bold', fontSize: 12 },
+  chapterStatusBadge: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
   chapterStatusText: { fontSize: 16 },
   chapterInfo: { flex: 1 },
-  chapterTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C' },
-  chapterTitleUnlocked: { color: '#E86548' },
-  chapterTitleLocked: { color: '#718096' },
-  chapterMeta: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 2 },
-  chapterArrow: { fontSize: 18, color: '#718096' },
+  chapterTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 16 },
+  chapterTitleUnlocked: { },
+  chapterTitleLocked: { },
+  chapterMeta: { fontFamily: 'Nunito_400Regular', fontSize: 12, marginTop: 2 },
+  chapterArrow: { fontSize: 18 },
 });

@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -31,6 +32,9 @@ export default function QuizEngineScreen({
   onBack: () => void;
   onComplete: (passed: boolean, score: number, total: number) => void;
 }) {
+  const { theme } = useTheme();
+  const { colors } = theme;
+
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
@@ -92,7 +96,7 @@ export default function QuizEngineScreen({
     const passed = pct >= PASS_THRESHOLD;
 
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <Animated.View
           style={[
             styles.resultContainer,
@@ -100,31 +104,31 @@ export default function QuizEngineScreen({
           ]}
         >
           <Text style={styles.resultEmoji}>{passed ? '🎉' : '💪'}</Text>
-          <Text style={styles.resultTitle}>
+          <Text style={[styles.resultTitle, { color: colors.text }]}>
             {passed ? 'Mahusay!' : 'Subukan Muli!'}
           </Text>
-          <Text style={styles.resultSub}>
+          <Text style={[styles.resultSub, { color: colors.textMuted }]}>
             {passed
               ? 'Mahusay ang iyong ginawa! Ipagpatuloy ang magandang aral!'
               : 'Huwag mawalan ng pag-asa! Maaari mong subukan muli.'}
           </Text>
 
-          <View style={styles.scoreCircle}>
-            <Text style={styles.scoreNum}>{Math.round(pct * 100)}%</Text>
-            <Text style={styles.scoreLabel}>Score</Text>
+          <View style={[styles.scoreCircle, { backgroundColor: colors.surface, borderColor: colors.gold }]}>
+            <Text style={[styles.scoreNum, { color: colors.text }]}>{Math.round(pct * 100)}%</Text>
+            <Text style={[styles.scoreLabel, { color: colors.textMuted }]}>Score</Text>
           </View>
 
-          <Text style={styles.scoreDetail}>
+          <Text style={[styles.scoreDetail, { color: colors.textMuted }]}>
             {correct} / {questions.length} correct
           </Text>
-          <Text style={styles.scoreXp}>
+          <Text style={[styles.scoreXp, { color: colors.coral }]}>
             {pct === 1 ? '+100 XP' : pct >= 0.75 ? '+50 XP' : '+0 XP'}
           </Text>
 
           <View style={styles.resultActions}>
             {!passed && (
               <TouchableOpacity
-                style={styles.retryBtn}
+                style={[styles.retryBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
                 onPress={() => {
                   setCurrentQ(0);
                   setAnswers([]);
@@ -134,15 +138,15 @@ export default function QuizEngineScreen({
                 }}
                 activeOpacity={0.8}
               >
-                <Text style={styles.retryBtnText}>Subukan Muli</Text>
+                <Text style={[styles.retryBtnText, { color: colors.text }]}>Subukan Muli</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={[styles.doneBtn, passed && styles.doneBtnPrimary]}
+              style={[styles.doneBtn, passed && styles.doneBtnPrimary, { borderColor: passed ? '#FF7E5F' : colors.border }]}
               onPress={() => onComplete(passed, correct, questions.length)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.doneBtnText, passed && styles.doneBtnTextPrimary]}>
+              <Text style={[styles.doneBtnText, passed && styles.doneBtnTextPrimary, { color: colors.text }]}>
                 {passed ? 'Next Lesson →' : 'Bumalik'}
               </Text>
             </TouchableOpacity>
@@ -155,33 +159,33 @@ export default function QuizEngineScreen({
   const question = questions[currentQ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} activeOpacity={0.7}>
-          <Text style={styles.backText}>← Exit</Text>
+          <Text style={[styles.backText, { color: colors.textLight }]}>← Exit</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Quiz</Text>
-        <Text style={styles.headerCount}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Quiz</Text>
+        <Text style={[styles.headerCount, { color: colors.textLight }]}>
           {currentQ + 1}/{questions.length}
         </Text>
       </View>
 
       {/* Progress Bar */}
-      <View style={styles.progressBar}>
+      <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
         <View style={[styles.progressFill, { width: `${progress}%` }]} />
       </View>
 
       {/* Question */}
       <View style={styles.questionArea}>
-        <Text style={styles.lessonLabel}>{lessonTitle}</Text>
-        <Text style={styles.questionText}>{question.question}</Text>
+        <Text style={[styles.lessonLabel, { color: colors.teal }]}>{lessonTitle}</Text>
+        <Text style={[styles.questionText, { color: colors.text }]}>{question.question}</Text>
       </View>
 
       {/* Options */}
       <View style={styles.optionsArea}>
         {question.options.map((opt, i) => {
-          let optionStyle = styles.option;
-          let textStyle = styles.optionText;
+          let optionStyle = { ...styles.option, backgroundColor: colors.surface, borderColor: colors.border };
+          let textStyle = { ...styles.optionText, color: colors.text };
 
           if (selected !== null) {
             if (i === question.correctAnswer) {
@@ -203,7 +207,7 @@ export default function QuizEngineScreen({
               onPress={() => handleAnswer(i)}
               activeOpacity={0.7}
             >
-              <Text style={styles.optionLetter}>
+              <Text style={[styles.optionLetter, { color: colors.textMuted, backgroundColor: colors.border }]}>
                 {String.fromCharCode(65 + i)}
               </Text>
               <Text style={textStyle}>{opt}</Text>
@@ -216,7 +220,7 @@ export default function QuizEngineScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -225,12 +229,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
   },
-  backText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#718096' },
-  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20, color: '#1A535C' },
-  headerCount: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: '#718096' },
+  backText: { fontFamily: 'Nunito_700Bold', fontSize: 14 },
+  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20 },
+  headerCount: { fontFamily: 'Nunito_700Bold', fontSize: 14 },
   progressBar: {
     height: 6,
-    backgroundColor: '#F5E6D5',
     marginHorizontal: 20,
     borderRadius: 999,
     overflow: 'hidden',
@@ -248,13 +251,11 @@ const styles = StyleSheet.create({
   lessonLabel: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 13,
-    color: '#2EC4B6',
     marginBottom: 8,
   },
   questionText: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 20,
-    color: '#1A535C',
     lineHeight: 30,
   },
   optionsArea: {
@@ -264,11 +265,9 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 2,
-    borderColor: '#F5E6D5',
     shadowColor: '#1A535C',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -281,17 +280,15 @@ const styles = StyleSheet.create({
   optionLetter: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 16,
-    color: '#718096',
     marginRight: 14,
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#F5E6D5',
     textAlign: 'center',
     lineHeight: 28,
     overflow: 'hidden',
   },
-  optionText: { fontFamily: 'Nunito_400Regular', fontSize: 16, color: '#1A535C', flex: 1 },
+  optionText: { fontFamily: 'Nunito_400Regular', fontSize: 16, flex: 1 },
   optionTextCorrect: { color: '#2F855A' },
   optionTextWrong: { color: '#C53030' },
   optionTextDimmed: { color: '#A0AEC0' },
@@ -302,11 +299,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   resultEmoji: { fontSize: 72, marginBottom: 16 },
-  resultTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 32, color: '#1A535C', marginBottom: 8 },
+  resultTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 32, marginBottom: 8 },
   resultSub: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 15,
-    color: '#4A5568',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 28,
@@ -315,45 +311,38 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: '#FFF8E0',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
     borderWidth: 4,
-    borderColor: '#FFD93D',
   },
-  scoreNum: { fontFamily: 'Fredoka_700Bold', fontSize: 36, color: '#1A535C' },
-  scoreLabel: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096' },
+  scoreNum: { fontFamily: 'Fredoka_700Bold', fontSize: 36 },
+  scoreLabel: { fontFamily: 'Nunito_400Regular', fontSize: 14 },
   scoreDetail: {
     fontFamily: 'Nunito_400Regular',
     fontSize: 15,
-    color: '#4A5568',
     marginBottom: 4,
   },
   scoreXp: {
     fontFamily: 'Fredoka_700Bold',
     fontSize: 18,
-    color: '#FF7E5F',
     marginBottom: 32,
   },
   resultActions: { width: '100%', gap: 12 },
   retryBtn: {
-    backgroundColor: '#FFFFFF',
     paddingVertical: 14,
     borderRadius: 999,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#F5E6D5',
   },
-  retryBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#1A535C' },
+  retryBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16 },
   doneBtn: {
     paddingVertical: 16,
     borderRadius: 999,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#F5E6D5',
   },
   doneBtnPrimary: { backgroundColor: '#FF7E5F', borderColor: '#FF7E5F' },
-  doneBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#1A535C' },
+  doneBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16 },
   doneBtnTextPrimary: { color: '#FFFFFF' },
 });

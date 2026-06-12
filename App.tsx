@@ -86,6 +86,7 @@ function AppContent() {
   const [selectedLanguage, setSelectedLanguage] = useState('fil');
   const [textSize, setTextSize] = useState(16);
   const [readAloud, setReadAloud] = useState(true);
+  const [scannedReport, setScannedReport] = useState<any>(null);
   const historyRef = useRef<FlowStep[]>([]);
 
   const isRootStep = useCallback((s: FlowStep) => {

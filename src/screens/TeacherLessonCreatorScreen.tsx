@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDb } from '../services/database';
 import type { User } from '../services/auth';
+import { useTheme } from '../context/ThemeContext';
 
 interface Subject {
   id: number;
@@ -46,6 +47,9 @@ export default function TeacherLessonCreatorScreen({
   const [imageUrls, setImageUrls] = useState('');
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const { colors } = theme;
+  const styles = createStyles(colors);
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
 
@@ -192,7 +196,7 @@ export default function TeacherLessonCreatorScreen({
             <TextInput
               style={styles.input}
               placeholder="e.g., Addition with Regrouping"
-              placeholderTextColor="#718096"
+              placeholderTextColor={colors.textLight}
               value={title}
               onChangeText={setTitle}
             />
@@ -204,7 +208,7 @@ export default function TeacherLessonCreatorScreen({
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Write your lesson content here..."
-              placeholderTextColor="#718096"
+              placeholderTextColor={colors.textLight}
               value={content}
               onChangeText={setContent}
               multiline
@@ -218,7 +222,7 @@ export default function TeacherLessonCreatorScreen({
             <TextInput
               style={styles.input}
               placeholder="Add image URLs, one per line"
-              placeholderTextColor="#718096"
+              placeholderTextColor={colors.textLight}
               multiline
               value={imageUrls}
               onChangeText={setImageUrls}
@@ -240,154 +244,166 @@ export default function TeacherLessonCreatorScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  headerBack: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 16,
-    color: '#718096',
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#1A535C',
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 15,
-    color: '#1A535C',
-    marginBottom: 8,
-  },
-  subjectGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  subjectCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  subjectCardSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  subjectIcon: {
-    fontSize: 20,
-  },
-  subjectName: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 14,
-    color: '#4A5568',
-  },
-  subjectNameSelected: {
-    color: '#E86548',
-  },
-  langRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  langChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 999,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-  },
-  langChipSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  langChipText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 13,
-    color: '#4A5568',
-  },
-  langChipTextSelected: {
-    color: '#E86548',
-  },
-  gradeRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  gradeChip: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gradeChipSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-  },
-  gradeChipText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#4A5568',
-  },
-  gradeChipTextSelected: {
-    color: '#E86548',
-  },
-  input: {
-    backgroundColor: '#FEFCF9',
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderRadius: 12,
-    padding: 14,
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  textArea: {
-    minHeight: 160,
-    lineHeight: 22,
-  },
-  btnSave: {
-    backgroundColor: '#FF7E5F',
-    paddingVertical: 16,
-    borderRadius: 9999,
-    alignItems: 'center',
-    marginTop: 8,
-    shadowColor: '#FF7E5F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  btnSaveDisabled: {
-    opacity: 0.5,
-  },
-  btnSaveText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-});
+const createStyles = (colors: {
+  background: string;
+  surface: string;
+  text: string;
+  textMuted: string;
+  textLight: string;
+  border: string;
+  coral: string;
+  teal: string;
+  gold: string;
+  green: string;
+}) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    headerBack: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 16,
+      color: colors.textLight,
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.text,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 40,
+    },
+    formGroup: {
+      marginBottom: 20,
+    },
+    label: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 15,
+      color: colors.text,
+      marginBottom: 8,
+    },
+    subjectGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+    },
+    subjectCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      padding: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    subjectCardSelected: {
+      borderColor: colors.coral,
+      backgroundColor: colors.border,
+    },
+    subjectIcon: {
+      fontSize: 20,
+    },
+    subjectName: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 14,
+      color: colors.textMuted,
+    },
+    subjectNameSelected: {
+      color: colors.coral,
+    },
+    langRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
+    langChip: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: colors.surface,
+      borderRadius: 999,
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    langChipSelected: {
+      borderColor: colors.coral,
+      backgroundColor: colors.border,
+    },
+    langChipText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    langChipTextSelected: {
+      color: colors.coral,
+    },
+    gradeRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    gradeChip: {
+      width: 44,
+      height: 44,
+      borderRadius: 12,
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    gradeChipSelected: {
+      borderColor: colors.coral,
+      backgroundColor: colors.border,
+    },
+    gradeChipText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.textMuted,
+    },
+    gradeChipTextSelected: {
+      color: colors.coral,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 14,
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 16,
+      color: colors.text,
+    },
+    textArea: {
+      minHeight: 160,
+      lineHeight: 22,
+    },
+    btnSave: {
+      backgroundColor: colors.coral,
+      paddingVertical: 16,
+      borderRadius: 9999,
+      alignItems: 'center',
+      marginTop: 8,
+      shadowColor: colors.coral,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    btnSaveDisabled: {
+      opacity: 0.5,
+    },
+    btnSaveText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: '#FFFFFF',
+    },
+  });

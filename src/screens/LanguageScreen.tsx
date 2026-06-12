@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../context/ThemeContext';
 
 interface Language {
   id: string;
@@ -27,6 +28,10 @@ export default function LanguageScreen({ onContinue }: { onContinue: (lang: stri
   const [selected, setSelected] = useState('fil');
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
+  const { theme } = useTheme();
+  const { colors } = theme;
+
+  const styles = makeStyles(colors);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,118 +85,120 @@ export default function LanguageScreen({ onContinue }: { onContinue: (lang: stri
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-    paddingHorizontal: 20,
-  },
-  header: {
-    paddingVertical: 24,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 28,
-    color: '#1A535C',
-  },
-  headerAccent: {
-    color: '#FF7E5F',
-  },
-  headerSub: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 15,
-    color: '#4A5568',
-    marginTop: 6,
-  },
-  list: {
-    flex: 1,
-    gap: 12,
-    justifyContent: 'center',
-  },
-  langCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    padding: 18,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  langCardSelected: {
-    borderColor: '#FF7E5F',
-    backgroundColor: '#FFF0EB',
-    shadowColor: '#FF7E5F',
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  flagWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#FFF8F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flag: {
-    fontSize: 28,
-  },
-  langInfo: {
-    flex: 1,
-  },
-  langName: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#1A535C',
-  },
-  langNative: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: '#718096',
-  },
-  check: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkSelected: {
-    backgroundColor: '#FF7E5F',
-    borderColor: '#FF7E5F',
-  },
-  checkMark: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  btnGroup: {
-    paddingVertical: 16,
-    gap: 12,
-  },
-  btnPrimary: {
-    backgroundColor: '#FF7E5F',
-    paddingVertical: 16,
-    borderRadius: 9999,
-    alignItems: 'center',
-    shadowColor: '#FF7E5F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 4,
-  },
-  btnPrimaryText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-});
+function makeStyles(colors: any) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 20,
+    },
+    header: {
+      paddingVertical: 24,
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 28,
+      color: colors.text,
+    },
+    headerAccent: {
+      color: colors.coral,
+    },
+    headerSub: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 15,
+      color: colors.textMuted,
+      marginTop: 6,
+    },
+    list: {
+      flex: 1,
+      gap: 12,
+      justifyContent: 'center',
+    },
+    langCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      padding: 18,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      borderWidth: 2,
+      borderColor: 'transparent',
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    langCardSelected: {
+      borderColor: colors.coral,
+      backgroundColor: `${colors.coral}1A`,
+      shadowColor: colors.coral,
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    flagWrap: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    flag: {
+      fontSize: 28,
+    },
+    langInfo: {
+      flex: 1,
+    },
+    langName: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.text,
+    },
+    langNative: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 14,
+      color: colors.textLight,
+    },
+    check: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      borderWidth: 2,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    checkSelected: {
+      backgroundColor: colors.coral,
+      borderColor: colors.coral,
+    },
+    checkMark: {
+      color: colors.surface,
+      fontSize: 14,
+      fontWeight: '700',
+    },
+    btnGroup: {
+      paddingVertical: 16,
+      gap: 12,
+    },
+    btnPrimary: {
+      backgroundColor: colors.coral,
+      paddingVertical: 16,
+      borderRadius: 9999,
+      alignItems: 'center',
+      shadowColor: colors.coral,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      elevation: 4,
+    },
+    btnPrimaryText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.surface,
+    },
+  });
+}

@@ -184,10 +184,14 @@
   "settings": {
     "title": "Mga Setting",
     "language": "Wika",
+    "appearance": "Pagpakita",
     "darkMode": "Dark Mode",
     "textSize": "Pagdako Text",
+    "accessibility": "Accessibility",
     "readAloud": "Basa Halting",
-    "about": "Mahitungod Sa App",
+    "aboutApp": "Mahitungod Sa App",
+    "version": "Version",
+    "appName": "Pangalan Ng App",
     "resetData": "Kukun Tanang Data",
     "resetDataConfirm": "Mabubura ang tanan nga aralin, quiz, ug progreso. Sigurado ka?"
   },

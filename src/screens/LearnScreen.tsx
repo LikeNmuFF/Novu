@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import Svg, { Path, Circle } from 'react-native-svg';
 import { getDb } from '../services/database';
 import { getSubjectProgress, getChaptersForSubject, ChapterStatus } from '../services/progress';
 import BottomNav from '../components/BottomNav';
+import { useTheme } from '../context/ThemeContext';
 import type { User } from '../services/auth';
 
 const { width } = Dimensions.get('window');
@@ -92,6 +93,9 @@ export default function LearnScreen({
 }) {
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
+  const { theme } = useTheme();
+  const { colors } = theme;
+  const themedStyles = useMemo(() => createStyles(colors), [colors]);
 
   const [subjects, setSubjects] = useState<SubjectWithChapters[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -153,7 +157,7 @@ export default function LearnScreen({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={themedStyles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         pointerEvents="box-none"
@@ -163,32 +167,32 @@ export default function LearnScreen({
         }
       >
         {/* Header */}
-        <View style={[styles.header, { paddingTop: topInset }]}>
+        <View style={[themedStyles.header, { paddingTop: topInset }]}>
           <View>
-            <Text style={styles.title}>Learn</Text>
-            <Text style={styles.subtitle}>Choose a subject to start learning</Text>
+            <Text style={themedStyles.title}>Learn</Text>
+            <Text style={themedStyles.subtitle}>Choose a subject to start learning</Text>
           </View>
         </View>
 
         {/* Summary Card */}
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryRow}>
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryNum}>
+        <View style={themedStyles.summaryCard}>
+          <View style={themedStyles.summaryRow}>
+            <View style={themedStyles.summaryItem}>
+              <Text style={themedStyles.summaryNum}>
                 {subjects.reduce((sum, s) => sum + s.completed, 0)}
               </Text>
-              <Text style={styles.summaryLabel}>Completed</Text>
+              <Text style={themedStyles.summaryLabel}>Completed</Text>
             </View>
-            <View style={styles.summaryDivider} />
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryNum}>
+            <View style={themedStyles.summaryDivider} />
+            <View style={themedStyles.summaryItem}>
+              <Text style={themedStyles.summaryNum}>
                 {subjects.reduce((sum, s) => sum + s.total, 0)}
               </Text>
-              <Text style={styles.summaryLabel}>Total Lessons</Text>
+              <Text style={themedStyles.summaryLabel}>Total Lessons</Text>
             </View>
-            <View style={styles.summaryDivider} />
-            <View style={styles.summaryItem}>
-              <Text style={styles.summaryNum}>
+            <View style={themedStyles.summaryDivider} />
+            <View style={themedStyles.summaryItem}>
+              <Text style={themedStyles.summaryNum}>
                 {subjects.length > 0
                   ? Math.round(
                       subjects.reduce((sum, s) => sum + s.pct, 0) / subjects.length
@@ -196,49 +200,49 @@ export default function LearnScreen({
                   : 0}
                 %
               </Text>
-              <Text style={styles.summaryLabel}>Avg Progress</Text>
+              <Text style={themedStyles.summaryLabel}>Avg Progress</Text>
             </View>
           </View>
         </View>
 
         {/* Subject List */}
         {subjects.map((subj) => (
-          <View key={subj.id} style={styles.subjectBlock}>
+          <View key={subj.id} style={themedStyles.subjectBlock}>
             {/* Subject Card */}
             <TouchableOpacity
-              style={[styles.subjectCard, { borderLeftColor: subj.color }]}
+              style={[themedStyles.subjectCard, { borderLeftColor: subj.color }]}
               onPress={() => toggleExpand(subj.id)}
               activeOpacity={0.7}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <View style={[styles.subjectIcon, { backgroundColor: subj.bg_color }]}>
-                <Text style={styles.subjectIconText}>{subj.icon}</Text>
+              <View style={[themedStyles.subjectIcon, { backgroundColor: subj.bg_color }]}>
+                <Text style={themedStyles.subjectIconText}>{subj.icon}</Text>
               </View>
-              <View style={styles.subjectInfo}>
-                <Text style={styles.subjectName}>{subj.name}</Text>
-                <Text style={styles.subjectProgress}>
+              <View style={themedStyles.subjectInfo}>
+                <Text style={themedStyles.subjectName}>{subj.name}</Text>
+                <Text style={themedStyles.subjectProgress}>
                   {subj.completed}/{subj.total} lessons
                 </Text>
               </View>
-              <View style={styles.subjectRight}>
+              <View style={themedStyles.subjectRight}>
                 <ProgressRing progress={subj.pct} color={subj.color} size={44} strokeWidth={4} />
-                <Text style={styles.subjectPct}>{subj.pct}%</Text>
+                <Text style={themedStyles.subjectPct}>{subj.pct}%</Text>
               </View>
-              <Text style={[styles.expandIcon, subj.expanded && styles.expandIconActive]}>
+              <Text style={[themedStyles.expandIcon, subj.expanded && themedStyles.expandIconActive]}>
                 ▼
               </Text>
             </TouchableOpacity>
 
             {/* Expanded Chapter List */}
             {subj.expanded && (
-              <View style={styles.chapterList}>
+              <View style={themedStyles.chapterList}>
                 {subj.chapters.map((ch) => (
                   <TouchableOpacity
                     key={ch.id}
                     style={[
-                      styles.chapterItem,
-                      ch.status === 'unlocked' && styles.chapterItemUnlocked,
-                      ch.status === 'locked' && styles.chapterItemLocked,
+                      themedStyles.chapterItem,
+                      ch.status === 'unlocked' && themedStyles.chapterItemUnlocked,
+                      ch.status === 'locked' && themedStyles.chapterItemLocked,
                     ]}
                     activeOpacity={ch.status === 'locked' ? 1 : 0.7}
                     onPress={() => {
@@ -246,27 +250,27 @@ export default function LearnScreen({
                     }}
                     hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                   >
-                    <View style={styles.chapterStatusBadge}>
-                      <Text style={styles.chapterStatusText}>
+                    <View style={themedStyles.chapterStatusBadge}>
+                      <Text style={themedStyles.chapterStatusText}>
                         {chapterStatusIcon(ch.status)}
                       </Text>
                     </View>
-                    <View style={styles.chapterInfo}>
+                    <View style={themedStyles.chapterInfo}>
                       <Text
                         style={[
-                          styles.chapterTitle,
-                          ch.status === 'unlocked' && styles.chapterTitleUnlocked,
-                          ch.status === 'locked' && styles.chapterTitleLocked,
+                          themedStyles.chapterTitle,
+                          ch.status === 'unlocked' && themedStyles.chapterTitleUnlocked,
+                          ch.status === 'locked' && themedStyles.chapterTitleLocked,
                         ]}
                       >
                         Ch. {ch.chapterNumber}: {ch.title}
                       </Text>
-                      <Text style={styles.chapterMeta}>
+                      <Text style={themedStyles.chapterMeta}>
                         {chapterStatusText(ch.status, ch.score)}
                       </Text>
                     </View>
                     {ch.status !== 'locked' && (
-                      <Text style={styles.chapterArrow}>→</Text>
+                      <Text style={themedStyles.chapterArrow}>→</Text>
                     )}
                   </TouchableOpacity>
                 ))}
@@ -276,10 +280,10 @@ export default function LearnScreen({
         ))}
 
         {subjects.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📚</Text>
-            <Text style={styles.emptyTitle}>No subjects available</Text>
-            <Text style={styles.emptyDesc}>
+          <View style={themedStyles.emptyState}>
+            <Text style={themedStyles.emptyIcon}>📚</Text>
+            <Text style={themedStyles.emptyTitle}>No subjects available</Text>
+            <Text style={themedStyles.emptyDesc}>
               Import lessons via QR code or ask your teacher to add content.
             </Text>
           </View>
@@ -291,83 +295,84 @@ export default function LearnScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF8F0' },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-  },
-  title: { fontFamily: 'Fredoka_700Bold', fontSize: 28, color: '#1A535C' },
-  subtitle: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096', marginTop: 2 },
-  summaryCard: {
-    marginHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 20,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  summaryItem: { alignItems: 'center' },
-  summaryNum: { fontFamily: 'Fredoka_700Bold', fontSize: 22, color: '#FF7E5F' },
-  summaryLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 2 },
-  summaryDivider: { width: 1, height: 32, backgroundColor: '#F5E6D5' },
-  subjectBlock: { marginBottom: 12, paddingHorizontal: 20 },
-  subjectCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
-    borderLeftWidth: 4,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  subjectIcon: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  subjectIconText: { fontSize: 24 },
-  subjectInfo: { flex: 1 },
-  subjectName: { fontFamily: 'Fredoka_700Bold', fontSize: 17, color: '#1A535C' },
-  subjectProgress: { fontFamily: 'Nunito_400Regular', fontSize: 13, color: '#718096', marginTop: 2 },
-  subjectRight: { alignItems: 'center', marginRight: 12 },
-  subjectPct: { fontFamily: 'Nunito_700Bold', fontSize: 11, color: '#718096', marginTop: 2 },
-  expandIcon: { fontSize: 12, color: '#718096', transform: [{ rotate: '0deg' }] },
-  expandIconActive: { transform: [{ rotate: '180deg' }] },
-  chapterList: { marginTop: 8, paddingLeft: 24, gap: 8 },
-  chapterItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  chapterItemUnlocked: { borderWidth: 1.5, borderColor: '#FFA68F' },
-  chapterItemLocked: { opacity: 0.5 },
-  chapterStatusBadge: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F4EF' },
-  chapterStatusText: { fontSize: 14 },
-  chapterInfo: { flex: 1 },
-  chapterTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 14, color: '#1A535C' },
-  chapterTitleUnlocked: { color: '#E86548' },
-  chapterTitleLocked: { color: '#718096' },
-  chapterMeta: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: '#718096', marginTop: 1 },
-  chapterArrow: { fontSize: 16, color: '#718096' },
-  emptyState: { alignItems: 'center', paddingTop: 60, paddingHorizontal: 40 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C', marginBottom: 8 },
-  emptyDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096', textAlign: 'center', lineHeight: 20 },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingBottom: 16,
+    },
+    title: { fontFamily: 'Fredoka_700Bold', fontSize: 28, color: colors.text },
+    subtitle: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: colors.textLight, marginTop: 2 },
+    summaryCard: {
+      marginHorizontal: 20,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 20,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    summaryRow: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
+    summaryItem: { alignItems: 'center' },
+    summaryNum: { fontFamily: 'Fredoka_700Bold', fontSize: 22, color: colors.coral },
+    summaryLabel: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: colors.textLight, marginTop: 2 },
+    summaryDivider: { width: 1, height: 32, backgroundColor: colors.border },
+    subjectBlock: { marginBottom: 12, paddingHorizontal: 20 },
+    subjectCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 16,
+      borderLeftWidth: 4,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    subjectIcon: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+    subjectIconText: { fontSize: 24 },
+    subjectInfo: { flex: 1 },
+    subjectName: { fontFamily: 'Fredoka_700Bold', fontSize: 17, color: colors.text },
+    subjectProgress: { fontFamily: 'Nunito_400Regular', fontSize: 13, color: colors.textLight, marginTop: 2 },
+    subjectRight: { alignItems: 'center', marginRight: 12 },
+    subjectPct: { fontFamily: 'Nunito_700Bold', fontSize: 11, color: colors.textLight, marginTop: 2 },
+    expandIcon: { fontSize: 12, color: colors.textLight, transform: [{ rotate: '0deg' }] },
+    expandIconActive: { transform: [{ rotate: '180deg' }] },
+    chapterList: { marginTop: 8, paddingLeft: 24, gap: 8 },
+    chapterItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      padding: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 1,
+    },
+    chapterItemUnlocked: { borderWidth: 1.5, borderColor: colors.coral },
+    chapterItemLocked: { opacity: 0.5 },
+    chapterStatusBadge: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.border },
+    chapterStatusText: { fontSize: 14 },
+    chapterInfo: { flex: 1 },
+    chapterTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 14, color: colors.text },
+    chapterTitleUnlocked: { color: colors.coral },
+    chapterTitleLocked: { color: colors.textLight },
+    chapterMeta: { fontFamily: 'Nunito_400Regular', fontSize: 12, color: colors.textLight, marginTop: 1 },
+    chapterArrow: { fontSize: 16, color: colors.textLight },
+    emptyState: { alignItems: 'center', paddingTop: 60, paddingHorizontal: 40 },
+    emptyIcon: { fontSize: 48, marginBottom: 12 },
+    emptyTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: colors.text, marginBottom: 8 },
+    emptyDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: colors.textLight, textAlign: 'center', lineHeight: 20 },
+  });

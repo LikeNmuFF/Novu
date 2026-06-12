@@ -14,6 +14,7 @@ import { getDb, getStudentReports, deleteStudentReport } from '../services/datab
 import { generateTeacherCode } from '../services/auth';
 import type { User } from '../services/auth';
 import type { StudentReport } from '../types/qr';
+import { useTheme } from '../context/ThemeContext';
 
 interface CreatedLesson {
   id: number;
@@ -43,6 +44,9 @@ export default function TeacherDashboardScreen({
   onViewReport: (report: StudentReport) => void;
 }) {
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const { colors } = theme;
+  const styles = createStyles(colors);
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
   const [lessons, setLessons] = useState<CreatedLesson[]>([]);
@@ -271,349 +275,361 @@ export default function TeacherDashboardScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF8F0',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  headerBack: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 16,
-    color: '#718096',
-  },
-  headerTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#1A535C',
-  },
-  headerAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#2EC4B6',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerAvatarText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  statNum: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 28,
-    color: '#FF7E5F',
-  },
-  statLabel: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: '#718096',
-    marginTop: 2,
-  },
-  codeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E8F8F6',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 12,
-    gap: 14,
-    borderWidth: 2,
-    borderColor: '#7DDAD0',
-  },
-  codeIcon: {
-    fontSize: 28,
-    width: 44,
-    textAlign: 'center',
-  },
-  codeContent: {
-    flex: 1,
-  },
-  codeTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  codeDesc: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: '#4A5568',
-    marginTop: 2,
-  },
-  codeArrow: {
-    fontSize: 20,
-    color: '#1A535C',
-  },
-  codeDisplay: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#7DDAD0',
-  },
-  codeLabel: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 12,
-    color: '#718096',
-  },
-  codeValue: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 24,
-    color: '#1A535C',
-    marginVertical: 4,
-    letterSpacing: 2,
-  },
-  codeHint: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 11,
-    color: '#718096',
-  },
-  createCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 12,
-    gap: 14,
-    borderWidth: 2,
-    borderColor: '#F5E6D5',
-    borderStyle: 'dashed',
-  },
-  createIcon: {
-    fontSize: 28,
-    width: 44,
-    textAlign: 'center',
-  },
-  createContent: {
-    flex: 1,
-  },
-  createTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  createDesc: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: '#718096',
-    marginTop: 2,
-  },
-  createArrow: {
-    fontSize: 20,
-    color: '#718096',
-  },
-  sectionTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 20,
-    color: '#1A535C',
-    marginTop: 16,
-    marginBottom: 12,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 40,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 12,
-  },
-  emptyText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#4A5568',
-  },
-  emptyDesc: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 14,
-    color: '#718096',
-    textAlign: 'center',
-    marginTop: 4,
-    paddingHorizontal: 40,
-  },
-  lessonCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 10,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  lessonInfo: {
-    flex: 1,
-  },
-  lessonSubject: {
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  lessonSubjectText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 12,
-    color: '#FF7E5F',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  lessonLang: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 12,
-    color: '#718096',
-  },
-  lessonGrade: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 11,
-    color: '#2EC4B6',
-    backgroundColor: '#E0F5F3',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  lessonTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#1A535C',
-    marginTop: 2,
-  },
-  shareBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#FFF0EB',
-    borderRadius: 999,
-  },
-  shareBtnText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 13,
-    color: '#E86548',
-  },
-  scanCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF0EB',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 12,
-    gap: 14,
-    borderWidth: 2,
-    borderColor: '#FF7E5F',
-  },
-  scanIcon: {
-    fontSize: 28,
-    width: 44,
-    textAlign: 'center',
-  },
-  scanContent: {
-    flex: 1,
-  },
-  scanTitle: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  scanDesc: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: '#4A5568',
-    marginTop: 2,
-  },
-  scanArrow: {
-    fontSize: 20,
-    color: '#FF7E5F',
-  },
-  reportCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 10,
-    shadowColor: '#1A535C',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  reportAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FF7E5F',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  reportAvatarText: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 18,
-    color: '#FFFFFF',
-  },
-  reportInfo: {
-    flex: 1,
-  },
-  reportName: {
-    fontFamily: 'Fredoka_700Bold',
-    fontSize: 16,
-    color: '#1A535C',
-  },
-  reportGrade: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 13,
-    color: '#718096',
-    marginTop: 2,
-  },
-  reportDate: {
-    fontFamily: 'Nunito_400Regular',
-    fontSize: 11,
-    color: '#A0AEC0',
-    marginTop: 2,
-  },
-  reportDeleteBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFF0EB',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  reportDeleteText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 14,
-    color: '#E86548',
-  },
-});
+const createStyles = (colors: {
+  background: string;
+  surface: string;
+  text: string;
+  textMuted: string;
+  textLight: string;
+  border: string;
+  coral: string;
+  teal: string;
+  gold: string;
+  green: string;
+}) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+    },
+    headerBack: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 16,
+      color: colors.textLight,
+    },
+    headerTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.text,
+    },
+    headerAvatar: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.teal,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerAvatarText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: '#FFFFFF',
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 40,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 20,
+    },
+    statCard: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      alignItems: 'center',
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    statNum: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 28,
+      color: colors.coral,
+    },
+    statLabel: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 13,
+      color: colors.textLight,
+      marginTop: 2,
+    },
+    codeCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 12,
+      gap: 14,
+      borderWidth: 2,
+      borderColor: colors.teal,
+    },
+    codeIcon: {
+      fontSize: 28,
+      width: 44,
+      textAlign: 'center',
+    },
+    codeContent: {
+      flex: 1,
+    },
+    codeTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.text,
+    },
+    codeDesc: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 13,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    codeArrow: {
+      fontSize: 20,
+      color: colors.text,
+    },
+    codeDisplay: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.teal,
+    },
+    codeLabel: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 12,
+      color: colors.textLight,
+    },
+    codeValue: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 24,
+      color: colors.text,
+      marginVertical: 4,
+      letterSpacing: 2,
+    },
+    codeHint: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 11,
+      color: colors.textLight,
+    },
+    createCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 12,
+      gap: 14,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderStyle: 'dashed',
+    },
+    createIcon: {
+      fontSize: 28,
+      width: 44,
+      textAlign: 'center',
+    },
+    createContent: {
+      flex: 1,
+    },
+    createTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.text,
+    },
+    createDesc: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 13,
+      color: colors.textLight,
+      marginTop: 2,
+    },
+    createArrow: {
+      fontSize: 20,
+      color: colors.textLight,
+    },
+    sectionTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 20,
+      color: colors.text,
+      marginTop: 16,
+      marginBottom: 12,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingVertical: 40,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+    },
+    emptyIcon: {
+      fontSize: 48,
+      marginBottom: 12,
+    },
+    emptyText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: colors.textMuted,
+    },
+    emptyDesc: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 14,
+      color: colors.textLight,
+      textAlign: 'center',
+      marginTop: 4,
+      paddingHorizontal: 40,
+    },
+    lessonCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 10,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    lessonInfo: {
+      flex: 1,
+    },
+    lessonSubject: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'center',
+    },
+    lessonSubjectText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 12,
+      color: colors.coral,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    lessonLang: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 12,
+      color: colors.textLight,
+    },
+    lessonGrade: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 11,
+      color: colors.teal,
+      backgroundColor: colors.border,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+    },
+    lessonTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.text,
+      marginTop: 2,
+    },
+    shareBtn: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: colors.border,
+      borderRadius: 999,
+    },
+    shareBtnText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 13,
+      color: colors.coral,
+    },
+    scanCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      padding: 18,
+      marginBottom: 12,
+      gap: 14,
+      borderWidth: 2,
+      borderColor: colors.coral,
+    },
+    scanIcon: {
+      fontSize: 28,
+      width: 44,
+      textAlign: 'center',
+    },
+    scanContent: {
+      flex: 1,
+    },
+    scanTitle: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.text,
+    },
+    scanDesc: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 13,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
+    scanArrow: {
+      fontSize: 20,
+      color: colors.coral,
+    },
+    reportCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 10,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    reportAvatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.coral,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    reportAvatarText: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 18,
+      color: '#FFFFFF',
+    },
+    reportInfo: {
+      flex: 1,
+    },
+    reportName: {
+      fontFamily: 'Fredoka_700Bold',
+      fontSize: 16,
+      color: colors.text,
+    },
+    reportGrade: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 13,
+      color: colors.textLight,
+      marginTop: 2,
+    },
+    reportDate: {
+      fontFamily: 'Nunito_400Regular',
+      fontSize: 11,
+      color: colors.textLight,
+      marginTop: 2,
+    },
+    reportDeleteBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    reportDeleteText: {
+      fontFamily: 'Nunito_700Bold',
+      fontSize: 14,
+      color: colors.coral,
+    },
+  });

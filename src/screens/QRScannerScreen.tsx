@@ -13,6 +13,7 @@ import { processQRScan } from '../utils/qr/package';
 import { importContent } from '../services/contentStore';
 import { QRContentType } from '../types/qr';
 import type { QRScanResult } from '../types/qr';
+import { useTheme } from '../context/ThemeContext';
 
 export default function QRScannerScreen({
   onBack,
@@ -21,6 +22,8 @@ export default function QRScannerScreen({
   onBack: () => void;
   onImported: (report?: any) => void;
 }) {
+  const { theme } = useTheme();
+  const { colors } = theme;
   const [permission, requestPermission] = useCameraPermissions();
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
@@ -96,9 +99,9 @@ export default function QRScannerScreen({
 
   if (!permission) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.teal }]}>
         <View style={styles.center}>
-          <Text style={styles.statusText}>Requesting camera permission...</Text>
+          <Text style={[styles.statusText, { color: colors.background }]}>Requesting camera permission...</Text>
         </View>
       </SafeAreaView>
     );
@@ -106,18 +109,18 @@ export default function QRScannerScreen({
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.teal }]}>
         <View style={styles.center}>
           <Text style={styles.errorIcon}>📷</Text>
-          <Text style={styles.errorTitle}>No camera access</Text>
-          <Text style={styles.errorDesc}>
+          <Text style={[styles.errorTitle, { color: colors.background }]}>No camera access</Text>
+          <Text style={[styles.errorDesc, { color: 'rgba(255,255,255,0.7)' }]}>
             Please enable camera in your settings to scan QR codes
           </Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={requestPermission}>
-            <Text style={styles.retryBtnText}>Grant Permission</Text>
+          <TouchableOpacity style={[styles.retryBtn, { backgroundColor: colors.coral }]} onPress={requestPermission}>
+            <Text style={[styles.retryBtnText, { color: colors.background }]}>Grant Permission</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.backBtn} onPress={onBack}>
-            <Text style={styles.backBtnText}>Go Back</Text>
+            <Text style={[styles.backBtnText, { color: 'rgba(255,255,255,0.6)' }]}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -125,12 +128,12 @@ export default function QRScannerScreen({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.teal }]}>
       <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
-          <Text style={styles.headerBack}>← Back</Text>
+          <Text style={[styles.headerBack, { color: 'rgba(255,255,255,0.8)' }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Scan QR Code</Text>
+        <Text style={[styles.headerTitle, { color: colors.background }]}>Scan QR Code</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -142,27 +145,27 @@ export default function QRScannerScreen({
         />
         <View style={styles.overlay}>
           <View style={styles.scanFrame}>
-            <View style={[styles.corner, styles.cornerTL]} />
-            <View style={[styles.corner, styles.cornerTR]} />
-            <View style={[styles.corner, styles.cornerBL]} />
-            <View style={[styles.corner, styles.cornerBR]} />
+            <View style={[styles.corner, styles.cornerTL, { borderColor: colors.coral }]} />
+            <View style={[styles.corner, styles.cornerTR, { borderColor: colors.coral }]} />
+            <View style={[styles.corner, styles.cornerBL, { borderColor: colors.coral }]} />
+            <View style={[styles.corner, styles.cornerBR, { borderColor: colors.coral }]} />
           </View>
         </View>
-        <View style={styles.scanLine} />
+        <View style={[styles.scanLine, { backgroundColor: colors.coral }]} />
       </View>
 
       <View style={styles.statusBar}>
         {status ? (
           <View style={[
             styles.statusCard,
-            scanResult?.status === 'complete' && styles.statusCardSuccess,
-            scanResult?.status === 'partial' && styles.statusCardPartial,
+            scanResult?.status === 'complete' && [styles.statusCardSuccess, { backgroundColor: 'rgba(107,203,119,0.3)' }],
+            scanResult?.status === 'partial' && [styles.statusCardPartial, { backgroundColor: 'rgba(255,217,61,0.3)' }],
           ]}>
-            <Text style={styles.statusText}>{status}</Text>
+            <Text style={[styles.statusText, { color: colors.background }]}>{status}</Text>
           </View>
         ) : (
-          <View style={styles.statusCard}>
-            <Text style={styles.statusHint}>Point your camera at a QR code</Text>
+          <View style={[styles.statusCard, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
+            <Text style={[styles.statusHint, { color: 'rgba(255,255,255,0.7)' }]}>Point your camera at a QR code</Text>
           </View>
         )}
       </View>
@@ -171,7 +174,7 @@ export default function QRScannerScreen({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1A535C' },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -180,8 +183,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     zIndex: 10,
   },
-  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: 'rgba(255,255,255,0.8)' },
-  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#FFFFFF' },
+  headerBack: { fontFamily: 'Nunito_700Bold', fontSize: 16 },
+  headerTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 18 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40 },
   scannerWrapper: { flex: 1, position: 'relative' },
   overlay: {
@@ -198,7 +201,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 30,
     height: 30,
-    borderColor: '#FF7E5F',
   },
   cornerTL: { top: 0, left: 0, borderTopWidth: 3, borderLeftWidth: 3 },
   cornerTR: { top: 0, right: 0, borderTopWidth: 3, borderRightWidth: 3 },
@@ -209,7 +211,6 @@ const styles = StyleSheet.create({
     left: 30,
     right: 30,
     height: 2,
-    backgroundColor: '#FF7E5F',
     top: '50%',
     opacity: 0.6,
   },
@@ -219,31 +220,29 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   statusCard: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 24,
     width: '100%',
     alignItems: 'center',
   },
-  statusCardSuccess: { backgroundColor: 'rgba(107,203,119,0.3)' },
-  statusCardPartial: { backgroundColor: 'rgba(255,217,61,0.3)' },
-  statusText: { fontFamily: 'Nunito_700Bold', fontSize: 15, color: '#FFFFFF', textAlign: 'center' },
-  statusHint: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
+  statusCardSuccess: {},
+  statusCardPartial: {},
+  statusText: { fontFamily: 'Nunito_700Bold', fontSize: 15, textAlign: 'center' },
+  statusHint: { fontFamily: 'Nunito_400Regular', fontSize: 14, textAlign: 'center' },
   errorIcon: { fontSize: 48, marginBottom: 16 },
-  errorTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 22, color: '#FFFFFF', marginBottom: 8 },
-  errorDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginBottom: 24 },
+  errorTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 22, marginBottom: 8 },
+  errorDesc: { fontFamily: 'Nunito_400Regular', fontSize: 14, textAlign: 'center', marginBottom: 24 },
   retryBtn: {
-    backgroundColor: '#FF7E5F',
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 999,
     marginBottom: 12,
   },
-  retryBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16, color: '#FFFFFF' },
+  retryBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 16 },
   backBtn: {
     paddingVertical: 12,
     paddingHorizontal: 32,
   },
-  backBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14, color: 'rgba(255,255,255,0.6)' },
+  backBtnText: { fontFamily: 'Nunito_700Bold', fontSize: 14 },
 });
