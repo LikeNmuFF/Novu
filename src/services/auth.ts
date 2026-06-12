@@ -1,6 +1,8 @@
 import * as Crypto from 'expo-crypto';
 import { getDb } from './database';
 
+const BOOTSTRAP_TEACHER_CODE = 'TCH-ADMIN';
+
 export interface User {
   id: number;
   name: string;
@@ -189,6 +191,16 @@ export async function updateUserProfile(
 export async function validateTeacherCode(code: string): Promise<boolean> {
   const db = await getDb();
   const now = Date.now();
+
+  // Bootstrap code: works only if no teachers exist yet
+  if (code === BOOTSTRAP_TEACHER_CODE) {
+    const existingTeacher = await db.getFirstAsync<{ id: number }>(
+      "SELECT id FROM users WHERE role = 'teacher' LIMIT 1"
+    );
+    if (!existingTeacher) return true;
+    return false;
+  }
+
   const row = await db.getFirstAsync<{
     id: number;
     used_by: number | null;
