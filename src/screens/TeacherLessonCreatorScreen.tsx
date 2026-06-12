@@ -12,6 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDb } from '../services/database';
 import type { User } from '../services/auth';
 
@@ -45,6 +46,8 @@ export default function TeacherLessonCreatorScreen({
   const [imageUrls, setImageUrls] = useState('');
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
 
   useEffect(() => {
     loadSubjects();
@@ -99,7 +102,7 @@ export default function TeacherLessonCreatorScreen({
         style={{ flex: 1 }}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: topInset }]}>
           <TouchableOpacity onPress={onBack}>
             <Text style={styles.headerBack}>← Back</Text>
           </TouchableOpacity>

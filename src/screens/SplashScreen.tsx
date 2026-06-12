@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import * as Font from 'expo-font';
 import Svg, { Path } from 'react-native-svg';
@@ -86,7 +87,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
   }, [onComplete]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
 
       <View style={styles.content}>
         <Animated.View
@@ -140,7 +141,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
           />
         </Svg>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

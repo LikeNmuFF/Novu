@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDb } from '../services/database';
 import { generateTeacherCode } from '../services/auth';
 import type { User } from '../services/auth';
@@ -37,6 +38,8 @@ export default function TeacherDashboardScreen({
   onShareLesson: (lesson: CreatedLesson) => void;
 }) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
   const [lessons, setLessons] = useState<CreatedLesson[]>([]);
   const [quizCount, setQuizCount] = useState(0);
   const [studentCount, setStudentCount] = useState(0);
@@ -101,7 +104,7 @@ export default function TeacherDashboardScreen({
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.headerBack}>← Back</Text>
         </TouchableOpacity>
