@@ -8,6 +8,7 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { QRChunkMeta, QRContentType } from '../types/qr';
 import { createQRPackage } from '../utils/qr/package';
@@ -30,6 +31,8 @@ export default function QRGeneratorScreen({
 }) {
   const [chunks] = useState<QRChunkMeta[]>(() => createQRPackage(content, contentType));
   const [currentChunk, setCurrentChunk] = useState(0);
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
 
   const chunk = chunks[currentChunk];
   const isMultiChunk = chunks.length > 1;
@@ -38,7 +41,7 @@ export default function QRGeneratorScreen({
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.headerBack}>← Back</Text>
         </TouchableOpacity>

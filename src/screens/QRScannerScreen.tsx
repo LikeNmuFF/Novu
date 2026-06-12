@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { processQRScan, getQRProgress } from '../utils/qr/package';
 import { importContent } from '../services/contentStore';
 import type { QRScanResult } from '../types/qr';
@@ -21,6 +22,8 @@ export default function QRScannerScreen({
   onImported: () => void;
 }) {
   const [permission, requestPermission] = useCameraPermissions();
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
   const [scanned, setScanned] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -116,7 +119,7 @@ export default function QRScannerScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
           <Text style={styles.headerBack}>← Back</Text>
         </TouchableOpacity>

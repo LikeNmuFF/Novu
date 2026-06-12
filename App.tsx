@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { BackHandler } from 'react-native';
 import { initDatabase, getDb } from './src/services/database';
 import type { User } from './src/services/auth';
 import { getLastSessionUser } from './src/services/auth';
@@ -73,6 +74,28 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState(16);
   const [readAloud, setReadAloud] = useState(true);
+  const historyRef = useRef<FlowStep[]>([]);
+
+  const isRootStep = useCallback((s: FlowStep) => {
+    return s === 'splash' || s === 'language' || s === 'onboarding' || s === 'login' || s === 'home' || s === 'teacher';
+  }, []);
+
+  const goBack = useCallback(() => {
+    const history = historyRef.current;
+    if (history.length === 0) return false;
+    const prev = history.pop()!;
+    setStep(prev);
+    return true;
+  }, []);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (isRootStep(step)) return false;
+      return goBack();
+    };
+    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => sub.remove();
+  }, [step, isRootStep, goBack]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -101,16 +124,19 @@ export default function App() {
   }, [step, user]);
 
   const navigate = useCallback((to: FlowStep) => {
+    historyRef.current.push(step);
     setStep(to);
-  }, []);
+  }, [step]);
 
   const handleLogin = useCallback((loggedInUser: User) => {
     setUser(loggedInUser);
+    historyRef.current = [];
     setStep(loggedInUser.role === 'teacher' ? 'teacher' : 'home');
   }, []);
 
   const handleRegister = useCallback((newUser: User) => {
     setUser(newUser);
+    historyRef.current = [];
     setStep(newUser.role === 'teacher' ? 'teacher' : 'home');
   }, []);
 
@@ -432,7 +458,7 @@ export default function App() {
           <StatusBar style="dark" />
           <ProfileScreen
             user={user}
-            onLogout={() => { setUser(null); navigate('login'); }}
+            onLogout={() => { setUser(null); historyRef.current = []; navigate('login'); }}
             onSettings={() => navigate('settings')}
             onUserUpdate={(updated) => setUser(updated)}
             onNavPress={handleNavPress}
@@ -457,6 +483,7 @@ export default function App() {
             onReadAloudToggle={() => setReadAloud(!readAloud)}
             onResetData={() => {
               setUser(null);
+              historyRef.current = [];
               setSelectedLanguage('fil');
               setDarkMode(false);
               setTextSize(16);
