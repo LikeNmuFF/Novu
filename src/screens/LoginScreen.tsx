@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loginUser } from '../services/auth';
 import type { User } from '../services/auth';
 
@@ -22,6 +23,8 @@ export default function LoginScreen({
   onSwitchToRegister: () => void;
 }) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +35,7 @@ export default function LoginScreen({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <View style={styles.illustration}>
+        <View style={[styles.illustration, { marginTop: topInset + 16 }]}>
           <Text style={styles.illustrationEmoji}>🎒</Text>
           <View style={styles.illustrationRing} />
         </View>
@@ -128,7 +131,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    marginTop: 32,
     marginBottom: 16,
     position: 'relative',
   },
@@ -166,6 +168,7 @@ const styles = StyleSheet.create({
   },
   form: {
     flex: 1,
+    justifyContent: 'center',
   },
   formGroup: {
     marginBottom: 16,

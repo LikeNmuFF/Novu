@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Language {
   id: string;
@@ -24,10 +25,12 @@ const languages: Language[] = [
 
 export default function LanguageScreen({ onContinue }: { onContinue: (lang: string) => void }) {
   const [selected, setSelected] = useState('fil');
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(insets.top, 16);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: topInset }]}>
         <Text style={styles.headerTitle}>
           Pumili ng <Text style={styles.headerAccent}>Wika</Text>
         </Text>
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    paddingVertical: 32,
+    paddingVertical: 24,
     alignItems: 'center',
   },
   headerTitle: {
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     gap: 12,
-    paddingVertical: 12,
+    justifyContent: 'center',
   },
   langCard: {
     flexDirection: 'row',
