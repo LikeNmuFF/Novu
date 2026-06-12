@@ -415,6 +415,7 @@
     "title": "Mga Setting",
     "language": "Wika",
     "languageDesc": "Palitan ang wika ng app",
+    "appearance": "Hitsura",
     "darkMode": "Dark Mode",
     "darkModeDesc": "I-enable ang dark theme",
     "textSize": "Laki ng Teksto",
@@ -423,10 +424,13 @@
     "textMedium": "Katamtaman",
     "textLarge": "Malaki",
     "textExtraLarge": "Sobrang Laki",
+    "accessibility": "Accessibility",
     "readAloud": "Basahin nang Malakas",
     "readAloudDesc": "I-enable ang text-to-speech",
     "aboutApp": "Tungkol sa App",
     "aboutAppDesc": "Version at impormasyon ng app",
+    "version": "Version",
+    "appName": "Pangalan ng App",
     "resetData": "I-reset Lahat ng Datos",
     "resetDataDesc": "Tanggalin ang lahat ng lokal na datos",
     "resetDataConfirm": "Mabubura ang lahat ng iyong mga aralin, quiz, at progreso. Sigurado ka?",
@@ -491,6 +495,29 @@
     "profileUpdated": "Na-update na ang profile",
     "profileUpdateFailed": "Nabigo ang pag-update ng profile",
     "loginFailed": "Nabigo ang Login",
-    "error": "Error"
+    "error": "Error",
+    "success": "Tagumpay!"
+  },
+  "report": {
+    "studentReport": "Ulat ng Estudyante",
+    "bySubject": "Ayon sa Subject",
+    "areasToImprove": "Mga Dapat Pagbutihin",
+    "needsWork": "Kailangan ng Trabaho",
+    "saveToDashboard": "I-save sa Dashboard",
+    "saved": "Na-save na",
+    "saving": "Ini-save...",
+    "average": "Average",
+    "completed": "Natapos",
+    "xp": "XP",
+    "level": "Antas",
+    "dayStreak": "{{count}} na araw na streak",
+    "lessonsCompleted": "{{count}}/{{total}} na lesson"
+  },
+  "teacher": {
+    "scanProgress": "I-scan ang Progress ng Estudyante",
+    "scanProgressDesc": "I-scan ang QR code ng estudyante para makita ang kanilang progreso",
+    "studentReports": "Mga Ulat ng Estudyante",
+    "noReports": "Wala pang ulat",
+    "noReportsDesc": "I-scan ang QR code ng progreso ng estudyante para makita ang kanilang ulat"
   }
 }

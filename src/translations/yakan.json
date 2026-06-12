@@ -137,9 +137,20 @@
   },
   "profile": {
     "title": "Profile",
+    "name": "Pangaran",
+    "grade": "Grade",
+    "xp": "XP",
+    "level": "Level",
+    "badges": "Mga Badge",
     "editProfile": "I-edit Ang Profile",
+    "generateQR": "Maggawa ug Progress QR",
     "settings": "Mga Setting",
     "logout": "Logout",
+    "logoutConfirm": "Sigurado ka ba nga gusto mo mag-logout?",
+    "aboutApp": "Mahitungod Sa App",
+    "resetData": "Kukun Tanang Data",
+    "resetDataConfirm": "Mabubura ang tanan nga data. Sigurado ka?",
+    "share": "I-share ang Progreso",
     "lessonsCompleted": "Mga Aralin nga Natapos",
     "quizAverage": "Average Quiz"
   },
@@ -173,10 +184,14 @@
   "settings": {
     "title": "Mga Setting",
     "language": "Wika",
+    "appearance": "Pagpakita",
     "darkMode": "Dark Mode",
     "textSize": "Pagdako Text",
+    "accessibility": "Accessibility",
     "readAloud": "Basa Halting",
-    "about": "Mahitungod Sa App",
+    "aboutApp": "Mahitungod Sa App",
+    "version": "Version",
+    "appName": "Pangalan Ng App",
     "resetData": "Kukun Tanang Data",
     "resetDataConfirm": "Mabubura ang tanan nga aralin, quiz, ug progreso. Sigurado ka?"
   },
@@ -203,6 +218,29 @@
     "profileUpdated": "Na-update na ang profile",
     "profileUpdateFailed": "Napakyas sa pag-update profile",
     "loginFailed": "Napakyas Ang Login",
-    "error": "Error"
+    "error": "Error",
+    "success": "Malampuson!"
+  },
+  "report": {
+    "studentReport": "Ulat Sa Estudyante",
+    "bySubject": "Sumala Sa Subject",
+    "areasToImprove": "Mga Dapit Para Paglambo",
+    "needsWork": "Kinahanglan Ug Trabaho",
+    "saveToDashboard": "I-save Sa Dashboard",
+    "saved": "Nasave Na!",
+    "saving": "Ginasave...",
+    "average": "Average",
+    "completed": "Natapos",
+    "xp": "XP",
+    "level": "Antas",
+    "dayStreak": "{{count}} ka adlaw streak",
+    "lessonsCompleted": "{{count}}/{{total}} ka aralin"
+  },
+  "teacher": {
+    "scanProgress": "I-scan Ang Progreso Sa Estudyante",
+    "scanProgressDesc": "I-scan ang QR code sa estudyante para makita ang ilang progreso",
+    "studentReports": "Mga Ulat Sa Estudyante",
+    "noReports": "Wala pay ulat",
+    "noReportsDesc": "I-scan ang QR code sa progreso sa estudyante para makita ang ilang ulat"
   }
 }

@@ -6,12 +6,12 @@ import {
   SafeAreaView,
   StyleSheet,
   Vibration,
-  Alert,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { processQRScan, getQRProgress } from '../utils/qr/package';
+import { processQRScan } from '../utils/qr/package';
 import { importContent } from '../services/contentStore';
+import { QRContentType } from '../types/qr';
 import type { QRScanResult } from '../types/qr';
 
 export default function QRScannerScreen({
@@ -19,7 +19,7 @@ export default function QRScannerScreen({
   onImported,
 }: {
   onBack: () => void;
-  onImported: () => void;
+  onImported: (report?: any) => void;
 }) {
   const [permission, requestPermission] = useCameraPermissions();
   const insets = useSafeAreaInsets();
@@ -66,6 +66,13 @@ export default function QRScannerScreen({
       if (result.status === 'complete') {
         setScanResult(result);
         setStatus('Content imported successfully!');
+
+        if (result.type === QRContentType.Progress) {
+          setTimeout(() => {
+            onImported(result.content);
+          }, 1500);
+          return;
+        }
 
         try {
           await importContent(result.type!, result.content);

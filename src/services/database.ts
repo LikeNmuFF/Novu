@@ -87,6 +87,22 @@ export async function initDatabase(): Promise<void> {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS student_reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      teacher_id INTEGER NOT NULL,
+      student_name TEXT NOT NULL,
+      grade TEXT NOT NULL,
+      average_score INTEGER NOT NULL,
+      completed_lessons INTEGER NOT NULL,
+      total_lessons INTEGER NOT NULL,
+      xp INTEGER NOT NULL,
+      level INTEGER NOT NULL,
+      streak INTEGER NOT NULL,
+      subjects TEXT NOT NULL,
+      scanned_at INTEGER NOT NULL,
+      FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
     CREATE TABLE IF NOT EXISTS earned_badges (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
@@ -381,4 +397,55 @@ async function seedLessons(database: SQLite.SQLiteDatabase): Promise<void> {
       );
     }
   }
+}
+
+export async function saveStudentReport(
+  teacherId: number,
+  report: {
+    student_name: string;
+    grade: string;
+    average_score: number;
+    completed_lessons: number;
+    total_lessons: number;
+    xp: number;
+    level: number;
+    streak: number;
+    subjects: { name: string; avg: number; completed: number; total: number }[];
+  }
+): Promise<number> {
+  const db = await getDb();
+  const result = await db.runAsync(
+    'INSERT INTO student_reports (teacher_id, student_name, grade, average_score, completed_lessons, total_lessons, xp, level, streak, subjects, scanned_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      teacherId,
+      report.student_name,
+      report.grade,
+      report.average_score,
+      report.completed_lessons,
+      report.total_lessons,
+      report.xp,
+      report.level,
+      report.streak,
+      JSON.stringify(report.subjects),
+      Date.now(),
+    ]
+  );
+  return result.lastInsertRowId;
+}
+
+export async function getStudentReports(teacherId: number): Promise<any[]> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<any>(
+    'SELECT * FROM student_reports WHERE teacher_id = ? ORDER BY scanned_at DESC',
+    [teacherId]
+  );
+  return rows.map(r => ({
+    ...r,
+    subjects: typeof r.subjects === 'string' ? JSON.parse(r.subjects) : r.subjects,
+  }));
+}
+
+export async function deleteStudentReport(id: number): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('DELETE FROM student_reports WHERE id = ?', [id]);
 }

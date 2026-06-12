@@ -8,19 +8,22 @@ import {
   ScrollView,
   RefreshControl,
   Alert,
+  Modal,
+  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import { getDb } from '../services/database';
 import { getUserStats } from '../services/auth';
 import { createQRPackage } from '../utils/qr/package';
-import { QRContentType } from '../types/qr';
+import { QRContentType, QRChunkMeta } from '../types/qr';
 import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
 
 const { width: screenWidth } = Dimensions.get('window');
+const QR_SIZE = screenWidth - 120;
 
 interface SubjectProgress {
   name: string;
@@ -48,6 +51,9 @@ export default function ProgressScreen({
   const [subjectProgress, setSubjectProgress] = useState<SubjectProgress[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [xpHistory, setXpHistory] = useState<number[]>([]);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrChunks, setQRChunks] = useState<QRChunkMeta[]>([]);
+  const [currentChunk, setCurrentChunk] = useState(0);
 
   const loadData = useCallback(async () => {
     try {
@@ -113,7 +119,7 @@ export default function ProgressScreen({
   const handleExportQR = async () => {
     try {
       const qrData = {
-        student: user.name,
+        student_name: user.name,
         grade: user.grade,
         average_score: overallAvg,
         completed_lessons: totalCompleted,
@@ -128,8 +134,10 @@ export default function ProgressScreen({
           total: s.total,
         })),
       };
-      const qr = createQRPackage(qrData, QRContentType.Progress);
-      Alert.alert(t('alerts.progressQRGenerated'), t('alerts.qrGenerated', { count: qr.length }));
+      const chunks = createQRPackage(qrData, QRContentType.Progress);
+      setQRChunks(chunks);
+      setCurrentChunk(0);
+      setShowQRModal(true);
     } catch {
       Alert.alert(t('alerts.error'), t('errors.storage'));
     }
@@ -260,6 +268,64 @@ export default function ProgressScreen({
       </ScrollView>
 
       <BottomNav activeTab={activeTab} onNavPress={onNavPress} />
+
+      {/* QR Display Modal */}
+      <Modal visible={showQRModal} transparent animationType="fade" onRequestClose={() => setShowQRModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>📤 Share Progress</Text>
+              <TouchableOpacity onPress={() => setShowQRModal(false)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalStudentInfo}>
+              <Text style={styles.modalStudentName}>{user.name}</Text>
+              <Text style={styles.modalStudentGrade}>{user.grade}</Text>
+            </View>
+
+            <View style={styles.modalQRWrapper}>
+              <View style={styles.modalQRCard}>
+                <QRCode
+                  value={JSON.stringify(qrChunks[currentChunk])}
+                  size={QR_SIZE}
+                  backgroundColor="#FFFFFF"
+                  color="#1A535C"
+                />
+              </View>
+            </View>
+
+            {qrChunks.length > 1 && (
+              <View style={styles.modalChunkNav}>
+                <TouchableOpacity
+                  style={[styles.modalChunkBtn, currentChunk === 0 && styles.modalChunkBtnDisabled]}
+                  onPress={() => setCurrentChunk(Math.max(0, currentChunk - 1))}
+                  disabled={currentChunk === 0}
+                >
+                  <Text style={styles.modalChunkBtnText}>←</Text>
+                </TouchableOpacity>
+                <Text style={styles.modalChunkCount}>
+                  {currentChunk + 1} / {qrChunks.length}
+                </Text>
+                <TouchableOpacity
+                  style={[styles.modalChunkBtn, currentChunk === qrChunks.length - 1 && styles.modalChunkBtnDisabled]}
+                  onPress={() => setCurrentChunk(Math.min(qrChunks.length - 1, currentChunk + 1))}
+                  disabled={currentChunk === qrChunks.length - 1}
+                >
+                  <Text style={styles.modalChunkBtnText}>→</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <Text style={styles.modalHint}>
+              {qrChunks.length > 1
+                ? `Show each QR code one by one. Teacher scans all ${qrChunks.length} codes.`
+                : 'Show this QR code to your teacher to share your progress.'}
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -384,4 +450,66 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   exportBtnText: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#FFFFFF' },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 16,
+  },
+  modalTitle: { fontFamily: 'Fredoka_700Bold', fontSize: 20, color: '#1A535C' },
+  modalClose: { fontFamily: 'Nunito_700Bold', fontSize: 20, color: '#718096' },
+  modalStudentInfo: { alignItems: 'center', marginBottom: 20 },
+  modalStudentName: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
+  modalStudentGrade: { fontFamily: 'Nunito_400Regular', fontSize: 14, color: '#718096', marginTop: 2 },
+  modalQRWrapper: { marginBottom: 16, alignItems: 'center' },
+  modalQRCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 12,
+    shadowColor: '#1A535C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 6,
+  },
+  modalChunkNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 16,
+  },
+  modalChunkBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F5E6D5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalChunkBtnDisabled: { opacity: 0.4 },
+  modalChunkBtnText: { fontFamily: 'Fredoka_700Bold', fontSize: 18, color: '#1A535C' },
+  modalChunkCount: { fontFamily: 'Fredoka_700Bold', fontSize: 16, color: '#1A535C' },
+  modalHint: {
+    fontFamily: 'Nunito_400Regular',
+    fontSize: 13,
+    color: '#718096',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
 });

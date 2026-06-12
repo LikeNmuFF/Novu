@@ -63,3 +63,23 @@ export interface QRStore {
     createdAt: number;
   };
 }
+
+export interface StudentReport {
+  id?: number;
+  teacher_id?: number;
+  student_name: string;
+  grade: string;
+  average_score: number;
+  completed_lessons: number;
+  total_lessons: number;
+  xp: number;
+  level: number;
+  streak: number;
+  subjects: {
+    name: string;
+    avg: number;
+    completed: number;
+    total: number;
+  }[];
+  scanned_at: number;
+}

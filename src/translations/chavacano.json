@@ -137,9 +137,20 @@
   },
   "profile": {
     "title": "Profile",
+    "name": "Nombre",
+    "grade": "Grade",
+    "xp": "XP",
+    "level": "Level",
+    "badges": "Mga Badge",
     "editProfile": "Edit Profile",
+    "generateQR": "Genera Progress QR",
     "settings": "Mga Setting",
     "logout": "Logout",
+    "logoutConfirm": "Seguro ka ba que quieres logout?",
+    "aboutApp": "Sobre la App",
+    "resetData": "Bura Todo Data",
+    "resetDataConfirm": "Mabubura todo el data. Seguro ka?",
+    "share": "Share el Progreso",
     "lessonsCompleted": "Mga Aralin na Acabado",
     "quizAverage": "Average Quiz"
   },
@@ -173,10 +184,14 @@
   "settings": {
     "title": "Mga Setting",
     "language": "Idioma",
+    "appearance": "Apariencia",
     "darkMode": "Dark Mode",
     "textSize": "Tamaño Texto",
+    "accessibility": "Accessibility",
     "readAloud": "Lee Alto",
-    "about": "Sobre la App",
+    "aboutApp": "Sobre la App",
+    "version": "Version",
+    "appName": "Nombre del App",
     "resetData": "Bura Todo Data",
     "resetDataConfirm": "Mabubura todo el aralin, quiz, y progreso. Seguro ka?"
   },
@@ -203,6 +218,29 @@
     "profileUpdated": "Ya update el profile",
     "profileUpdateFailed": "Fallo el update profile",
     "loginFailed": "Fallo el Login",
-    "error": "Error"
+    "error": "Error",
+    "success": "Ya funciona!"
+  },
+  "report": {
+    "studentReport": "Reporte del Estudiante",
+    "bySubject": "Por Subject",
+    "areasToImprove": "Areas para Mejora",
+    "needsWork": "Necesita Trabaho",
+    "saveToDashboard": "Save sa Dashboard",
+    "saved": "Ya save na!",
+    "saving": "Ya save...",
+    "average": "Average",
+    "completed": "Ya Acaba",
+    "xp": "XP",
+    "level": "Nivel",
+    "dayStreak": "{{count}} na araw streak",
+    "lessonsCompleted": "{{count}}/{{total}} na aralin"
+  },
+  "teacher": {
+    "scanProgress": "Scan Progreso del Estudiante",
+    "scanProgressDesc": "Scan el QR code del estudiante para mira su progreso",
+    "studentReports": "Mga Reporte del Estudiante",
+    "noReports": "Wala pa reporte",
+    "noReportsDesc": "Scan el QR code del progreso del estudiante para mira su reporte"
   }
 }

@@ -415,6 +415,7 @@
     "title": "Settings",
     "language": "Language",
     "languageDesc": "Change app language",
+    "appearance": "Appearance",
     "darkMode": "Dark Mode",
     "darkModeDesc": "Enable dark theme",
     "textSize": "Text Size",
@@ -423,10 +424,13 @@
     "textMedium": "Medium",
     "textLarge": "Large",
     "textExtraLarge": "Extra Large",
+    "accessibility": "Accessibility",
     "readAloud": "Read Aloud",
     "readAloudDesc": "Enable text-to-speech",
-    "aboutApp": "About App",
+    "aboutApp": "About",
     "aboutAppDesc": "App version and information",
+    "version": "Version",
+    "appName": "App Name",
     "resetData": "Reset All Data",
     "resetDataDesc": "Delete all local data",
     "resetDataConfirm": "This will delete all your lessons quizzes and progress. Are you sure?",
@@ -491,6 +495,29 @@
     "profileUpdated": "Profile updated",
     "profileUpdateFailed": "Failed to update profile",
     "loginFailed": "Login Failed",
-    "error": "Error"
+    "error": "Error",
+    "success": "Success!"
+  },
+  "report": {
+    "studentReport": "Student Report",
+    "bySubject": "By Subject",
+    "areasToImprove": "Areas to Improve",
+    "needsWork": "Needs Work",
+    "saveToDashboard": "Save to Dashboard",
+    "saved": "Saved!",
+    "saving": "Saving...",
+    "average": "Average",
+    "completed": "Completed",
+    "xp": "XP",
+    "level": "Level",
+    "dayStreak": "{{count}} day streak",
+    "lessonsCompleted": "{{count}}/{{total}} lessons"
+  },
+  "teacher": {
+    "scanProgress": "Scan Student Progress",
+    "scanProgressDesc": "Scan a student's QR code to view their progress",
+    "studentReports": "Student Reports",
+    "noReports": "No reports yet",
+    "noReportsDesc": "Scan a student's progress QR to see their report"
   }
 }

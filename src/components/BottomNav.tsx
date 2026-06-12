@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
+import { useTheme } from '../context/ThemeContext';
 
 const NAV_ITEMS = [
   { key: 'home', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z', label: 'Home' },
@@ -19,9 +20,11 @@ export default function BottomNav({
 }) {
   const insets = useSafeAreaInsets();
   const bottomInset = insets.bottom;
+  const { theme } = useTheme();
+  const { colors } = theme;
 
   return (
-    <View style={[styles.bottomNav, { paddingBottom: bottomInset, zIndex: 100 }]}>
+    <View style={[styles.bottomNav, { paddingBottom: bottomInset, zIndex: 100, backgroundColor: colors.navBg, borderTopColor: colors.navBorder }]}>
       {NAV_ITEMS.map((item, i) => (
         <TouchableOpacity
           key={i}
@@ -29,10 +32,10 @@ export default function BottomNav({
           onPress={() => onNavPress(item.key)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === activeTab ? '#FF7E5F' : '#718096'}>
+          <Svg width={24} height={24} viewBox="0 0 24 24" fill={item.key === activeTab ? colors.coral : colors.textLight}>
             <Path d={item.icon} />
           </Svg>
-          <Text style={[styles.navLabel, item.key === activeTab && styles.navLabelActive]}>
+          <Text style={[styles.navLabel, { color: item.key === activeTab ? colors.coral : colors.textLight }]}>
             {item.label}
           </Text>
         </TouchableOpacity>
@@ -48,9 +51,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 90,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#F5E6D5',
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-around',
@@ -65,9 +66,5 @@ const styles = StyleSheet.create({
   navLabel: {
     fontFamily: 'Nunito_700Bold',
     fontSize: 11,
-    color: '#718096',
-  },
-  navLabelActive: {
-    color: '#FF7E5F',
   },
 });

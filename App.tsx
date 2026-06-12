@@ -12,6 +12,7 @@ import type { QuizQuestion } from './src/screens/QuizEngineScreen';
 import { QRContentType } from './src/types/qr';
 import './src/i18n';
 import i18n from './src/i18n';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 import SplashScreen from './src/screens/SplashScreen';
 import LanguageScreen from './src/screens/LanguageScreen';
@@ -30,6 +31,7 @@ import TeacherLessonCreatorScreen from './src/screens/TeacherLessonCreatorScreen
 import TeacherQuizCreatorScreen from './src/screens/TeacherQuizCreatorScreen';
 import RewardsScreen from './src/screens/RewardsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
+import ProgressReportScreen from './src/screens/ProgressReportScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 
@@ -52,7 +54,9 @@ type FlowStep =
   | 'rewards'
   | 'progress'
   | 'profile'
-  | 'settings';
+  | 'settings'
+  | 'scanstudentprogress'
+  | 'viewreport';
 
 interface PendingLesson {
   subject: string;
@@ -63,6 +67,15 @@ interface PendingLesson {
 }
 
 export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const { isDark, setDarkMode } = useTheme();
   const [step, setStep] = useState<FlowStep>('splash');
   const [user, setUser] = useState<User | null>(null);
   const [pendingLesson, setPendingLesson] = useState<PendingLesson | null>(null);
@@ -71,7 +84,6 @@ export default function App() {
   const [dbReady, setDbReady] = useState(false);
   const [selectedSubjectId, setSelectedSubjectId] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState('fil');
-  const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState(16);
   const [readAloud, setReadAloud] = useState(true);
   const historyRef = useRef<FlowStep[]>([]);
@@ -242,7 +254,7 @@ export default function App() {
     case 'language':
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <LanguageScreen onContinue={(lang) => { setSelectedLanguage(lang); i18n.changeLanguage(lang); navigate('onboarding'); }} />
         </SafeAreaProvider>
       );
@@ -250,7 +262,7 @@ export default function App() {
     case 'onboarding':
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <OnboardingScreen onStart={() => navigate('login')} />
         </SafeAreaProvider>
       );
@@ -258,7 +270,7 @@ export default function App() {
     case 'login':
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <LoginScreen
             onLogin={handleLogin}
             onSwitchToRegister={() => navigate('register')}
@@ -269,7 +281,7 @@ export default function App() {
     case 'register':
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <RegisterScreen
             onRegister={handleRegister}
             onSwitchToLogin={() => navigate('login')}
@@ -281,7 +293,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <HomeScreen
             user={user}
             onSubjectPress={(id: number) => {
@@ -299,7 +311,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <LearnScreen
             user={user}
             onSubjectPress={(id: number) => {
@@ -360,7 +372,32 @@ export default function App() {
           <StatusBar style="light" />
           <QRScannerScreen
             onBack={() => navigate('home')}
-            onImported={() => navigate('home')}
+            onImported={(report) => {
+              if (report) {
+                setScannedReport(report);
+                navigate('viewreport');
+              } else {
+                navigate('home');
+              }
+            }}
+          />
+        </SafeAreaProvider>
+      );
+
+    case 'scanstudentprogress':
+      return (
+        <SafeAreaProvider>
+          <StatusBar style="light" />
+          <QRScannerScreen
+            onBack={() => navigate('teacher')}
+            onImported={(report) => {
+              if (report) {
+                setScannedReport(report);
+                navigate('viewreport');
+              } else {
+                navigate('teacher');
+              }
+            }}
           />
         </SafeAreaProvider>
       );
@@ -369,7 +406,7 @@ export default function App() {
       if (!pendingLesson) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <QRGeneratorScreen
             content={{ ...pendingLesson }}
             contentType={QRContentType.Lesson}
@@ -384,7 +421,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <TeacherDashboardScreen
             user={user}
             onBack={() => navigate('home')}
@@ -400,6 +437,11 @@ export default function App() {
               });
               navigate('generate');
             }}
+            onScanProgress={() => navigate('scanstudentprogress')}
+            onViewReport={(report) => {
+              setScannedReport(report);
+              navigate('viewreport');
+            }}
           />
         </SafeAreaProvider>
       );
@@ -408,7 +450,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <TeacherLessonCreatorScreen
             user={user}
             onBack={() => navigate('teacher')}
@@ -424,7 +466,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <TeacherQuizCreatorScreen
             user={user}
             onBack={() => navigate('teacher')}
@@ -433,11 +475,27 @@ export default function App() {
         </SafeAreaProvider>
       );
 
+    case 'viewreport':
+      if (!user || !scannedReport) return null;
+      return (
+        <SafeAreaProvider>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+          <ProgressReportScreen
+            report={scannedReport}
+            user={user}
+            onBack={() => {
+              setScannedReport(null);
+              goBack();
+            }}
+          />
+        </SafeAreaProvider>
+      );
+
     case 'rewards':
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <RewardsScreen user={user} onNavPress={handleNavPress} activeTab="rewards" />
         </SafeAreaProvider>
       );
@@ -446,7 +504,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <ProgressScreen user={user} onNavPress={handleNavPress} activeTab="progress" />
         </SafeAreaProvider>
       );
@@ -455,7 +513,7 @@ export default function App() {
       if (!user) return null;
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <ProfileScreen
             user={user}
             onLogout={() => { setUser(null); historyRef.current = []; navigate('login'); }}
@@ -470,13 +528,13 @@ export default function App() {
     case 'settings':
       return (
         <SafeAreaProvider>
-          <StatusBar style="dark" />
+          <StatusBar style={isDark ? 'light' : 'dark'} />
           <SettingsScreen
             onBack={() => navigate('profile')}
             currentLanguage={selectedLanguage}
             onLanguageChange={(lang) => { setSelectedLanguage(lang); i18n.changeLanguage(lang); }}
-            darkMode={darkMode}
-            onDarkModeToggle={() => setDarkMode(!darkMode)}
+            darkMode={isDark}
+            onDarkModeToggle={() => setDarkMode(!isDark)}
             textSize={textSize}
             onTextSizeChange={setTextSize}
             readAloud={readAloud}
