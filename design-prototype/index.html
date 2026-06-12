@@ -1115,6 +1115,170 @@
         transform: scale(0.7);
       }
     }
+
+    /* ═══════════════════════════════════════════
+       REWARDS — BADGES GRID
+       ═══════════════════════════════════════════ */
+    .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .badge-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: all 0.25s ease; position: relative; }
+    .badge-item.earned { border: 2px solid var(--gold); }
+    .badge-item.locked { opacity: 0.45; }
+    .badge-item.locked .badge-icon { filter: grayscale(1); }
+    .badge-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .badge-icon { font-size: 28px; }
+    .badge-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; color: var(--text); text-align: center; line-height: 1.2; }
+
+    /* PROGRESS */
+    .progress-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .progress-stat-card { background: var(--bg-card); border-radius: var(--radius-md); padding: 16px; text-align: center; box-shadow: var(--shadow-sm); }
+    .progress-stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .progress-stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin: 0 auto 8px; }
+    .progress-stat-value { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); }
+    .progress-stat-label { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+    .subject-progress-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .subject-progress-item { background: var(--bg-card); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+    .subject-progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .subject-progress-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); }
+    .subject-progress-pct { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--coral); }
+    .weekly-chart { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; height: 120px; padding: 16px; background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+    .chart-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+    .bar-fill { width: 100%; max-width: 28px; height: var(--bar-height, 50%); background: linear-gradient(180deg, var(--teal), var(--teal-dark)); border-radius: 6px 6px 2px 2px; }
+    .bar-label { font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--text-light); }
+
+    /* PROFILE */
+    .profile-header { display: flex; flex-direction: column; align-items: center; padding: 16px 0 20px; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--coral-light), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; color: white; box-shadow: 0 4px 20px rgba(255, 126, 95, 0.35); margin-bottom: 12px; }
+    .profile-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); }
+    .profile-grade { font-size: 14px; color: var(--text-light); margin-top: 2px; }
+    .profile-stats { display: flex; justify-content: space-around; align-items: center; background: var(--bg-card); border-radius: var(--radius-md); padding: 16px 8px; margin-bottom: 20px; box-shadow: var(--shadow-sm); }
+    .profile-stat { text-align: center; flex: 1; }
+    .profile-stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--coral); }
+    .profile-stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+    .profile-stat-divider { width: 1px; height: 30px; background: var(--cream-dark); }
+    .profile-menu { display: flex; flex-direction: column; background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .profile-menu-item { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--cream-dark); cursor: pointer; transition: background 0.2s ease; }
+    .profile-menu-item:hover { background: var(--cream); }
+    .profile-menu-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .profile-menu-text { flex: 1; }
+    .profile-menu-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); }
+    .profile-menu-desc { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+    .profile-menu-arrow { color: var(--text-light); font-size: 18px; flex-shrink: 0; }
+
+    /* SETTINGS */
+    .settings-header { padding: 0 0 12px; }
+    .settings-list { display: flex; flex-direction: column; background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .settings-item { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--cream-dark); }
+    .settings-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .settings-text { flex: 1; }
+    .settings-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); }
+    .settings-desc { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+    .settings-toggle { color: var(--text-light); font-size: 18px; flex-shrink: 0; }
+    .toggle-switch { width: 44px; height: 24px; border-radius: 12px; background: var(--cream-dark); position: relative; transition: background 0.3s ease; cursor: pointer; }
+    .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.15); transition: transform 0.3s ease; }
+    .toggle-switch.active { background: var(--coral); }
+    .toggle-switch.active::after { transform: translateX(20px); }
+
+    /* LESSON VIEWER */
+    .lesson-hero { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); margin: -60px -20px 20px; padding: 100px 20px 28px; border-radius: 0 0 var(--radius-xl) var(--radius-xl); color: white; position: relative; overflow: hidden; }
+    .lesson-hero::after { content: '\1F4D6'; position: absolute; right: 24px; bottom: 24px; font-size: 48px; opacity: 0.2; }
+    .lesson-hero .back { display: flex; align-items: center; gap: 6px; font-size: 14px; color: rgba(255,255,255,0.8); cursor: pointer; margin-bottom: 12px; font-weight: 600; }
+    .lesson-hero .breadcrumb { font-size: 13px; opacity: 0.7; margin-bottom: 4px; }
+    .lesson-hero h1 { font-family: var(--font-display); font-size: 26px; font-weight: 700; }
+    .lesson-content { padding: 0 20px 100px; }
+    .read-aloud-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: var(--bg-card); border: 2px solid var(--cream-dark); border-radius: var(--radius-full); font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; margin-bottom: 16px; box-shadow: var(--shadow-sm); transition: all 0.25s ease; }
+    .read-aloud-btn:hover { border-color: var(--coral-light); background: var(--coral-glow); }
+    .read-aloud-btn.active { background: var(--coral-glow); border-color: var(--coral); color: var(--coral-dark); }
+    .lesson-text-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
+    .lesson-text-card p { font-family: var(--font-body); font-size: 16px; line-height: 1.7; color: var(--text); }
+    .lesson-image { width: 100%; height: 180px; background: linear-gradient(135deg, var(--teal-glow), var(--cream)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 64px; margin-bottom: 16px; }
+    .lesson-summary { background: var(--gold-glow); border-radius: var(--radius-md); padding: 16px 18px; margin-bottom: 16px; }
+    .lesson-summary h4 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .lesson-summary p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .lesson-bottom-cta { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 20px 32px; background: linear-gradient(0deg, var(--cream) 60%, transparent); }
+    .quiz-cta-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--coral), var(--coral-dark)); color: white; border: none; border-radius: var(--radius-full); font-family: var(--font-display); font-size: 18px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-coral); transition: all 0.25s ease; }
+    .quiz-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(255, 126, 95, 0.45); }
+
+    /* QUIZ ENGINE */
+    .quiz-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 0 12px; }
+    .quiz-header .back { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text-light); cursor: pointer; }
+    .quiz-header .title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text); }
+    .quiz-header .count { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text-light); }
+    .quiz-progress { height: 6px; background: var(--cream-dark); border-radius: var(--radius-full); margin-bottom: 24px; overflow: hidden; }
+    .quiz-progress-fill { height: 100%; background: linear-gradient(90deg, var(--coral), var(--gold)); border-radius: var(--radius-full); transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+    .quiz-question-area { margin-bottom: 24px; }
+    .quiz-lesson-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--teal); margin-bottom: 8px; }
+    .quiz-question-text { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .quiz-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .quiz-option { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--bg-card); border: 2px solid var(--cream-dark); border-radius: var(--radius-md); cursor: pointer; transition: all 0.25s ease; box-shadow: var(--shadow-sm); }
+    .quiz-option:hover { border-color: var(--coral-light); transform: translateX(4px); }
+    .quiz-option.selected { border-color: var(--coral); background: var(--coral-glow); }
+    .quiz-option.correct { border-color: var(--green); background: var(--green-glow); }
+    .quiz-option.wrong { border-color: #E86548; background: #FFEBE8; }
+    .quiz-option.dimmed { opacity: 0.5; }
+    .quiz-option-letter { width: 28px; height: 28px; border-radius: 50%; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-light); flex-shrink: 0; }
+    .quiz-option.selected .quiz-option-letter { background: var(--coral); color: white; }
+    .quiz-option.correct .quiz-option-letter { background: var(--green); color: white; }
+    .quiz-option.wrong .quiz-option-letter { background: #E86548; color: white; }
+    .quiz-option-text { font-family: var(--font-body); font-size: 16px; color: var(--text); flex: 1; }
+    .quiz-result { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; animation: screenIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+    .quiz-result-emoji { font-size: 72px; margin-bottom: 16px; }
+    .quiz-result-title { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .quiz-result-sub { font-size: 15px; color: var(--text-muted); line-height: 1.5; max-width: 280px; margin-bottom: 28px; }
+    .quiz-score-circle { width: 140px; height: 140px; border-radius: 50%; background: var(--gold-glow); border: 4px solid var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .quiz-score-num { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: var(--text); }
+    .quiz-score-label { font-size: 14px; color: var(--text-light); }
+    .quiz-score-detail { font-size: 15px; color: var(--text-muted); margin-bottom: 4px; }
+    .quiz-score-xp { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--coral); margin-bottom: 32px; }
+    .quiz-result-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
+    /* QR SCANNER */
+    .qr-scanner-preview { width: 100%; height: 300px; background: #0D3B42; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 20px; }
+    .qr-scanner-frame { width: 200px; height: 200px; border: 3px solid rgba(255,255,255,0.4); border-radius: 16px; position: relative; }
+    .qr-scanner-frame::before, .qr-scanner-frame::after { content: ''; position: absolute; width: 30px; height: 30px; border: 3px solid var(--coral); }
+    .qr-scanner-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+    .qr-scanner-frame::after { bottom: -3px; right: -3px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+    .qr-scan-line { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--coral); animation: scanLine 2s ease-in-out infinite; box-shadow: 0 0 12px rgba(255, 126, 95, 0.6); }
+    @keyframes scanLine { 0%, 100% { top: 0; } 50% { top: calc(100% - 3px); } }
+    .qr-scanner-hint { text-align: center; font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .qr-scanner-sub { text-align: center; font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+
+    /* QR GENERATOR */
+    .qr-generator-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px; text-align: center; box-shadow: var(--shadow-md); margin-bottom: 20px; }
+    .qr-code-placeholder { width: 180px; height: 180px; background: white; border: 2px solid var(--cream-dark); border-radius: 16px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+    .qr-code-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 3px; width: 120px; height: 120px; }
+    .qr-cell { background: var(--ocean); border-radius: 2px; }
+    .qr-cell.light { background: transparent; }
+    .qr-generator-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .qr-generator-sub { font-size: 14px; color: var(--text-light); margin-bottom: 16px; }
+    .qr-type-badge { display: inline-flex; padding: 6px 14px; background: var(--teal-glow); border-radius: var(--radius-full); font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--teal-dark); }
+
+    /* TEACHER DASHBOARD */
+    .teacher-stats-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .teacher-stat-card { flex: 1; background: var(--bg-card); border-radius: var(--radius-md); padding: 16px 12px; text-align: center; box-shadow: var(--shadow-sm); }
+    .teacher-stat-num { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--coral); }
+    .teacher-stat-label { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+    .teacher-create-card { display: flex; align-items: center; gap: 14px; padding: 18px; background: var(--bg-card); border: 2px dashed var(--cream-dark); border-radius: var(--radius-lg); margin-bottom: 12px; cursor: pointer; transition: all 0.25s ease; }
+    .teacher-create-card:hover { border-color: var(--coral-light); background: var(--coral-glow); transform: translateY(-2px); }
+    .teacher-create-icon { font-size: 28px; width: 44px; text-align: center; flex-shrink: 0; }
+    .teacher-create-text { flex: 1; }
+    .teacher-create-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); }
+    .teacher-create-desc { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+    .teacher-create-arrow { color: var(--text-light); font-size: 20px; flex-shrink: 0; }
+    .teacher-lesson-card { display: flex; align-items: center; background: var(--bg-card); border-radius: var(--radius-md); padding: 16px; margin-bottom: 10px; box-shadow: var(--shadow-sm); }
+    .teacher-lesson-info { flex: 1; }
+    .teacher-lesson-subject { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--coral); text-transform: uppercase; letter-spacing: 0.5px; }
+    .teacher-lesson-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); margin-top: 2px; }
+    .teacher-share-btn { padding: 8px 16px; background: var(--coral-glow); border-radius: var(--radius-full); font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--coral-dark); cursor: pointer; transition: all 0.2s ease; }
+    .teacher-share-btn:hover { background: var(--coral); color: white; }
+
+    /* TEACHER LESSON CREATOR */
+    .creator-form { display: flex; flex-direction: column; gap: 4px; }
+    .creator-textarea { width: 100%; min-height: 120px; padding: 14px 18px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 16px; color: var(--text); background: var(--bg-input); resize: vertical; outline: none; }
+    .creator-textarea:focus { border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255, 126, 95, 0.15); }
+    .creator-select { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 16px; color: var(--text); background: var(--bg-input); outline: none; appearance: none; }
+    .creator-preview-card { background: var(--teal-glow); border: 2px solid var(--teal-light); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; }
+    .creator-preview-label { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--teal-dark); margin-bottom: 4px; }
+    .creator-preview-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -1938,7 +2102,256 @@
     </div>
   </div>
 
-  <script>
+      <!-- 13. LESSON VIEWER -->
+      <div class="screen lesson-viewer" id="lesson-viewer" data-title="Lesson Viewer">
+        <div class="lesson-hero">
+          <div class="back" onclick="go('subject')">← Back</div>
+          <div class="breadcrumb">Mathematics → Chapter 1</div>
+          <h1>Numbers 1 to 10</h1>
+        </div>
+        <div class="lesson-content">
+          <button class="read-aloud-btn" onclick="this.classList.toggle('active')">🔊 Read Aloud</button>
+          <div class="lesson-image">🔢</div>
+          <div class="lesson-text-card">
+            <p><strong>What are numbers?</strong><br><br>Numbers are symbols we use to count, measure, and label things around us. In this lesson, you will learn the numbers from 1 to 10 and how to recognize them.</p>
+          </div>
+          <div class="lesson-text-card">
+            <p><strong>Examples:</strong><br><br>🍎 1 apple<br>🍎🍎 2 apples<br>🍎🍎🍎 3 apples<br>🍎🍎🍎🍎 4 apples<br>🍎🍎🍎🍎🍎 5 apples</p>
+          </div>
+          <div class="lesson-summary">
+            <h4>📝 Summary</h4>
+            <p>Numbers 1 through 10 are the building blocks of mathematics. Practice counting objects around you!</p>
+          </div>
+        </div>
+        <div class="lesson-bottom-cta">
+          <button class="quiz-cta-btn" onclick="go('quiz')">Start Quiz →</button>
+        </div>
+      </div>
+
+      <!-- 14. QUIZ ENGINE -->
+      <div class="screen quiz-engine" id="quiz-engine" data-title="Quiz Engine">
+        <div class="quiz-header">
+          <span class="back" onclick="go('lesson-viewer')">← Back</span>
+          <span class="title">Quiz</span>
+          <span class="count">1 / 5</span>
+        </div>
+        <div class="quiz-progress"><div class="quiz-progress-fill" style="width: 20%"></div></div>
+        <div class="quiz-lesson-area">
+          <div class="quiz-lesson-label">📖 Numbers 1 to 10</div>
+          <div class="quiz-question-text">How many fingers do you have on one hand?</div>
+        </div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="selectOption(this, 3)">
+            <div class="quiz-option-letter">A</div>
+            <div class="quiz-option-text">3</div>
+          </div>
+          <div class="quiz-option" onclick="selectOption(this, 3)">
+            <div class="quiz-option-letter">B</div>
+            <div class="quiz-option-text">4</div>
+          </div>
+          <div class="quiz-option selected" onclick="selectOption(this, 3)">
+            <div class="quiz-option-letter">C</div>
+            <div class="quiz-option-text">5</div>
+          </div>
+          <div class="quiz-option" onclick="selectOption(this, 3)">
+            <div class="quiz-option-letter">D</div>
+            <div class="quiz-option-text">6</div>
+          </div>
+        </div>
+        <button class="btn-coral" onclick="go('quiz-result')">Check Answer →</button>
+      </div>
+
+      <!-- 15. QUIZ RESULTS -->
+      <div class="screen quiz-results" id="quiz-results" data-title="Quiz Results">
+        <div class="quiz-header">
+          <span class="title">Quiz Complete!</span>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-score-circle">
+            <div class="quiz-score-num">100</div>
+            <div class="quiz-score-label">points</div>
+          </div>
+          <div class="quiz-result-emoji">🎉</div>
+          <div class="quiz-result-title">Perfect Score!</div>
+          <div class="quiz-result-sub">Amazing work! You answered all 5 questions correctly!</div>
+          <div class="quiz-score-detail">5 out of 5 correct</div>
+          <div class="quiz-score-xp">+100 XP Earned</div>
+          <div class="quiz-result-actions">
+            <button class="btn-coral" onclick="go('subject')">Continue →</button>
+            <button class="btn-outline" onclick="go('quiz')">Review Answers</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 16. QR SCANNER -->
+      <div class="screen qr-scanner" id="qr-scanner" data-title="Scan QR">
+        <div class="section-header" style="padding-top:0">
+          <span class="section-label">QR Scanner</span>
+          <span class="section-link" onclick="go('home')">✕</span>
+        </div>
+        <div class="qr-scanner-preview">
+          <div class="qr-scanner-frame">
+            <div class="qr-scan-line"></div>
+          </div>
+        </div>
+        <div class="qr-scanner-hint">📷 Point your camera at a QR code</div>
+        <div class="qr-scanner-sub">Scan lesson, quiz, or subject QR codes from your teacher</div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button class="btn-coral" style="flex:1" onclick="showImportResult()">Simulate Scan</button>
+          <button class="btn-outline" style="flex:1" onclick="go('home')">Cancel</button>
+        </div>
+      </div>
+
+      <!-- 17. QR GENERATOR -->
+      <div class="screen qr-generator" id="qr-generator" data-title="QR Generator">
+        <div class="section-header" style="padding-top:0">
+          <span class="section-label">QR Generator</span>
+          <span class="section-link" onclick="go('teacher-dashboard')">✕</span>
+        </div>
+        <div class="qr-generator-card">
+          <div class="qr-code-placeholder">
+            <div class="qr-code-grid">
+              <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+              <div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div>
+              <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+              <div class="qr-cell light"></div><div class="qr-cell light"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell light"></div><div class="qr-cell light"></div>
+              <div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div>
+              <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell light"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+              <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
+            </div>
+          </div>
+          <div class="qr-generator-title">Numbers 1 to 10</div>
+          <div class="qr-generator-sub">Mathematics • Chapter 1</div>
+          <div class="qr-type-badge">📖 Lesson</div>
+        </div>
+        <button class="btn-coral" onclick="go('teacher-dashboard')">Share QR →</button>
+      </div>
+
+      <!-- 18. TEACHER DASHBOARD -->
+      <div class="screen teacher-dashboard" id="teacher-dashboard" data-title="Teacher Dashboard">
+        <div class="section-header" style="padding-top:0">
+          <div>
+            <div class="section-label">Teacher Dashboard</div>
+            <div style="font-size:13px; color:var(--text-light);">Welcome back, Teacher!</div>
+          </div>
+          <span class="section-link" onclick="go('settings')">⚙️</span>
+        </div>
+        <div class="teacher-stats-row">
+          <div class="teacher-stat-card">
+            <div class="teacher-stat-num">12</div>
+            <div class="teacher-stat-label">Students</div>
+          </div>
+          <div class="teacher-stat-card">
+            <div class="teacher-stat-num">8</div>
+            <div class="teacher-stat-label">Lessons</div>
+          </div>
+          <div class="teacher-stat-card">
+            <div class="teacher-stat-num">85%</div>
+            <div class="teacher-stat-label">Avg Score</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">Create Content</span>
+        </div>
+        <div class="teacher-create-card" onclick="go('teacher-lesson-creator')">
+          <div class="teacher-create-icon">📝</div>
+          <div class="teacher-create-text">
+            <div class="teacher-create-title">Create New Lesson</div>
+            <div class="teacher-create-desc">Write content for your students</div>
+          </div>
+          <div class="teacher-create-arrow">›</div>
+        </div>
+        <div class="teacher-create-card">
+          <div class="teacher-create-icon">❓</div>
+          <div class="teacher-create-text">
+            <div class="teacher-create-title">Create New Quiz</div>
+            <div class="teacher-create-desc">Build multiple choice questions</div>
+          </div>
+          <div class="teacher-create-arrow">›</div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">Recent Lessons</span>
+        </div>
+        <div class="teacher-lesson-card">
+          <div class="teacher-lesson-info">
+            <div class="teacher-lesson-subject">Mathematics</div>
+            <div class="teacher-lesson-title">Numbers 1 to 10</div>
+          </div>
+          <div class="teacher-share-btn" onclick="go('qr-generator')">📤 Share</div>
+        </div>
+        <div class="teacher-lesson-card">
+          <div class="teacher-lesson-info">
+            <div class="teacher-lesson-subject">Science</div>
+            <div class="teacher-lesson-title">Parts of a Plant</div>
+          </div>
+          <div class="teacher-share-btn" onclick="go('qr-generator')">📤 Share</div>
+        </div>
+
+        <div class="section-header">
+          <span class="section-title">Student Reports</span>
+        </div>
+        <div class="student-report">
+          <div class="avatar-circle" style="width:40px; height:40px; font-size:18px;">B</div>
+          <div class="student-report-info">
+            <div class="student-report-name">Ben</div>
+            <div class="student-report-subject">Science • 15/20</div>
+          </div>
+          <div class="student-report-score red">75%</div>
+        </div>
+        <div class="student-report">
+          <div class="avatar-circle avatar-green" style="width:40px; height:40px; font-size:18px;">C</div>
+          <div class="student-report-info">
+            <div class="student-report-name">Carla</div>
+            <div class="student-report-subject">Math • 18/20</div>
+          </div>
+          <div class="student-report-score green">90%</div>
+        </div>
+        <button class="btn-outline" style="margin-top:16px; width:100%; text-align:center;" onclick="go('qr-scanner')">📷 Scan Student Progress QR</button>
+      </div>
+
+      <!-- 19. TEACHER LESSON CREATOR -->
+      <div class="screen teacher-lesson-creator" id="teacher-lesson-creator" data-title="Create Lesson">
+        <div class="section-header" style="padding-top:0">
+          <span class="section-label">Create Lesson</span>
+          <span class="section-link" onclick="go('teacher-dashboard')">✕</span>
+        </div>
+        <div class="creator-form">
+          <label style="font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--text);">Subject</label>
+          <select class="creator-select">
+            <option>Mathematics</option>
+            <option>Science</option>
+            <option>English</option>
+            <option>Filipino</option>
+            <option>Araling Panlipunan</option>
+          </select>
+          <label style="font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--text);">Language</label>
+          <select class="creator-select">
+            <option>Filipino</option>
+            <option>Chavacano</option>
+            <option>Yakan</option>
+            <option>Tausug</option>
+            <option>English</option>
+          </select>
+          <label style="font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--text);">Title</label>
+          <input type="text" class="text-input" placeholder="Lesson title...">
+          <label style="font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--text);">Content</label>
+          <textarea class="creator-textarea" placeholder="Write lesson content here...">Numbers are symbols we use to count, measure, and label things around us. In this lesson, you will learn the numbers from 1 to 10 and how to recognize them.
+
+Examples:
+🍎 1 apple
+🍎🍎 2 apples
+🍎🍎🍎 3 apples</textarea>
+          <div class="creator-preview-card">
+            <div class="creator-preview-label">Preview</div>
+            <div class="creator-preview-text">Numbers are symbols we use to count, measure, and label things around us. In this lesson, you will learn the numbers from 1 to 10 and how to recognize them...</div>
+          </div>
+          <button class="btn-coral" onclick="go('qr-generator')">Save & Generate QR →</button>
+        </div>
+      </div>
+
+      <script>
     // ═══════════════════════════════════════════
     // NAVIGATION
     // ═══════════════════════════════════════════
@@ -1980,6 +2393,33 @@
     function selectGrade(el) {
       document.querySelectorAll('.grade-option').forEach(g => g.classList.remove('selected'));
       el.classList.add('selected');
+    }
+
+    // ═══════════════════════════════════════════
+    // QUIZ OPTION SELECT
+    // ═══════════════════════════════════════════
+    function selectOption(el, correctIndex) {
+      const options = el.parentElement.querySelectorAll('.quiz-option');
+      options.forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    // ═══════════════════════════════════════════
+    // IMPORT RESULT SIMULATION
+    // ═══════════════════════════════════════════
+    function showImportResult() {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:absolute; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:100; animation: fadeIn 0.3s ease;';
+      overlay.innerHTML = `
+        <div style="background:white; border-radius:20px; padding:32px 24px; text-align:center; max-width:280px; margin:0 20px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+          <div style="font-size:56px; margin-bottom:16px;">✅</div>
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:700; margin-bottom:8px;">Import Successful!</h3>
+          <p style="font-size:14px; color:var(--text-light); margin-bottom:8px;">New lesson imported from QR code</p>
+          <p style="font-family:var(--font-display); font-size:16px; font-weight:600; color:var(--teal-dark); margin-bottom:24px;">📖 Numbers 1 to 10</p>
+          <button class="btn-coral" onclick="this.closest('div[style]').parentElement.remove(); showScreen('subjects');" style="width:100%; text-align:center;">View Lesson →</button>
+        </div>
+      `;
+      document.querySelector('.phone-frame').appendChild(overlay);
     }
 
     // ═══════════════════════════════════════════

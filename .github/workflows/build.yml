@@ -11,13 +11,19 @@ concurrency:
 
 jobs:
   build:
-    name: Build APK (local EAS)
+    name: Build APK
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -27,38 +33,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@latest
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --clean
 
-      - name: Build APK (local)
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build APK with Gradle
         run: |
-          eas build \
-            --platform android \
-            --profile preview \
-            --non-interactive \
-            --local \
-            --output ./LearnBasilan.apk
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
-      - name: List build output
+      - name: Find APK
+        id: find-apk
         if: always()
         run: |
-          echo "--- Searching for APK files ---"
-          find . -name "*.apk" -type f 2>/dev/null || true
-          echo "--- Searching for AAB files ---"
-          find . -name "*.aab" -type f 2>/dev/null || true
-          echo "--- Build directory contents ---"
-          ls -la build/ 2>/dev/null || echo "No build/ directory"
-          ls -la . 2>/dev/null | head -30
+          APK=$(find android/app/build/outputs -name "*.apk" -type f 2>/dev/null | head -1)
+          echo "apk_path=$APK" >> "$GITHUB_OUTPUT"
+          if [ -n "$APK" ]; then
+            echo "Found APK: $APK"
+            cp "$APK" ./LearnBasilan.apk
+          else
+            echo "No APK found. Listing build outputs:"
+            find android/ -name "*.apk" -o -name "*.aab" 2>/dev/null || true
+            echo "--- gradle tasks ---"
+            cd android && ./gradlew tasks --all 2>/dev/null | grep -i assemble || true
+          fi
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
-        if: always()
+        if: steps.find-apk.outputs.apk_path != ''
         with:
           name: LearnBasilan-APK
-          path: |
-            ./*.apk
-            **/*.apk
+          path: ./LearnBasilan.apk
           retention-days: 30
-          if-no-files-found: warn
