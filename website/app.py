@@ -5,9 +5,17 @@ import os
 app = Flask(__name__)
 
 # Database setup for real download counts
-DB_PATH = 'downloads.db'
+DB_PATH = os.environ.get('DB_PATH', '/data/downloads.db')
+
+def ensure_db_dir():
+    """Ensure the database directory exists."""
+    db_dir = os.path.dirname(DB_PATH)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
 
 def init_db():
+    """Initialize the database with the stats table."""
+    ensure_db_dir()
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute('CREATE TABLE IF NOT EXISTS stats (id INTEGER PRIMARY KEY, count INTEGER)')
         cur = conn.cursor()

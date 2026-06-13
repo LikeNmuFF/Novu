@@ -1,0 +1,8 @@
+downloads.db
+__pycache__
+*.pyc
+.git
+.gitignore
+*.md
+fly.toml
+.dockerignore
