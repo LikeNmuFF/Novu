@@ -110,7 +110,8 @@ export default function LearnScreen({
       const cards: SubjectWithChapters[] = [];
       for (const row of rows) {
         const progress = await getSubjectProgress(user.id, row.id);
-        const chapters = await getChaptersForSubject(user.id, row.id);
+        const gradeNum = user.grade ? parseInt(user.grade, 10) : undefined;
+        const chapters = await getChaptersForSubject(user.id, row.id, gradeNum);
         cards.push({
           id: row.id,
           name: row.name,
@@ -160,8 +161,7 @@ export default function LearnScreen({
     <SafeAreaView style={themedStyles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        pointerEvents="box-none"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF7E5F" />
         }

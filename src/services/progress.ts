@@ -46,7 +46,8 @@ export async function getChapterStatus(
 
 export async function getChaptersForSubject(
   userId: number,
-  subjectId: number
+  subjectId: number,
+  gradeLevel?: number
 ): Promise<Array<{
   id: number;
   title: string;
@@ -60,8 +61,10 @@ export async function getChaptersForSubject(
     title: string;
     chapter_number: number;
   }>(
-    'SELECT id, title, chapter_number FROM lessons WHERE subject_id = ? ORDER BY chapter_number ASC',
-    [subjectId]
+    gradeLevel !== undefined
+      ? 'SELECT id, title, chapter_number FROM lessons WHERE subject_id = ? AND grade_level = ? ORDER BY chapter_number ASC'
+      : 'SELECT id, title, chapter_number FROM lessons WHERE subject_id = ? ORDER BY chapter_number ASC',
+    gradeLevel !== undefined ? [subjectId, gradeLevel] : [subjectId]
   );
 
   const result = [];

@@ -88,7 +88,8 @@ export default function SubjectDetailScreen({
         'SELECT name, icon, color FROM subjects WHERE id = ?', [subjectId]
       );
       setSubject(subj);
-      const chs = await getChaptersForSubject(userId, subjectId);
+      const gradeNum = userGrade ? parseInt(userGrade, 10) : undefined;
+      const chs = await getChaptersForSubject(userId, subjectId, gradeNum);
       setChapters(chs);
       const p = await getSubjectProgress(userId, subjectId);
       setProgress(p);
@@ -110,8 +111,7 @@ export default function SubjectDetailScreen({
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        pointerEvents="box-none"
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }}
       >
         {/* Hero */}
         <View style={[styles.hero, { backgroundColor: subject?.color ?? '#FF7E5F', paddingTop: topInset + 24 }]}>
