@@ -32,9 +32,11 @@ export default function TeacherLessonCreatorScreen({
   onBack: () => void;
   onSave: (lesson: {
     subject: string;
+    subject_id: number;
     title: string;
     content: string;
     language: string;
+    grade_level: number;
     images: string[];
   }) => void;
 }) {
@@ -87,9 +89,11 @@ export default function TeacherLessonCreatorScreen({
       const subjectName = subjects.find(s => s.id === subjectId)?.name || 'Unknown';
       onSave({
         subject: subjectName,
+        subject_id: subjectId,
         title: title.trim(),
         content: content.trim(),
         language,
+        grade_level: gradeLevel,
         images,
       });
     } catch (e: any) {

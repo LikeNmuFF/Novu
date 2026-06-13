@@ -13,12 +13,15 @@ import { processQRScan } from '../utils/qr/package';
 import { importContent } from '../services/contentStore';
 import { QRContentType } from '../types/qr';
 import type { QRScanResult } from '../types/qr';
+import type { User } from '../services/auth';
 import { useTheme } from '../context/ThemeContext';
 
 export default function QRScannerScreen({
+  user,
   onBack,
   onImported,
 }: {
+  user: User;
   onBack: () => void;
   onImported: (report?: any) => void;
 }) {
@@ -68,17 +71,36 @@ export default function QRScannerScreen({
 
       if (result.status === 'complete') {
         setScanResult(result);
-        setStatus('Content imported successfully!');
 
         if (result.type === QRContentType.Progress) {
+          setStatus('Content imported successfully!');
           setTimeout(() => {
             onImported(result.content);
           }, 1500);
           return;
         }
 
+        // Grade-level validation for lessons
+        if (result.type === QRContentType.Lesson && result.content) {
+          const content = result.content as Record<string, unknown>;
+          const qrGradeLevel = content.grade_level as number | undefined;
+
+          if (qrGradeLevel !== undefined && user.role === 'student') {
+            const studentGrade = parseInt(user.grade.replace('Grade ', ''), 10);
+
+            if (!isNaN(studentGrade) && qrGradeLevel !== studentGrade) {
+              setStatus(`This lesson is for Grade ${qrGradeLevel}. Your grade is ${user.grade}.`);
+              Vibration.vibrate([0, 100, 100, 100]);
+              setScanning(false);
+              return;
+            }
+          }
+        }
+
+        setStatus('Content imported successfully!');
+
         try {
-          await importContent(result.type!, result.content);
+          await importContent(result.type!, result.content, user.id);
         } catch (err) {
           setStatus('Error saving content. Please try again.');
           setScanning(false);

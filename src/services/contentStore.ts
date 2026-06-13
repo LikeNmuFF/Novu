@@ -1,5 +1,5 @@
 import { getDb } from './database';
-import type { QRContentType } from '../types/qr';
+import { QRContentType } from '../types/qr';
 
 export interface ImportedItem {
   id: number;
@@ -39,6 +39,73 @@ export async function importContent(
   const importedAt = Date.now();
   const contentStr = JSON.stringify(content);
 
+  // For lesson type, insert into lessons table so it appears in student's subject list
+  if (type === QRContentType.Lesson && content && typeof content === 'object') {
+    const lessonContent = content as Record<string, unknown>;
+    const subjectName = lessonContent.subject as string | undefined;
+    const subjectId = lessonContent.subject_id as number | undefined;
+    const gradeLevel = (lessonContent.grade_level as number) || 1;
+    const language = (lessonContent.language as string) || 'fil';
+    const lessonContentText = (lessonContent.content as string) || '';
+    const lessonTitle = (lessonContent.title as string) || title;
+
+    // Resolve subject_id from name if not provided
+    let resolvedSubjectId = subjectId;
+    if (!resolvedSubjectId && subjectName) {
+      const subj = await db.getFirstAsync<{ id: number }>(
+        'SELECT id FROM subjects WHERE name = ?',
+        [subjectName]
+      );
+      resolvedSubjectId = subj?.id;
+    }
+
+    if (resolvedSubjectId) {
+      // Get next chapter number for this subject and grade
+      const maxChapter = await db.getFirstAsync<{ max_chapter: number | null }>(
+        'SELECT MAX(chapter_number) as max_chapter FROM lessons WHERE subject_id = ? AND grade_level = ?',
+        [resolvedSubjectId, gradeLevel]
+      );
+      const nextChapter = (maxChapter?.max_chapter || 0) + 1;
+
+      // Insert into lessons table
+      await db.runAsync(
+        'INSERT INTO lessons (subject_id, title, content, language, chapter_number, grade_level, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [resolvedSubjectId, lessonTitle, lessonContentText, language, nextChapter, gradeLevel, null, importedAt]
+      );
+    }
+  }
+
+  // For quiz type, insert into quizzes table if lesson exists
+  if (type === QRContentType.Quiz && content && typeof content === 'object') {
+    const quizContent = content as Record<string, unknown>;
+    const lessonTitle = quizContent.lesson_title as string | undefined;
+
+    if (lessonTitle) {
+      const lesson = await db.getFirstAsync<{ id: number }>(
+        'SELECT id FROM lessons WHERE title = ? ORDER BY id DESC LIMIT 1',
+        [lessonTitle]
+      );
+
+      if (lesson) {
+        const questions = quizContent.questions as Array<Record<string, unknown>> | undefined;
+        if (questions && Array.isArray(questions)) {
+          for (const q of questions) {
+            const question = q.question as string;
+            const options = JSON.stringify(q.options || []);
+            const correctAnswer = (q.correctAnswer as number) || 0;
+            const explanation = (q.explanation as string) || null;
+
+            await db.runAsync(
+              'INSERT INTO quizzes (lesson_id, question, options, correct_answer, explanation) VALUES (?, ?, ?, ?, ?)',
+              [lesson.id, question, options, correctAnswer, explanation]
+            );
+          }
+        }
+      }
+    }
+  }
+
+  // Always save to imported_content for tracking history
   const result = await db.runAsync(
     'INSERT INTO imported_content (user_id, type, title, content, imported_at) VALUES (?, ?, ?, ?, ?)',
     [userId ?? null, type, title, contentStr, importedAt]

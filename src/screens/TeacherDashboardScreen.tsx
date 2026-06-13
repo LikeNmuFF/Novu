@@ -19,6 +19,7 @@ import { useTheme } from '../context/ThemeContext';
 interface CreatedLesson {
   id: number;
   subject: string;
+  subject_id: number;
   title: string;
   content: string;
   language: string;
@@ -72,6 +73,7 @@ export default function TeacherDashboardScreen({
       setLessons(lessonRows.map(r => ({
         id: r.id,
         subject: r.subject_name || 'Unknown',
+        subject_id: r.subject_id,
         title: r.title,
         content: r.content,
         language: r.language,

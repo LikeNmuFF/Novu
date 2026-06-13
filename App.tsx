@@ -60,9 +60,11 @@ type FlowStep =
 
 interface PendingLesson {
   subject: string;
+  subject_id: number;
   title: string;
   content: string;
   language: string;
+  grade_level: number;
   images: string[];
 }
 
@@ -368,10 +370,12 @@ function AppContent() {
       );
 
     case 'qrcode':
+      if (!user) return null;
       return (
         <SafeAreaProvider>
           <StatusBar style="light" />
           <QRScannerScreen
+            user={user}
             onBack={() => navigate('home')}
             onImported={(report) => {
               if (report) {
@@ -386,10 +390,12 @@ function AppContent() {
       );
 
     case 'scanstudentprogress':
+      if (!user) return null;
       return (
         <SafeAreaProvider>
           <StatusBar style="light" />
           <QRScannerScreen
+            user={user}
             onBack={() => navigate('teacher')}
             onImported={(report) => {
               if (report) {
@@ -431,9 +437,11 @@ function AppContent() {
             onShareLesson={(lesson) => {
               setPendingLesson({
                 subject: lesson.subject,
+                subject_id: lesson.subject_id,
                 title: lesson.title,
                 content: lesson.content,
                 language: lesson.language,
+                grade_level: lesson.grade_level,
                 images: [],
               });
               navigate('generate');
