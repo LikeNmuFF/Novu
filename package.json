@@ -1,6 +1,7 @@
 {
   "name": "learnbasilan",
   "version": "1.0.1",
+  "type": "module",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
