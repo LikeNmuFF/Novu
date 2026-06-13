@@ -1,0 +1,15 @@
+src/
+node_modules/
+android/
+ios/
+assets/
+design-prototype/
+poster/
+logs/
+*.json
+!vercel.json
+!package.json
+.git/
+.github/
+.obsidian/
+*.md
