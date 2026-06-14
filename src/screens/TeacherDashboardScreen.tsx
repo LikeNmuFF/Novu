@@ -33,6 +33,7 @@ export default function TeacherDashboardScreen({
   onCreateLesson,
   onCreateQuiz,
   onShareLesson,
+  onOpenLesson,
   onScanProgress,
   onViewReport,
 }: {
@@ -41,6 +42,7 @@ export default function TeacherDashboardScreen({
   onCreateLesson: () => void;
   onCreateQuiz: () => void;
   onShareLesson: (lesson: CreatedLesson) => void;
+  onOpenLesson: (lessonId: number) => void;
   onScanProgress: () => void;
   onViewReport: (report: StudentReport) => void;
 }) {
@@ -253,7 +255,12 @@ export default function TeacherDashboardScreen({
           </View>
         ) : (
           lessons.map((lesson) => (
-            <View key={lesson.id} style={styles.lessonCard}>
+            <TouchableOpacity
+              key={lesson.id}
+              style={styles.lessonCard}
+              onPress={() => onOpenLesson(lesson.id)}
+              activeOpacity={0.7}
+            >
               <View style={styles.lessonInfo}>
                 <View style={styles.lessonSubject}>
                   <Text style={styles.lessonSubjectText}>{lesson.subject}</Text>
@@ -269,7 +276,7 @@ export default function TeacherDashboardScreen({
               >
                 <Text style={styles.shareBtnText}>Share QR</Text>
               </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           ))
         )}
       </ScrollView>

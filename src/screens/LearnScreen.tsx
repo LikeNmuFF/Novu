@@ -110,7 +110,7 @@ export default function LearnScreen({
       const cards: SubjectWithChapters[] = [];
       for (const row of rows) {
         const progress = await getSubjectProgress(user.id, row.id);
-        const gradeNum = user.grade ? parseInt(user.grade, 10) : undefined;
+        const gradeNum = user.grade ? parseInt(user.grade.replace('Grade ', ''), 10) : undefined;
         const chapters = await getChaptersForSubject(user.id, row.id, gradeNum);
         cards.push({
           id: row.id,

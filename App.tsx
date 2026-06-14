@@ -446,6 +446,7 @@ function AppContent() {
               });
               navigate('generate');
             }}
+            onOpenLesson={handleOpenLesson}
             onScanProgress={() => navigate('scanstudentprogress')}
             onViewReport={(report) => {
               setScannedReport(report);

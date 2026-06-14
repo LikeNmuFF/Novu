@@ -3,25 +3,27 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 export type ChapterStatus = 'locked' | 'unlocked' | 'completed';
 
-export async function getSubjectProgress(userId: number, subjectId: number): Promise<{
+export async function getSubjectProgress(userId: number, subjectId: number, gradeLevel?: number): Promise<{
   completed: number;
   total: number;
   averageScore: number;
 }> {
   const db = await getDb();
+  const gradeFilter = gradeLevel !== undefined ? 'AND grade_level = ?' : '';
+  const totalParams = gradeLevel !== undefined ? [subjectId, gradeLevel] : [subjectId];
   const total = await db.getFirstAsync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ?',
-    [subjectId]
+    `SELECT COUNT(*) as count FROM lessons WHERE subject_id = ? ${gradeFilter}`,
+    totalParams
   );
   const completed = await db.getFirstAsync<{ count: number }>(
     `SELECT COUNT(*) as count FROM progress
-     WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'`,
-    [userId, subjectId]
+     WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ? ${gradeFilter}) AND status = 'completed'`,
+    [userId, subjectId, ...(gradeLevel !== undefined ? [gradeLevel] : [])]
   );
   const avgScore = await db.getFirstAsync<{ avg: number | null }>(
     `SELECT AVG(score) as avg FROM progress
-     WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'`,
-    [userId, subjectId]
+     WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ? ${gradeFilter}) AND status = 'completed'`,
+    [userId, subjectId, ...(gradeLevel !== undefined ? [gradeLevel] : [])]
   );
 
   return {

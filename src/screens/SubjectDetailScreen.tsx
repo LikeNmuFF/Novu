@@ -88,10 +88,10 @@ export default function SubjectDetailScreen({
         'SELECT name, icon, color FROM subjects WHERE id = ?', [subjectId]
       );
       setSubject(subj);
-      const gradeNum = userGrade ? parseInt(userGrade, 10) : undefined;
+      const gradeNum = userGrade ? parseInt(userGrade.replace('Grade ', ''), 10) : undefined;
       const chs = await getChaptersForSubject(userId, subjectId, gradeNum);
       setChapters(chs);
-      const p = await getSubjectProgress(userId, subjectId);
+      const p = await getSubjectProgress(userId, subjectId, gradeNum);
       setProgress(p);
     })();
   }, [userId, subjectId]);
