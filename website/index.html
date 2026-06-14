@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" href="https://likenmuff.github.io/Novu/website/static/logo.png">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <style>
         /* ═══════════════════════════════════════════════════════════════
            PHASE 1: DESIGN SYSTEM — Living Reef Palette
@@ -1206,8 +1208,118 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           ORGANIC SECTION SHAPES
+           VIDEO SCROLL SECTION — Apple-style Video Scrub
            ═══════════════════════════════════════════════════════════════ */
+        .video-scroll-section {
+            height: 400vh;
+            position: relative;
+        }
+        .video-scroll-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--ocean-abyss);
+        }
+        .video-scroll-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .video-scroll-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            display: none;
+        }
+        .video-scroll-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(14, 45, 50, 0.3) 50%,
+                rgba(14, 45, 50, 0.8) 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+        .video-scroll-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: var(--space-xl);
+        }
+        .video-scroll-title {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: white;
+            margin-bottom: var(--space-lg);
+            opacity: 0;
+            text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+        .video-scroll-subtitle {
+            font-size: var(--text-xl);
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            font-weight: 600;
+            opacity: 0;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Fallback Animated Gradient (when no video) */
+        .video-scroll-fallback {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(
+                135deg,
+                var(--ocean-abyss) 0%,
+                var(--ocean-deep) 25%,
+                var(--reef-teal-deep) 50%,
+                var(--ocean-deep) 75%,
+                var(--ocean-abyss) 100%
+            );
+            background-size: 400% 400%;
+            animation: reef-gradient 15s ease infinite;
+        }
+        @keyframes reef-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles in video section */
+        .video-particles {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .video-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: video-particle-drift linear infinite;
+        }
+        @keyframes video-particle-drift {
+            0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) translateX(40px) scale(0.6); opacity: 0; }
+        }
         .reef-curve {
             position: absolute;
             left: 0;
@@ -1351,6 +1463,49 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             VIDEO SCROLL — Apple-style Video Scrub Section
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="video-scroll-section" id="video-scroll-section" aria-label="Video scroll experience">
+            <div class="video-scroll-sticky">
+                <!-- Video element (hidden until video added) -->
+                <video
+                    class="video-scroll-video"
+                    id="hero-video"
+                    preload="auto"
+                    muted
+                    playsinline
+                    webkit-playsinline
+                    style="display: none;"
+                >
+                    <source src="/videos/reef-hero.webm" type="video/webm">
+                    <source src="/videos/reef-hero.mp4" type="video/mp4">
+                </video>
+
+                <!-- Canvas for image sequence (alternative) -->
+                <canvas class="video-scroll-canvas" id="hero-canvas" width="1920" height="1080"></canvas>
+
+                <!-- Fallback animated gradient (when no video) -->
+                <div class="video-scroll-fallback" id="video-fallback"></div>
+
+                <!-- Floating particles -->
+                <div class="video-particles" id="videoParticles"></div>
+
+                <!-- Gradient overlay -->
+                <div class="video-scroll-gradient"></div>
+
+                <!-- Text overlay -->
+                <div class="video-scroll-overlay">
+                    <h2 class="video-scroll-title" id="video-title">
+                        Learning Comes Alive
+                    </h2>
+                    <p class="video-scroll-subtitle" id="video-subtitle">
+                        Explore the underwater world of knowledge — where every lesson is an adventure.
+                    </p>
                 </div>
             </div>
         </section>
@@ -1778,6 +1933,121 @@
                         ticking = true;
                     }
                 }, { passive: true });
+            }
+
+            /* ─── Video Scroll Section — GSAP ScrollTrigger ─── */
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            
+            if (!prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                const videoSection = document.querySelector('.video-scroll-section');
+                const video = document.querySelector('#hero-video');
+                const canvas = document.querySelector('#hero-canvas');
+                const fallback = document.querySelector('#video-fallback');
+                const videoTitle = document.querySelector('#video-title');
+                const videoSubtitle = document.querySelector('#video-subtitle');
+
+                // Video particles
+                const videoParticlesContainer = document.getElementById('videoParticles');
+                if (videoParticlesContainer) {
+                    for (let i = 0; i < 12; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'video-particle';
+                        const size = Math.random() * 4 + 2;
+                        particle.style.cssText = `
+                            width: ${size}px;
+                            height: ${size}px;
+                            left: ${Math.random() * 100}%;
+                            animation-duration: ${Math.random() * 15 + 10}s;
+                            animation-delay: ${Math.random() * 10}s;
+                        `;
+                        videoParticlesContainer.appendChild(particle);
+                    }
+                }
+
+                // Check if video is available
+                const hasVideo = video && video.querySelector('source') && 
+                    video.querySelector('source').src && 
+                    !video.querySelector('source').src.includes('reef-hero');
+
+                if (hasVideo) {
+                    // Video scrub mode
+                    video.style.display = 'block';
+                    fallback.style.display = 'none';
+
+                    const initVideoScrub = () => {
+                        ScrollTrigger.create({
+                            trigger: '.video-scroll-section',
+                            start: 'top top',
+                            end: 'bottom bottom',
+                            scrub: 0.5,
+                            onUpdate: (self) => {
+                                if (video.readyState >= 2 && video.duration) {
+                                    video.currentTime = self.progress * video.duration;
+                                }
+                            }
+                        });
+                    };
+
+                    if (video.readyState >= 2) {
+                        initVideoScrub();
+                    } else {
+                        video.addEventListener('loadedmetadata', initVideoScrub);
+                    }
+                } else {
+                    // Fallback gradient animation mode
+                    if (video) video.style.display = 'none';
+                    if (canvas) canvas.style.display = 'none';
+                    fallback.style.display = 'block';
+
+                    // Parallax on fallback gradient
+                    gsap.to('.video-scroll-fallback', {
+                        backgroundPosition: '100% 50%',
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '.video-scroll-section',
+                            start: 'top top',
+                            end: 'bottom bottom',
+                            scrub: 1
+                        }
+                    });
+                }
+
+                // Text layer animations
+                const textTl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.video-scroll-section',
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.8
+                    }
+                });
+
+                // Fade in title at 10% scroll
+                textTl.fromTo('#video-title',
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 0.15 },
+                    0.1
+                )
+                // Fade in subtitle at 25% scroll
+                .fromTo('#video-subtitle',
+                    { opacity: 0, y: 20 },
+                    { opacity: 1, y: 0, duration: 0.15 },
+                    0.25
+                )
+                // Fade out text at 70% scroll
+                .to('.video-scroll-overlay',
+                    { opacity: 0, duration: 0.15 },
+                    0.7
+                );
+
+            } else if (prefersReducedMotion) {
+                // Reduced motion: show static state
+                const videoTitle = document.querySelector('#video-title');
+                const videoSubtitle = document.querySelector('#video-subtitle');
+                if (videoTitle) videoTitle.style.opacity = '1';
+                if (videoSubtitle) videoSubtitle.style.opacity = '1';
             }
         })();
     </script>
