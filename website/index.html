@@ -85,13 +85,33 @@
             --radius-2xl: 48px;
             --radius-full: 9999px;
 
-            /* Reef Transitions */
-            --ease-organic: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-            --duration-fast: 200ms;
-            --duration-normal: 400ms;
-            --duration-slow: 700ms;
+            /* ═══════════════════════════════════════════════════════════════
+               MOTION TOKENS — Apple Cinematic System
+               ═══════════════════════════════════════════════════════════════ */
+            /* Durations */
+            --motion-instant: 120ms;
+            --motion-fast: 200ms;
+            --motion-normal: 350ms;
+            --motion-slow: 600ms;
+            --motion-hero: 1200ms;
+
+            /* Easing */
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Stagger */
+            --stagger-fast: 40ms;
+            --stagger-normal: 60ms;
+            --stagger-slow: 90ms;
+
+            /* Legacy aliases */
+            --ease-organic: var(--ease-out);
+            --ease-bounce: var(--ease-spring);
+            --ease-smooth: var(--ease-in-out);
+            --duration-fast: var(--motion-fast);
+            --duration-normal: var(--motion-normal);
+            --duration-slow: var(--motion-slow);
         }
 
         @media (prefers-color-scheme: dark) {
@@ -163,7 +183,8 @@
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid var(--border);
-            transition: all var(--duration-normal) var(--ease-smooth);
+            transition: background var(--motion-normal) var(--ease-out),
+                        box-shadow var(--motion-normal) var(--ease-out);
         }
         .nav.scrolled {
             background: rgba(255, 255, 255, 0.92);
@@ -207,7 +228,7 @@
             font-size: var(--text-sm);
             font-weight: 700;
             color: var(--text-secondary);
-            transition: color var(--duration-fast) var(--ease-smooth);
+            transition: color var(--motion-fast) var(--ease-out);
             position: relative;
         }
         .nav-link::after {
@@ -219,7 +240,7 @@
             height: 2px;
             background: var(--reef-coral);
             border-radius: var(--radius-full);
-            transition: width var(--duration-normal) var(--ease-organic);
+            transition: width var(--motion-normal) var(--ease-out);
         }
         .nav-link:hover { color: var(--reef-coral); }
         .nav-link:hover::after { width: 100%; }
@@ -247,7 +268,8 @@
             height: 2.5px;
             background: var(--text);
             border-radius: var(--radius-full);
-            transition: all var(--duration-normal) var(--ease-organic);
+            transition: transform var(--motion-normal) var(--ease-out),
+                        opacity var(--motion-fast) var(--ease-out);
             transform-origin: center;
         }
         .hamburger.active span:nth-child(1) {
@@ -275,7 +297,8 @@
             padding: 100px var(--space-2xl) var(--space-2xl);
             transform: translateX(100%);
             opacity: 0;
-            transition: all var(--duration-slow) var(--ease-organic);
+            transition: transform var(--motion-slow) var(--ease-out),
+                        opacity var(--motion-normal) var(--ease-out);
             box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
             pointer-events: none;
         }
@@ -292,7 +315,7 @@
             z-index: 190;
             opacity: 0;
             pointer-events: none;
-            transition: opacity var(--duration-normal) var(--ease-smooth);
+            transition: opacity var(--motion-normal) var(--ease-out);
         }
         .mobile-drawer-overlay.open {
             opacity: 1;
@@ -306,7 +329,7 @@
             color: var(--text);
             padding: var(--space-md) 0;
             border-bottom: 1px solid var(--border);
-            transition: color var(--duration-fast) var(--ease-smooth);
+            transition: color var(--motion-fast) var(--ease-out);
         }
         .mobile-drawer a:hover { color: var(--reef-coral); }
         .mobile-drawer .btn { margin-top: var(--space-xl); }
@@ -325,7 +348,10 @@
             font-size: var(--text-base);
             line-height: 1;
             cursor: pointer;
-            transition: all var(--duration-normal) var(--ease-organic);
+            transition: transform var(--motion-fast) var(--ease-out),
+                        box-shadow var(--motion-fast) var(--ease-out),
+                        background var(--motion-fast) var(--ease-out),
+                        border-color var(--motion-fast) var(--ease-out);
             border: none;
             text-decoration: none;
             font-family: var(--font-display);
@@ -341,7 +367,7 @@
             border-radius: inherit;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
             opacity: 0;
-            transition: opacity var(--duration-fast) var(--ease-smooth);
+            transition: opacity var(--motion-fast) var(--ease-out);
         }
         .btn:hover::before { opacity: 1; }
         .btn:active { transform: scale(0.97); }
@@ -398,7 +424,9 @@
             background: var(--surface);
             border-radius: var(--radius-xl);
             padding: var(--space-2xl);
-            transition: all var(--duration-slow) var(--ease-organic);
+            transition: transform var(--motion-normal) var(--ease-out),
+                        box-shadow var(--motion-normal) var(--ease-out),
+                        border-color var(--motion-normal) var(--ease-out);
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
             overflow: hidden;
@@ -421,73 +449,97 @@
             height: 100%;
             background: radial-gradient(circle, var(--bio-pulse) 0%, transparent 70%);
             opacity: 0;
-            transition: opacity var(--duration-slow) var(--ease-smooth);
+            transition: opacity var(--motion-normal) var(--ease-out);
             pointer-events: none;
         }
         .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(255, 126, 95, 0.15);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(255, 126, 95, 0.12);
         }
-        .card:hover::after { opacity: 0.3; }
+        .card:hover::after { opacity: 0.25; }
 
         @media (prefers-color-scheme: dark) {
             .card::before {
                 background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
             }
             .card:hover {
-                box-shadow: 0 16px 64px rgba(0, 0, 0, 0.4);
-                border-color: rgba(46, 196, 182, 0.2);
+                box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+                border-color: rgba(46, 196, 182, 0.15);
             }
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           REVEAL ANIMATIONS — Staggered Organic
+           REVEAL ANIMATIONS — Apple Cinematic
            ═══════════════════════════════════════════════════════════════ */
         .reveal {
             opacity: 0;
-            transform: translateY(40px) scale(0.97);
-            transition: all var(--duration-slow) var(--ease-organic);
+            transform: translateY(20px);
+            transition: opacity var(--motion-slow) var(--ease-out),
+                        transform var(--motion-slow) var(--ease-out);
         }
         .reveal.visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
-        .reveal-delay-1 { transition-delay: 100ms; }
-        .reveal-delay-2 { transition-delay: 200ms; }
-        .reveal-delay-3 { transition-delay: 300ms; }
-        .reveal-delay-4 { transition-delay: 400ms; }
-        .reveal-delay-5 { transition-delay: 500ms; }
+        .reveal-delay-1 { transition-delay: var(--stagger-fast); }
+        .reveal-delay-2 { transition-delay: calc(var(--stagger-fast) * 2); }
+        .reveal-delay-3 { transition-delay: calc(var(--stagger-fast) * 3); }
+        .reveal-delay-4 { transition-delay: calc(var(--stagger-fast) * 4); }
+        .reveal-delay-5 { transition-delay: calc(var(--stagger-fast) * 5); }
 
         .reveal-left {
             opacity: 0;
-            transform: translateX(-60px) scale(0.95);
-            transition: all var(--duration-slow) var(--ease-organic);
+            transform: translateX(-30px);
+            transition: opacity var(--motion-slow) var(--ease-out),
+                        transform var(--motion-slow) var(--ease-out);
         }
         .reveal-left.visible {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateX(0);
         }
 
         .reveal-right {
             opacity: 0;
-            transform: translateX(60px) scale(0.95);
-            transition: all var(--duration-slow) var(--ease-organic);
+            transform: translateX(30px);
+            transition: opacity var(--motion-slow) var(--ease-out),
+                        transform var(--motion-slow) var(--ease-out);
         }
         .reveal-right.visible {
             opacity: 1;
-            transform: translateX(0) scale(1);
+            transform: translateX(0);
         }
 
         .reveal-scale {
             opacity: 0;
-            transform: scale(0.8);
-            transition: all var(--duration-slow) var(--ease-organic);
+            transform: scale(0.95);
+            transition: opacity var(--motion-slow) var(--ease-out),
+                        transform var(--motion-slow) var(--ease-out);
         }
         .reveal-scale.visible {
             opacity: 1;
             transform: scale(1);
         }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HERO CHOREOGRAPHY — Staggered Cinematic Entrance
+           ═══════════════════════════════════════════════════════════════ */
+        .hero-choreo {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity var(--motion-slow) var(--ease-out),
+                        transform var(--motion-slow) var(--ease-out);
+        }
+        .hero-choreo.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-choreo-1 { transition-delay: 200ms; }
+        .hero-choreo-2 { transition-delay: 400ms; }
+        .hero-choreo-3 { transition-delay: 550ms; }
+        .hero-choreo-4 { transition-delay: 700ms; }
+        .hero-choreo-5 { transition-delay: 900ms; }
+        .hero-choreo-6 { transition-delay: 1100ms; }
 
         /* ═══════════════════════════════════════════════════════════════
            PHASE 3: HERO — Ocean Depth Emergence
@@ -538,9 +590,11 @@
         }
         @keyframes particle-drift {
             0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) translateX(100px) scale(1); opacity: 0; }
+            8% { opacity: 0; }
+            15% { opacity: 0.5; }
+            85% { opacity: 0.5; }
+            92% { opacity: 0; }
+            100% { transform: translateY(-10vh) translateX(60px) scale(0.8); opacity: 0; }
         }
 
         .hero-content {
@@ -649,14 +703,14 @@
         }
         .phone-wrapper {
             position: relative;
-            animation: phone-emerge 1.2s var(--ease-organic) forwards;
+            animation: phone-emerge var(--motion-hero) var(--ease-out) forwards;
             opacity: 0;
-            transform: translateY(60px) rotateX(15deg) rotateY(-5deg);
+            transform: translateY(40px) perspective(1200px) rotateX(8deg);
         }
         @keyframes phone-emerge {
             to {
                 opacity: 1;
-                transform: translateY(0) rotateX(0) rotateY(0);
+                transform: translateY(0) perspective(1200px) rotateX(0deg);
             }
         }
         .phone-mockup {
@@ -671,15 +725,16 @@
                 0 0 0 1px rgba(255, 255, 255, 0.05) inset,
                 0 -20px 60px rgba(46, 196, 182, 0.15);
             overflow: hidden;
-            transition: transform var(--duration-slow) var(--ease-organic);
+            transition: transform var(--motion-slow) var(--ease-out),
+                        box-shadow var(--motion-slow) var(--ease-out);
         }
         @media (min-width: 768px) {
             .phone-mockup { width: 300px; height: 600px; }
         }
         .phone-mockup:hover {
-            transform: translateY(-8px) rotateY(-3deg);
+            transform: translateY(-6px) perspective(1200px) rotateY(-2deg);
             box-shadow:
-                0 32px 80px rgba(0, 0, 0, 0.35),
+                0 28px 72px rgba(0, 0, 0, 0.35),
                 0 0 0 1px rgba(255, 255, 255, 0.08) inset,
                 0 -24px 80px rgba(46, 196, 182, 0.2);
         }
@@ -699,10 +754,10 @@
             );
             opacity: 0;
             z-index: -1;
-            transition: opacity var(--duration-slow) var(--ease-smooth);
-            animation: glow-rotate 8s linear infinite;
+            transition: opacity var(--motion-slow) var(--ease-out);
+            animation: glow-rotate 10s linear infinite;
         }
-        .phone-mockup:hover .phone-glow { opacity: 0.6; }
+        .phone-mockup:hover .phone-glow { opacity: 0.5; }
         @keyframes glow-rotate {
             to { transform: rotate(360deg); }
         }
@@ -811,11 +866,12 @@
             font-weight: 700;
             font-size: 0.8rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all var(--duration-fast) var(--ease-smooth);
+            transition: transform var(--motion-fast) var(--ease-out),
+                        background var(--motion-fast) var(--ease-out);
         }
         .phone-subject:hover {
             background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
+            transform: scale(1.04);
         }
         .phone-subject .icon {
             font-size: 1.5rem;
@@ -851,21 +907,10 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           FLOATING PHONE — Parallax Through Sections
+           PHONE — Parallax Only (no infinite float)
            ═══════════════════════════════════════════════════════════════ */
-        @keyframes float-organic {
-            0%, 100% {
-                transform: translateY(0px) rotate(-1deg);
-            }
-            33% {
-                transform: translateY(-12px) rotate(0.5deg);
-            }
-            66% {
-                transform: translateY(-6px) rotate(-0.5deg);
-            }
-        }
         .phone-float {
-            animation: float-organic 6s ease-in-out infinite;
+            /* Parallax controlled via JS */
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -882,6 +927,8 @@
             margin-bottom: var(--space-lg);
             position: relative;
             box-shadow: var(--shadow-md);
+            transition: transform var(--motion-fast) var(--ease-out),
+                        box-shadow var(--motion-fast) var(--ease-out);
         }
         .feature-icon::after {
             content: '';
@@ -907,6 +954,10 @@
             position: relative;
             z-index: 1;
         }
+        .card:hover .feature-icon {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
 
         /* ═══════════════════════════════════════════════════════════════
            LANGUAGE CHIPS — Bioluminescent
@@ -919,7 +970,8 @@
             border-radius: var(--radius-full);
             font-weight: 700;
             font-size: var(--text-base);
-            transition: all var(--duration-normal) var(--ease-organic);
+            transition: transform var(--motion-fast) var(--ease-out),
+                        box-shadow var(--motion-fast) var(--ease-out);
             cursor: default;
             border: 1px solid transparent;
             position: relative;
@@ -932,11 +984,11 @@
             border-radius: inherit;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
             opacity: 0;
-            transition: opacity var(--duration-fast) var(--ease-smooth);
+            transition: opacity var(--motion-fast) var(--ease-out);
         }
         .language-chip:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
         .language-chip:hover::before { opacity: 1; }
 
@@ -959,7 +1011,8 @@
             background: linear-gradient(135deg, var(--reef-coral), var(--reef-coral-deep));
             color: white;
             box-shadow: 0 8px 24px rgba(255, 126, 95, 0.35);
-            transition: all var(--duration-normal) var(--ease-organic);
+            transition: transform var(--motion-fast) var(--ease-out),
+                        box-shadow var(--motion-fast) var(--ease-out);
         }
         .step-number::after {
             content: '';
@@ -978,6 +1031,10 @@
         .step-number.gold-step {
             background: linear-gradient(135deg, var(--reef-gold), #E5B800);
             box-shadow: 0 8px 24px rgba(255, 217, 61, 0.35);
+        }
+
+        .text-center:hover .step-number {
+            transform: scale(1.08);
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -1073,7 +1130,7 @@
         }
         .footer a {
             color: var(--text-on-dark-muted);
-            transition: color var(--duration-fast) var(--ease-smooth);
+            transition: color var(--motion-fast) var(--ease-out);
         }
         .footer a:hover { color: white; }
 
@@ -1099,7 +1156,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           REDUCED MOTION — Accessibility
+           REDUCED MOTION — Graceful Fallback
            ═══════════════════════════════════════════════════════════════ */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -1108,17 +1165,27 @@
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
             }
-            .reveal, .reveal-left, .reveal-right, .reveal-scale {
+            /* Keep content visible */
+            .reveal, .reveal-left, .reveal-right, .reveal-scale,
+            .hero-choreo {
                 opacity: 1 !important;
                 transform: none !important;
             }
             .phone-wrapper {
                 opacity: 1 !important;
                 transform: none !important;
+                animation: none !important;
             }
-            .phone-float { animation: none !important; }
+            /* Remove decorative motion */
+            .phone-float { transform: none !important; }
             .btn:hover { transform: none; }
             .card:hover { transform: none; }
+            .feature-icon { transition: none; }
+            .card:hover .feature-icon { transform: none; }
+            .step-number { transition: none; }
+            .text-center:hover .step-number { transform: none; }
+            /* Keep shadows for depth perception */
+            .card:hover { box-shadow: var(--shadow-sm); }
         }
 
         /* Skip Link */
@@ -1132,7 +1199,7 @@
             color: white;
             font-weight: 700;
             border-radius: var(--radius-md);
-            transition: top var(--duration-fast) var(--ease-smooth);
+            transition: top var(--motion-fast) var(--ease-out);
         }
         .skip-link:focus {
             top: var(--space-md);
@@ -1206,20 +1273,22 @@
             <div class="hero-particles" id="heroParticles"></div>
             <div class="container">
                 <div class="hero-content">
-                    <div class="hero-text reveal">
-                        <div class="hero-badge">
-                            <span class="hero-badge-dot"></span>
-                            Offline-First Learning App
+                    <div class="hero-text">
+                        <div class="hero-choreo hero-choreo-1">
+                            <div class="hero-badge">
+                                <span class="hero-badge-dot"></span>
+                                Offline-First Learning App
+                            </div>
                         </div>
-                        <h1 class="hero-title">
+                        <h1 class="hero-title hero-choreo hero-choreo-2">
                             Matuto, Maglaro,<br />
                             <span class="accent">Magtagumpay</span>
                         </h1>
-                        <p class="hero-subtitle">
+                        <p class="hero-subtitle hero-choreo hero-choreo-3">
                             LearnBasilan brings interactive education to elementary students in Basilan —
                             no internet required. Lessons, quizzes, and achievements in <strong>5 languages</strong>.
                         </p>
-                        <div class="hero-actions">
+                        <div class="hero-actions hero-choreo hero-choreo-4">
                             <a href="/api/download" class="btn btn-primary">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Download App
@@ -1229,7 +1298,7 @@
                                 See How It Works
                             </a>
                         </div>
-                        <div class="hero-social-proof">
+                        <div class="hero-social-proof hero-choreo hero-choreo-5">
                             <div class="hero-avatars">
                                 <div class="hero-avatar" style="background:var(--reef-coral-glow);color:var(--reef-coral-deep);">F</div>
                                 <div class="hero-avatar" style="background:var(--reef-teal-glow);color:var(--reef-teal-deep);">C</div>
@@ -1241,7 +1310,7 @@
                         </div>
                     </div>
 
-                    <div class="hero-phone phone-float">
+                    <div class="hero-phone hero-choreo hero-choreo-6">
                         <div class="phone-wrapper">
                             <div class="phone-glow"></div>
                             <div class="phone-mockup" role="img" aria-label="LearnBasilan app screenshot">
@@ -1509,13 +1578,13 @@
                         <a href="mailto:learnbasilan@email.com" style="font-size:var(--text-sm);">learnbasilan@email.com</a>
                     </div>
                     <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-lg);">
-                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="Facebook">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s;" aria-label="Facebook" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                         </a>
-                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="Twitter">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s;" aria-label="Twitter" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
                         </a>
-                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="GitHub">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s;" aria-label="GitHub" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                         </a>
                     </div>
@@ -1596,10 +1665,24 @@
                         revealObserver.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+            }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
 
             document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
                 revealObserver.observe(el);
+            });
+
+            /* ─── Hero Choreography Observer ─── */
+            const heroObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        heroObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.hero-choreo').forEach(function(el) {
+                heroObserver.observe(el);
             });
 
             /* ─── Stat Counter Animation ─── */
@@ -1619,17 +1702,26 @@
 
             function animateCount(el, target) {
                 let current = 0;
-                const increment = Math.ceil(target / 50);
-                const duration = 1200;
-                const stepTime = duration / (target / increment);
-                const timer = setInterval(function() {
-                    current += increment;
-                    if (current >= target) {
-                        current = target;
-                        clearInterval(timer);
-                    }
+                const duration = 1000;
+                const startTime = performance.now();
+                
+                function easeOut(t) {
+                    return 1 - Math.pow(1 - t, 3);
+                }
+                
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easedProgress = easeOut(progress);
+                    current = Math.round(easedProgress * target);
                     el.textContent = current;
-                }, stepTime);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+                
+                requestAnimationFrame(update);
             }
 
             document.querySelectorAll('.count-up').forEach(function(el) {
@@ -1647,36 +1739,43 @@
                 });
             });
 
-            /* ─── Hero Particles ─── */
+            /* ─── Hero Particles (Reduced to 8 for performance) ─── */
             const particlesContainer = document.getElementById('heroParticles');
             if (particlesContainer) {
                 const colors = ['var(--reef-coral)', 'var(--reef-teal)', 'var(--reef-gold)', 'var(--reef-green)'];
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 8; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
-                    const size = Math.random() * 6 + 2;
+                    const size = Math.random() * 5 + 3;
                     const color = colors[Math.floor(Math.random() * colors.length)];
                     particle.style.cssText = `
                         width: ${size}px;
                         height: ${size}px;
                         background: ${color};
                         left: ${Math.random() * 100}%;
-                        animation-duration: ${Math.random() * 10 + 8}s;
-                        animation-delay: ${Math.random() * 5}s;
+                        animation-duration: ${Math.random() * 12 + 10}s;
+                        animation-delay: ${Math.random() * 8}s;
                     `;
                     particlesContainer.appendChild(particle);
                 }
             }
 
-            /* ─── Parallax on Scroll (phone float) ─── */
+            /* ─── Parallax on Scroll (phone only, no float conflict) ─── */
             const phoneFloat = document.querySelector('.phone-float');
             if (phoneFloat && window.matchMedia('(min-width: 1024px)').matches) {
+                let ticking = false;
                 window.addEventListener('scroll', function() {
-                    const scrolled = window.pageYOffset;
-                    const phoneRect = phoneFloat.getBoundingClientRect();
-                    if (phoneRect.top < window.innerHeight && phoneRect.bottom > 0) {
-                        const parallax = scrolled * 0.15;
-                        phoneFloat.style.transform = `translateY(${parallax}px)`;
+                    if (!ticking) {
+                        window.requestAnimationFrame(function() {
+                            const scrolled = window.pageYOffset;
+                            const phoneRect = phoneFloat.getBoundingClientRect();
+                            if (phoneRect.top < window.innerHeight && phoneRect.bottom > 0) {
+                                const parallax = scrolled * 0.08;
+                                phoneFloat.style.transform = `translateY(${parallax}px)`;
+                            }
+                            ticking = false;
+                        });
+                        ticking = true;
                     }
                 }, { passive: true });
             }
