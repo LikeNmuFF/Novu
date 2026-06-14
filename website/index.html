@@ -3,316 +3,1042 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LearnBasilan &mdash; Matuto, Maglaro, Magtagumpay</title>
+    <title>LearnBasilan — Matuto, Maglaro, Magtagumpay</title>
     <meta name="description" content="LearnBasilan is an offline-first mobile learning app for elementary students in Basilan. Supports Filipino, Chavacano, Yakan, Tausug, and English." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <linl rel="icon" type="png/x-icon" href="https://likenmuff.github.io/Novu/website/static/logo.png">
+    <link rel="icon" type="image/png" href="https://likenmuff.github.io/Novu/website/static/logo.png">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        coral: { DEFAULT: '#FF7E5F', dark: '#E86548', light: '#FFA68F', glow: '#FFF0EB' },
-                        teal: { DEFAULT: '#2EC4B6', dark: '#219A8F', light: '#7DDAD0', glow: '#E8F8F6' },
-                        gold: { DEFAULT: '#FFD93D', light: '#FFE680', glow: '#FFF8E0' },
-                        green: { DEFAULT: '#6BCB77', light: '#94D99D', glow: '#EDF8EF' },
-                        ocean: { DEFAULT: '#1A535C', dark: '#0E2D32', light: '#2D7A87' },
-                        cream: { DEFAULT: '#FFF8F0', dark: '#F5E6D5' }
-                    },
-                    fontFamily: { display: ['Fredoka', 'sans-serif'], body: ['Nunito', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
     <style>
+        /* ═══════════════════════════════════════════════════════════════
+           PHASE 1: DESIGN SYSTEM — Living Reef Palette
+           ═══════════════════════════════════════════════════════════════ */
         :root {
-            --coral: #FF7E5F; --coral-dark: #E86548; --coral-light: #FFA68F;
-            --teal: #2EC4B6; --teal-dark: #219A8F; --teal-light: #7DDAD0;
-            --gold: #FFD93D; --gold-light: #FFE680;
-            --green: #6BCB77; --green-light: #94D99D;
-            --ocean: #1A535C; --ocean-dark: #0E2D32; --ocean-light: #2D7A87;
-            --cream: #FFF8F0; --cream-dark: #F5E6D5;
-            --white: #FFFFFF;
-            --bg: #FFF8F0; --surface: #FFFFFF; --text: #1A535C; --text-secondary: #1A535C;
-            --text-footer: #CBD5E1;
-            --border: #E2E8F0; --shadow: rgba(26,83,92,0.08);
+            /* Reef Core Palette */
+            --reef-coral: #FF7E5F;
+            --reef-coral-deep: #E86548;
+            --reef-coral-glow: #FFA68F;
+            --reef-teal: #2EC4B6;
+            --reef-teal-deep: #1A9E92;
+            --reef-teal-glow: #7DDAD0;
+            --reef-gold: #FFD93D;
+            --reef-gold-glow: #FFE680;
+            --reef-green: #6BCB77;
+            --reef-green-glow: #94D99D;
+
+            /* Ocean Depth Zones */
+            --ocean-surface: #FFF8F0;
+            --ocean-shallow: #E0F7F4;
+            --ocean-mid: #2D7A87;
+            --ocean-deep: #1A535C;
+            --ocean-abyss: #0E2D32;
+
+            /* Bioluminescent Accents */
+            --bio-pulse: rgba(46, 196, 182, 0.4);
+            --bio-glow: rgba(255, 126, 95, 0.3);
+            --bio-spark: rgba(255, 217, 61, 0.5);
+
+            /* Semantic Tokens */
+            --bg: var(--ocean-surface);
+            --bg-gradient: linear-gradient(180deg, var(--ocean-surface) 0%, var(--ocean-shallow) 100%);
+            --surface: #FFFFFF;
+            --surface-glass: rgba(255, 255, 255, 0.72);
+            --text: var(--ocean-deep);
+            --text-secondary: var(--ocean-mid);
+            --text-on-dark: #FFFFFF;
+            --text-on-dark-muted: rgba(255, 255, 255, 0.7);
+            --border: rgba(26, 83, 92, 0.1);
+            --shadow-sm: 0 2px 8px rgba(26, 83, 92, 0.06);
+            --shadow-md: 0 8px 32px rgba(26, 83, 92, 0.1);
+            --shadow-lg: 0 16px 64px rgba(26, 83, 92, 0.15);
+            --shadow-glow-coral: 0 8px 32px rgba(255, 126, 95, 0.25);
+            --shadow-glow-teal: 0 8px 32px rgba(46, 196, 182, 0.25);
+
+            /* Organic Spacing (8px base) */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            --space-4xl: 6rem;
+
+            /* Fluid Typography */
             --font-display: 'Fredoka', sans-serif;
             --font-body: 'Nunito', sans-serif;
+            --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
+            --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+            --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+            --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+            --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+            --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+            --text-3xl: clamp(1.875rem, 1.4rem + 2.4vw, 2.75rem);
+            --text-4xl: clamp(2.25rem, 1.5rem + 3.75vw, 3.75rem);
+            --text-5xl: clamp(2.75rem, 1.5rem + 6.25vw, 5rem);
+
+            /* Organic Radii */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-2xl: 48px;
+            --radius-full: 9999px;
+
+            /* Reef Transitions */
+            --ease-organic: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --duration-fast: 200ms;
+            --duration-normal: 400ms;
+            --duration-slow: 700ms;
         }
+
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #0E2D32; --surface: #1A535C; --text: #FFFFFF; --text-secondary: #CBD5E1;
-                --border: #2D7A87; --shadow: rgba(0,0,0,0.3);
+                --bg: var(--ocean-abyss);
+                --bg-gradient: linear-gradient(180deg, var(--ocean-abyss) 0%, var(--ocean-deep) 100%);
+                --surface: var(--ocean-deep);
+                --surface-glass: rgba(14, 45, 50, 0.85);
+                --text: #FFFFFF;
+                --text-secondary: rgba(255, 255, 255, 0.7);
+                --border: rgba(255, 255, 255, 0.1);
+                --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+                --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.4);
             }
-            body { background: var(--bg); color: var(--text); }
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BASE RESETS & ORGANIC FOUNDATIONS
+           ═══════════════════════════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; scroll-padding-top: 80px; }
         body {
             font-family: var(--font-body);
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.7;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        ::selection { background: var(--coral); color: white; }
-        :focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; border-radius: 4px; }
+        ::selection { background: var(--reef-coral); color: white; }
+        :focus-visible {
+            outline: 3px solid var(--reef-coral);
+            outline-offset: 2px;
+            border-radius: var(--radius-sm);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            line-height: 1.15;
+            color: var(--text);
+        }
+        img { max-width: 100%; height: auto; }
+        a { color: inherit; text-decoration: none; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.25rem; }
-        @media (min-width: 768px) { .container { padding: 0 2rem; } }
-        @media (min-width: 1024px) { .container { padding: 0 2.5rem; } }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+        @media (min-width: 768px) { .container { padding: 0 var(--space-2xl); } }
 
-        h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+        .section {
+            padding: var(--space-4xl) 0;
+            position: relative;
+        }
+        @media (min-width: 768px) { .section { padding: 8rem 0; } }
 
-        .glass {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.3);
+        /* ═══════════════════════════════════════════════════════════════
+           PHASE 2: NAVIGATION — Glassmorphism Shell
+           ═══════════════════════════════════════════════════════════════ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            transition: all var(--duration-normal) var(--ease-smooth);
+        }
+        .nav.scrolled {
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: var(--shadow-md);
         }
         @media (prefers-color-scheme: dark) {
-            .glass {
-                background: rgba(14,45,50,0.85);
-                border-bottom: 1px solid rgba(45,122,135,0.3);
-            }
+            .nav { background: rgba(14, 45, 50, 0.88); }
+            .nav.scrolled { background: rgba(14, 45, 50, 0.95); }
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: var(--text-lg);
+            color: var(--text);
+            transition: transform var(--duration-fast) var(--ease-bounce);
+        }
+        .nav-logo:hover { transform: scale(1.03); }
+        .nav-logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+        }
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: var(--space-xl);
+            list-style: none;
+        }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+        .nav-link {
+            font-size: var(--text-sm);
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: color var(--duration-fast) var(--ease-smooth);
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--reef-coral);
+            border-radius: var(--radius-full);
+            transition: width var(--duration-normal) var(--ease-organic);
+        }
+        .nav-link:hover { color: var(--reef-coral); }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Hamburger */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: var(--space-sm);
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 110;
+        }
+        @media (min-width: 768px) { .hamburger { display: none; } }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2.5px;
+            background: var(--text);
+            border-radius: var(--radius-full);
+            transition: all var(--duration-normal) var(--ease-organic);
+            transform-origin: center;
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(7.5px) rotate(45deg);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-7.5px) rotate(-45deg);
         }
 
+        /* Mobile Drawer */
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(320px, 85vw);
+            height: 100vh;
+            background: var(--surface);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            padding: 100px var(--space-2xl) var(--space-2xl);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all var(--duration-slow) var(--ease-organic);
+            box-shadow: -8px 0 40px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+        .mobile-drawer.open {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mobile-drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(14, 45, 50, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 190;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--duration-normal) var(--ease-smooth);
+        }
+        .mobile-drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mobile-drawer a {
+            display: block;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: var(--text-xl);
+            color: var(--text);
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--border);
+            transition: color var(--duration-fast) var(--ease-smooth);
+        }
+        .mobile-drawer a:hover { color: var(--reef-coral); }
+        .mobile-drawer .btn { margin-top: var(--space-xl); }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BUTTONS — Organic Shapes
+           ═══════════════════════════════════════════════════════════════ */
         .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.875rem 2rem; border-radius: 9999px; font-weight: 700;
-            font-size: 1rem; line-height: 1; cursor: pointer; transition: all 0.25s ease;
-            border: none; text-decoration: none; font-family: var(--font-display);
-            min-height: 48px; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: 0.875rem 2rem;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: var(--text-base);
+            line-height: 1;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-organic);
+            border: none;
+            text-decoration: none;
+            font-family: var(--font-display);
+            min-height: 48px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
         }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: var(--coral); color: white; box-shadow: 0 4px 14px rgba(255,126,95,0.35); }
-        .btn-primary:hover { background: var(--coral-dark); box-shadow: 0 6px 20px rgba(255,126,95,0.45); transform: translateY(-2px); }
-        .btn-secondary { background: var(--teal); color: white; box-shadow: 0 4px 14px rgba(46,196,182,0.35); }
-        .btn-secondary:hover { background: var(--teal-dark); box-shadow: 0 6px 20px rgba(46,196,182,0.45); transform: translateY(-2px); }
-        .btn-outline { background: transparent; color: var(--text); border: 2px solid var(--border); }
-        .btn-outline:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-glow); }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--duration-fast) var(--ease-smooth);
+        }
+        .btn:hover::before { opacity: 1; }
+        .btn:active { transform: scale(0.97); }
 
-        .section { padding: 5rem 0; }
-        @media (min-width: 768px) { .section { padding: 7rem 0; } }
+        .btn-primary {
+            background: var(--reef-coral);
+            color: white;
+            box-shadow: var(--shadow-glow-coral);
+        }
+        .btn-primary:hover {
+            background: var(--reef-coral-deep);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255, 126, 95, 0.4);
+        }
 
+        .btn-secondary {
+            background: var(--reef-teal);
+            color: white;
+            box-shadow: var(--shadow-glow-teal);
+        }
+        .btn-secondary:hover {
+            background: var(--reef-teal-deep);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(46, 196, 182, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--reef-coral);
+            color: var(--reef-coral);
+            background: rgba(255, 126, 95, 0.05);
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CARDS — Reef Organic
+           ═══════════════════════════════════════════════════════════════ */
         .card {
-            position: relative; background: var(--surface); border-radius: 1.25rem;
-            padding: 2rem; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+            position: relative;
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            transition: all var(--duration-slow) var(--ease-organic);
             border: 1px solid var(--border);
-            box-shadow:
-                0 1px 3px rgba(0,0,0,0.04),
-                0 4px 12px var(--shadow),
-                0 0 0 1px rgba(255,255,255,0.5) inset;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
         }
         .card::before {
-            content: ''; position: absolute; inset: 0; border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--bio-pulse) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity var(--duration-slow) var(--ease-smooth);
             pointer-events: none;
         }
         .card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow:
-                0 2px 6px rgba(0,0,0,0.05),
-                0 12px 32px var(--shadow),
-                0 24px 60px rgba(255,126,95,0.08),
-                0 0 0 1px rgba(255,126,95,0.15) inset;
-            border-color: rgba(255,126,95,0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 126, 95, 0.15);
         }
+        .card:hover::after { opacity: 0.3; }
+
         @media (prefers-color-scheme: dark) {
             .card::before {
-                background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
             }
             .card:hover {
-                box-shadow:
-                    0 2px 6px rgba(0,0,0,0.1),
-                    0 12px 32px rgba(0,0,0,0.3),
-                    0 0 0 1px rgba(255,126,95,0.2) inset;
+                box-shadow: 0 16px 64px rgba(0, 0, 0, 0.4);
+                border-color: rgba(46, 196, 182, 0.2);
             }
         }
 
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.16,1,0.3,1); }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-        .reveal-delay-4 { transition-delay: 0.4s; }
+        /* ═══════════════════════════════════════════════════════════════
+           REVEAL ANIMATIONS — Staggered Organic
+           ═══════════════════════════════════════════════════════════════ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            transition: all var(--duration-slow) var(--ease-organic);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 100ms; }
+        .reveal-delay-2 { transition-delay: 200ms; }
+        .reveal-delay-3 { transition-delay: 300ms; }
+        .reveal-delay-4 { transition-delay: 400ms; }
+        .reveal-delay-5 { transition-delay: 500ms; }
 
-        @media (prefers-reduced-motion: reduce) {
-            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-            .btn:active { transform: none; }
-            .card:hover { transform: none; }
-            .btn-primary:hover, .btn-secondary:hover { transform: none; }
-            .phone-float { animation: none !important; }
-            * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px) scale(0.95);
+            transition: all var(--duration-slow) var(--ease-organic);
+        }
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(-2deg); }
-            50% { transform: translateY(-16px) rotate(0deg); }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px) scale(0.95);
+            transition: all var(--duration-slow) var(--ease-organic);
         }
-        .phone-float { animation: float 5s ease-in-out infinite; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.8s ease forwards; }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0) scale(1);
         }
 
-        .hero-gradient {
-            background: linear-gradient(135deg, var(--cream) 0%, #FFE8E0 40%, #E0F7F4 100%);
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all var(--duration-slow) var(--ease-organic);
+        }
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PHASE 3: HERO — Ocean Depth Emergence
+           ═══════════════════════════════════════════════════════════════ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg,
+                var(--ocean-surface) 0%,
+                var(--ocean-shallow) 40%,
+                rgba(45, 122, 135, 0.3) 70%,
+                var(--ocean-deep) 100%
+            );
+            z-index: 0;
         }
         @media (prefers-color-scheme: dark) {
-            .hero-gradient {
-                background: linear-gradient(135deg, #0E2D32 0%, #1A535C 40%, #0E2D32 100%);
+            .hero-bg {
+                background: linear-gradient(180deg,
+                    var(--ocean-abyss) 0%,
+                    var(--ocean-deep) 40%,
+                    rgba(26, 83, 92, 0.8) 70%,
+                    var(--ocean-abyss) 100%
+                );
             }
         }
 
+        /* Floating Organic Particles */
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: particle-drift linear infinite;
+        }
+        @keyframes particle-drift {
+            0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(100px) scale(1); opacity: 0; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-3xl);
+            align-items: center;
+        }
+        @media (min-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-4xl);
+            }
+        }
+        .hero-text {
+            max-width: 560px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: rgba(46, 196, 182, 0.12);
+            border: 1px solid rgba(46, 196, 182, 0.25);
+            color: var(--reef-teal-deep);
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 700;
+            margin-bottom: var(--space-xl);
+            backdrop-filter: blur(8px);
+        }
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--reef-teal);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 var(--bio-pulse); }
+            50% { box-shadow: 0 0 0 8px transparent; }
+        }
+
+        .hero-title {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.02em;
+        }
+        .hero-title .accent {
+            background: linear-gradient(135deg, var(--reef-coral) 0%, var(--reef-coral-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+            line-height: 1.7;
+            font-weight: 600;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
+        }
+        .hero-social-proof {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        .hero-avatars {
+            display: flex;
+        }
+        .hero-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: 800;
+            color: white;
+            border: 2px solid white;
+            margin-left: -8px;
+        }
+        .hero-avatar:first-child { margin-left: 0; }
+        .hero-social-text {
+            font-size: var(--text-sm);
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PHASE 4: PHONE MOCKUP — Swimming Creature
+           ═══════════════════════════════════════════════════════════════ */
+        .hero-phone {
+            display: flex;
+            justify-content: center;
+            perspective: 1200px;
+        }
+        .phone-wrapper {
+            position: relative;
+            animation: phone-emerge 1.2s var(--ease-organic) forwards;
+            opacity: 0;
+            transform: translateY(60px) rotateX(15deg) rotateY(-5deg);
+        }
+        @keyframes phone-emerge {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0) rotateY(0);
+            }
+        }
+        .phone-mockup {
+            position: relative;
+            width: 280px;
+            height: 560px;
+            background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1a 100%);
+            border-radius: 44px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 -20px 60px rgba(46, 196, 182, 0.15);
+            overflow: hidden;
+            transition: transform var(--duration-slow) var(--ease-organic);
+        }
+        @media (min-width: 768px) {
+            .phone-mockup { width: 300px; height: 600px; }
+        }
+        .phone-mockup:hover {
+            transform: translateY(-8px) rotateY(-3deg);
+            box-shadow:
+                0 32px 80px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                0 -24px 80px rgba(46, 196, 182, 0.2);
+        }
+
+        /* Phone Glow Ring */
+        .phone-glow {
+            position: absolute;
+            inset: -2px;
+            border-radius: 46px;
+            background: conic-gradient(
+                from 0deg,
+                var(--reef-coral) 0deg,
+                var(--reef-teal) 90deg,
+                var(--reef-gold) 180deg,
+                var(--reef-green) 270deg,
+                var(--reef-coral) 360deg
+            );
+            opacity: 0;
+            z-index: -1;
+            transition: opacity var(--duration-slow) var(--ease-smooth);
+            animation: glow-rotate 8s linear infinite;
+        }
+        .phone-mockup:hover .phone-glow { opacity: 0.6; }
+        @keyframes glow-rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1a 100%);
+            border-radius: 0 0 20px 20px;
+            z-index: 2;
+        }
+        .phone-screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg,
+                var(--reef-coral) 0%,
+                var(--reef-coral-glow) 40%,
+                var(--ocean-surface) 100%
+            );
+            padding: 52px 20px 20px;
+            z-index: 1;
+        }
+        .phone-status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px 16px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .phone-screen h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .phone-screen .phone-grade {
+            color: white;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Phone Streak Widget */
+        .phone-streak {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .phone-streak-label {
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .phone-streak-days {
+            display: flex;
+            gap: 4px;
+        }
+        .phone-streak-day {
+            border-radius: 6px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .phone-streak-day.active {
+            background: var(--reef-gold);
+            color: var(--ocean-deep);
+        }
+        .phone-streak-day.inactive {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .phone-subjects-label {
+            color: white;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .phone-subject-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .phone-subject {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius-sm);
+            padding: 14px 8px;
+            text-align: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--duration-fast) var(--ease-smooth);
+        }
+        .phone-subject:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .phone-subject .icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .phone-bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .phone-nav-item {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.65rem;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .phone-nav-item.active {
+            color: white;
+            font-weight: 800;
+        }
+        .phone-nav-item .dot {
+            display: block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            margin: 4px auto 0;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FLOATING PHONE — Parallax Through Sections
+           ═══════════════════════════════════════════════════════════════ */
+        @keyframes float-organic {
+            0%, 100% {
+                transform: translateY(0px) rotate(-1deg);
+            }
+            33% {
+                transform: translateY(-12px) rotate(0.5deg);
+            }
+            66% {
+                transform: translateY(-6px) rotate(-0.5deg);
+            }
+        }
+        .phone-float {
+            animation: float-organic 6s ease-in-out infinite;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FEATURE ICONS — Organic Gradient Orbs
+           ═══════════════════════════════════════════════════════════════ */
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .feature-icon.icon-coral {
+            background: linear-gradient(135deg, var(--reef-coral), var(--reef-coral-glow));
+        }
+        .feature-icon.icon-teal {
+            background: linear-gradient(135deg, var(--reef-teal), var(--reef-teal-glow));
+        }
+        .feature-icon.icon-gold {
+            background: linear-gradient(135deg, var(--reef-gold), var(--reef-gold-glow));
+        }
+        .feature-icon.icon-green {
+            background: linear-gradient(135deg, var(--reef-green), var(--reef-green-glow));
+        }
+        .feature-icon svg {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           LANGUAGE CHIPS — Bioluminescent
+           ═══════════════════════════════════════════════════════════════ */
         .language-chip {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 1.5rem; border-radius: 9999px;
-            font-weight: 700; font-size: 1rem;
-            transition: all 0.3s cubic-bezier(0.16,1,0.3,1); cursor: default;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02) inset;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: var(--text-base);
+            transition: all var(--duration-normal) var(--ease-organic);
+            cursor: default;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
-        .language-chip:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-
-        .stat-value {
-            font-family: var(--font-display); font-size: 2.5rem; font-weight: 700;
-            background: linear-gradient(135deg, var(--coral), var(--teal));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; display: inline-block;
-            filter: drop-shadow(0 4px 12px rgba(255,126,95,0.4));
+        .language-chip::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity var(--duration-fast) var(--ease-smooth);
         }
-        @media (min-width: 768px) { .stat-value { font-size: 3rem; } }
+        .language-chip:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+        .language-chip:hover::before { opacity: 1; }
 
+        /* ═══════════════════════════════════════════════════════════════
+           STEP NUMBERS — Coral Reef Orbs
+           ═══════════════════════════════════════════════════════════════ */
         .step-number {
-            display: flex; align-items: center; justify-content: center;
-            width: 56px; height: 56px; border-radius: 50%; position: relative;
-            font-family: var(--font-display); font-weight: 700; font-size: 1.35rem;
-            flex-shrink: 0; z-index: 1;
-            background: linear-gradient(135deg, var(--coral), var(--coral-dark));
-            color: white; box-shadow: 0 6px 20px rgba(255,126,95,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            position: relative;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--reef-coral), var(--reef-coral-deep));
+            color: white;
+            box-shadow: 0 8px 24px rgba(255, 126, 95, 0.35);
+            transition: all var(--duration-normal) var(--ease-organic);
         }
         .step-number::after {
-            content: ''; position: absolute; inset: 2px; border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%);
             pointer-events: none;
         }
         .step-number span { position: relative; z-index: 1; }
+
         .step-number.teal-step {
-            background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-            box-shadow: 0 6px 20px rgba(46,196,182,0.3);
+            background: linear-gradient(135deg, var(--reef-teal), var(--reef-teal-deep));
+            box-shadow: 0 8px 24px rgba(46, 196, 182, 0.35);
         }
         .step-number.gold-step {
-            background: linear-gradient(135deg, #FFD93D, #E5B800);
-            box-shadow: 0 6px 20px rgba(255,217,61,0.3);
+            background: linear-gradient(135deg, var(--reef-gold), #E5B800);
+            box-shadow: 0 8px 24px rgba(255, 217, 61, 0.35);
         }
 
-        .phone-mockup {
-            position: relative; width: 280px; height: 560px;
-            background: #1a1a2e; border-radius: 40px;
-            border: 3px solid #333; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        /* ═══════════════════════════════════════════════════════════════
+           STAT VALUES — Gradient Text
+           ═══════════════════════════════════════════════════════════════ */
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--reef-coral), var(--reef-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            filter: drop-shadow(0 4px 12px rgba(255, 126, 95, 0.3));
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           PHASE 5: SECTION BACKGROUNDS — Reef Zones
+           ═══════════════════════════════════════════════════════════════ */
+        .section-surface {
+            background: var(--bg);
+        }
+        .section-shallow {
+            background: linear-gradient(180deg, var(--ocean-surface) 0%, var(--ocean-shallow) 100%);
+        }
+        @media (prefers-color-scheme: dark) {
+            .section-shallow {
+                background: linear-gradient(180deg, var(--ocean-abyss) 0%, rgba(26, 83, 92, 0.3) 100%);
+            }
+        }
+        .section-mid {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CTA GRADIENT — Bioluminescent CTA
+           ═══════════════════════════════════════════════════════════════ */
+        .cta-gradient {
+            background: linear-gradient(135deg, var(--reef-coral) 0%, var(--reef-teal) 50%, var(--ocean-deep) 100%);
+            position: relative;
             overflow: hidden;
         }
-        @media (min-width: 768px) { .phone-mockup { width: 300px; height: 600px; } }
-        .phone-mockup iframe { width: 100%; height: 100%; border: none; }
-        .phone-notch {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 120px; height: 24px; background: #1a1a2e;
-            border-radius: 0 0 16px 16px; z-index: 2;
-        }
-        .phone-screen {
-            position: absolute; inset: 0; display: flex; flex-direction: column;
-            background: linear-gradient(180deg, #FF7E5F 0%, #FFA68F 40%, #FFF8F0 100%);
-            padding: 48px 20px 20px; z-index: 1;
-        }
-        .phone-screen .status-bar {
-            display: flex; justify-content: space-between; padding: 0 4px 16px;
-            color: white; font-size: 0.8rem; font-weight: 700;
-        }
-        .phone-screen h3 {
-            color: white; font-size: 1.6rem; margin-bottom: 0.25rem;
-        }
-        .phone-screen p {
-            color: white; font-size: 0.85rem; margin-bottom: 1.25rem; font-weight: 600;
-        }
-        .phone-subject-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-        }
-        .phone-subject {
-            background: rgba(255,255,255,0.25); backdrop-filter: blur(8px);
-            border-radius: 12px; padding: 14px 8px; text-align: center;
-            color: white; font-weight: 700; font-size: 0.8rem;
-        }
-        .phone-subject .icon { font-size: 1.6rem; margin-bottom: 6px; display: block; }
-        .phone-bottom-nav {
-            display: flex; justify-content: space-around; margin-top: auto;
-            padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);
-        }
-        .phone-bottom-nav span {
-            color: rgba(255,255,255,0.75); font-size: 0.7rem; text-align: center; font-weight: 600;
-        }
-        .phone-bottom-nav span.active { color: white; font-weight: 800; }
-
-        .hamburger {
-            display: flex; flex-direction: column; gap: 5px; cursor: pointer;
-            background: none; border: none; padding: 8px; min-width: 44px; min-height: 44px;
-            align-items: center; justify-content: center;
-        }
-        .hamburger span {
-            display: block; width: 24px; height: 2.5px; background: var(--text);
-            border-radius: 2px; transition: all 0.3s ease;
-        }
-        .hamburger.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
-
-        .mobile-nav {
-            position: fixed; top: 72px; left: 0; right: 0; bottom: 0;
-            background: var(--surface); z-index: 40;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-            transform: translateY(-100%); opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
-            pointer-events: none;
-        }
-        .mobile-nav.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-
-        .feature-icon {
-            width: 56px; height: 56px; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; margin-bottom: 1.25rem; position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-        .feature-icon::after {
-            content: ''; position: absolute; inset: 0; border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        .feature-icon.icon-coral { background: linear-gradient(135deg, #FF7E5F, #FFA68F); }
-        .feature-icon.icon-teal { background: linear-gradient(135deg, #2EC4B6, #7DDAD0); }
-        .feature-icon.icon-gold { background: linear-gradient(135deg, #FFD93D, #FFE680); }
-        .feature-icon.icon-green { background: linear-gradient(135deg, #6BCB77, #94D99D); }
-        .feature-icon svg { position: relative; z-index: 1; }
-
-        .cta-gradient {
-            background: linear-gradient(135deg, var(--coral) 0%, var(--teal) 100%);
-            position: relative; overflow: hidden;
-        }
         .cta-gradient::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.15) 0%, transparent 70%);
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
             pointer-events: none;
         }
         .cta-gradient::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);
-            animation: cta-shimmer 15s ease-in-out infinite;
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+            animation: cta-shimmer 20s ease-in-out infinite;
             pointer-events: none;
         }
         @keyframes cta-shimmer {
@@ -320,63 +1046,180 @@
             50% { transform: translate(10%, 5%) rotate(3deg); }
         }
 
-        .language-flag { width: 28px; height: 20px; border-radius: 3px; object-fit: cover; }
+        /* ═══════════════════════════════════════════════════════════════
+           FOOTER — Deep Ocean
+           ═══════════════════════════════════════════════════════════════ */
+        .footer {
+            background: var(--ocean-abyss);
+            color: var(--text-on-dark);
+            padding: var(--space-4xl) 0 var(--space-2xl);
+            position: relative;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--reef-teal) 20%,
+                var(--reef-coral) 50%,
+                var(--reef-teal) 80%,
+                transparent 100%
+            );
+            opacity: 0.4;
+        }
+        .footer a {
+            color: var(--text-on-dark-muted);
+            transition: color var(--duration-fast) var(--ease-smooth);
+        }
+        .footer a:hover { color: white; }
 
-        .card h3, .card p { color: var(--text); }
-        section .text-ocean { color: var(--text); }
+        /* ═══════════════════════════════════════════════════════════════
+           WAVE DIVIDERS — Organic Section Transitions
+           ═══════════════════════════════════════════════════════════════ */
+        .wave-divider {
+            position: relative;
+            height: 80px;
+            overflow: hidden;
+        }
+        .wave-divider svg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .wave-divider path {
+            fill: var(--surface);
+        }
+        @media (prefers-color-scheme: dark) {
+            .wave-divider path { fill: var(--ocean-deep); }
+        }
 
-        footer a { color: var(--text-footer); text-decoration: none; transition: color 0.2s; }
-        footer a:hover { color: white; }
+        /* ═══════════════════════════════════════════════════════════════
+           REDUCED MOTION — Accessibility
+           ═══════════════════════════════════════════════════════════════ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal, .reveal-left, .reveal-right, .reveal-scale {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .phone-wrapper {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .phone-float { animation: none !important; }
+            .btn:hover { transform: none; }
+            .card:hover { transform: none; }
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: fixed;
+            top: -100%;
+            left: var(--space-md);
+            z-index: 1000;
+            padding: var(--space-md) var(--space-xl);
+            background: var(--reef-coral);
+            color: white;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            transition: top var(--duration-fast) var(--ease-smooth);
+        }
+        .skip-link:focus {
+            top: var(--space-md);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ORGANIC SECTION SHAPES
+           ═══════════════════════════════════════════════════════════════ */
+        .reef-curve {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 80px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .reef-curve-top {
+            top: -40px;
+        }
+        .reef-curve-bottom {
+            bottom: -40px;
+            transform: rotate(180deg);
+        }
+        .reef-curve svg {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-coral focus:text-white focus:rounded-lg focus:font-bold">
-        Skip to main content
-    </a>
+    <a href="#main" class="skip-link">Skip to main content</a>
 
-    <nav class="fixed top-0 left-0 right-0 z-50 glass" role="navigation" aria-label="Main navigation">
-        <div class="container flex items-center justify-between h-[72px]">
-            <a href="#" class="flex items-center gap-2.5 text-xl font-bold no-underline text-ocean" style="font-family:var(--font-display)" aria-label="LearnBasilan home">
-                <img src="https://likenmuff.github.io/Novu/website/static/logo.png" alt="LearnBasilan" class="w-8 h-8 rounded-lg object-cover" />
+    <!-- ═══════════════════════════════════════════════════════════════
+         NAVIGATION — Glassmorphism Shell
+         ═══════════════════════════════════════════════════════════════ -->
+    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo" aria-label="LearnBasilan home">
+                <img src="https://likenmuff.github.io/Novu/website/static/logo.png" alt="LearnBasilan" />
                 LearnBasilan
             </a>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#features" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">Features</a>
-                <a href="#languages" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">Languages</a>
-                <a href="#how-it-works" class="text-sm font-semibold text-ocean no-underline hover:text-coral transition-colors">How It Works</a>
-                <a href="#download" class="btn btn-primary text-sm py-2.5 px-6">Get Started</a>
-            </div>
-            <button class="hamburger md:hidden" aria-label="Toggle navigation menu" aria-expanded="false" id="menuBtn">
+            <ul class="nav-links">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#languages" class="nav-link">Languages</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#download" class="btn btn-primary" style="padding:0.5rem 1.25rem;min-height:40px;font-size:0.9rem;">Get Started</a></li>
+            </ul>
+            <button class="hamburger" id="menuBtn" aria-label="Toggle navigation menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
 
-    <div class="mobile-nav md:hidden" id="mobileNav" role="dialog" aria-label="Mobile navigation">
-        <a href="#features" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">Features</a>
-        <a href="#languages" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">Languages</a>
-        <a href="#how-it-works" class="text-xl font-bold text-ocean no-underline" style="font-family:var(--font-display)">How It Works</a>
-        <a href="/api/download" class="btn btn-primary text-lg">Get Started</a>
+    <!-- Mobile Drawer Overlay -->
+    <div class="mobile-drawer-overlay" id="drawerOverlay"></div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-label="Mobile navigation">
+        <a href="#features">Features</a>
+        <a href="#languages">Languages</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="/api/download" class="btn btn-primary" style="margin-top:var(--space-2xl);">Get Started</a>
     </div>
 
     <main id="main">
-        <section class="hero-gradient pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden" aria-label="Hero">
+        <!-- ═══════════════════════════════════════════════════════════════
+             HERO — Ocean Depth Emergence
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="hero" aria-label="Hero">
+            <div class="hero-bg"></div>
+            <div class="hero-particles" id="heroParticles"></div>
             <div class="container">
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div class="fade-in">
-                        <div class="inline-flex items-center gap-2 bg-teal-glow dark:bg-teal/20 text-teal-dark dark:text-teal-light px-4 py-2 rounded-full text-sm font-bold mb-6">
-                            <span class="w-2 h-2 bg-teal rounded-full" style="animation:pulse-dot 2s ease-in-out infinite"></span>
+                <div class="hero-content">
+                    <div class="hero-text reveal">
+                        <div class="hero-badge">
+                            <span class="hero-badge-dot"></span>
                             Offline-First Learning App
                         </div>
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-ocean mb-4">
+                        <h1 class="hero-title">
                             Matuto, Maglaro,<br />
-                            <span class="text-coral">Magtagumpay</span>
+                            <span class="accent">Magtagumpay</span>
                         </h1>
-                        <p class="text-lg md:text-xl text-ocean mb-8 max-w-lg leading-relaxed font-semibold">
-                            LearnBasilan brings interactive education to elementary students in Basilan &mdash; 
+                        <p class="hero-subtitle">
+                            LearnBasilan brings interactive education to elementary students in Basilan —
                             no internet required. Lessons, quizzes, and achievements in <strong>5 languages</strong>.
                         </p>
-                        <div class="flex flex-wrap gap-4">
+                        <div class="hero-actions">
                             <a href="/api/download" class="btn btn-primary">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Download App
@@ -386,52 +1229,56 @@
                                 See How It Works
                             </a>
                         </div>
-                        <div class="flex items-center gap-4 mt-8 text-sm text-ocean">
-                            <div class="flex -space-x-2">
-                                <div class="w-8 h-8 rounded-full bg-coral-light border-2 border-white flex items-center justify-center text-xs font-bold text-coral-dark">F</div>
-                                <div class="w-8 h-8 rounded-full bg-teal-light border-2 border-white flex items-center justify-center text-xs font-bold text-teal-dark">C</div>
-                                <div class="w-8 h-8 rounded-full bg-gold-light border-2 border-white flex items-center justify-center text-xs font-bold text-yellow-700">Y</div>
-                                <div class="w-8 h-8 rounded-full bg-green-light border-2 border-white flex items-center justify-center text-xs font-bold text-green-800">T</div>
-                                <div class="w-8 h-8 rounded-full bg-ocean-light border-2 border-white flex items-center justify-center text-xs font-bold text-white">E</div>
+                        <div class="hero-social-proof">
+                            <div class="hero-avatars">
+                                <div class="hero-avatar" style="background:var(--reef-coral-glow);color:var(--reef-coral-deep);">F</div>
+                                <div class="hero-avatar" style="background:var(--reef-teal-glow);color:var(--reef-teal-deep);">C</div>
+                                <div class="hero-avatar" style="background:var(--reef-gold-glow);color:#92400E;">Y</div>
+                                <div class="hero-avatar" style="background:var(--reef-green-glow);color:#166534;">T</div>
+                                <div class="hero-avatar" style="background:rgba(45,122,135,0.2);color:var(--ocean-deep);">E</div>
                             </div>
-                            <span class="text-ocean font-semibold">5 Languages Supported</span>
+                            <span class="hero-social-text">5 Languages Supported</span>
                         </div>
                     </div>
-                    <div class="flex justify-center lg:justify-end phone-float">
-                        <div class="phone-mockup" role="img" aria-label="LearnBasilan app screenshot">
-                            <div class="phone-notch"></div>
-                            <div class="phone-screen">
-                                <div class="status-bar">
-                                    <span>9:41</span>
-                                    <span>LearnBasilan</span>
-                                </div>
-                                <h3>Welcome, Juan!</h3>
-                                <p>Grade 4 &bull; Level 3 &bull; 240 XP</p>
-                                <div style="background:rgba(255,255,255,0.2);border-radius:8px;padding:10px;margin-bottom:16px">
-                                    <div style="color:white;font-size:0.75rem;font-weight:700;margin-bottom:6px">Current Streak</div>
-                                    <div style="display:flex;gap:4px">
-                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">M</span>
-                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">T</span>
-                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">W</span>
-                                        <span style="background:var(--gold);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#1A535C">T</span>
-                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">F</span>
-                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">S</span>
-                                        <span style="background:rgba(255,255,255,0.2);border-radius:4px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.6)">S</span>
+
+                    <div class="hero-phone phone-float">
+                        <div class="phone-wrapper">
+                            <div class="phone-glow"></div>
+                            <div class="phone-mockup" role="img" aria-label="LearnBasilan app screenshot">
+                                <div class="phone-notch"></div>
+                                <div class="phone-screen">
+                                    <div class="phone-status-bar">
+                                        <span>9:41</span>
+                                        <span>LearnBasilan</span>
+                                    </div>
+                                    <h3>Welcome, Juan!</h3>
+                                    <p class="phone-grade">Grade 4 · Level 3 · 240 XP</p>
+                                    <div class="phone-streak">
+                                        <div class="phone-streak-label">Current Streak</div>
+                                        <div class="phone-streak-days">
+                                            <span class="phone-streak-day active">M</span>
+                                            <span class="phone-streak-day active">T</span>
+                                            <span class="phone-streak-day active">W</span>
+                                            <span class="phone-streak-day active">T</span>
+                                            <span class="phone-streak-day inactive">F</span>
+                                            <span class="phone-streak-day inactive">S</span>
+                                            <span class="phone-streak-day inactive">S</span>
+                                        </div>
+                                    </div>
+                                    <p class="phone-subjects-label">Your Subjects</p>
+                                    <div class="phone-subject-grid">
+                                        <div class="phone-subject"><span class="icon">🔬</span>Science</div>
+                                        <div class="phone-subject"><span class="icon">🔢</span>Math</div>
+                                        <div class="phone-subject"><span class="icon">🌍</span>AP</div>
+                                        <div class="phone-subject"><span class="icon">🇺🇸</span>English</div>
+                                    </div>
+                                    <div class="phone-bottom-nav">
+                                        <span class="phone-nav-item active">Home<span class="dot"></span></span>
+                                        <span class="phone-nav-item">Learn<span class="dot"></span></span>
+                                        <span class="phone-nav-item">Badges<span class="dot"></span></span>
+                                        <span class="phone-nav-item">Profile<span class="dot"></span></span>
                                     </div>
                                 </div>
-                                <p style="margin-bottom:12px;font-size:0.85rem">Your Subjects</p>
-                                <div class="phone-subject-grid">
-                                    <div class="phone-subject"><span class="icon">&#128300;</span>Science</div>
-                                    <div class="phone-subject"><span class="icon">&#128424;</span>Math</div>
-                                    <div class="phone-subject"><span class="icon">&#127758;</span>AP</div>
-                                    <div class="phone-subject"><span class="icon">&#127468;&#127463;</span>English</div>
-                                </div>
-                                <div class="phone-bottom-nav">
-                                    <span class="active">Home<br/>&#9679;</span>
-                                    <span>Learn<br/>&#9679;</span>
-                                    <span>Badges<br/>&#9679;</span>
-                                    <span>Profile<br/>&#9679;</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,155 +1286,181 @@
             </div>
         </section>
 
-        <section class="section bg-white dark:bg-ocean-dark" aria-label="Trusted by students">
+        <!-- ═══════════════════════════════════════════════════════════════
+             TRUSTED BY — Reef Partners
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="section section-mid" aria-label="Trusted by students">
             <div class="container text-center">
-                <p class="text-sm font-bold uppercase tracking-widest text-ocean mb-8">Trusted by students across Basilan</p>
-                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
-                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">DepEd Basilan</span>
-                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">LearnBasilan</span>
-                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">Mother Tongue</span>
-                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">QR Learning</span>
-                    <span class="text-lg font-bold text-ocean" style="font-family:var(--font-display)">Offline First</span>
+                <p style="font-size:var(--text-sm);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-secondary);margin-bottom:var(--space-xl);">Trusted by students across Basilan</p>
+                <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:var(--space-2xl) var(--space-3xl);opacity:0.6;">
+                    <span style="font-size:var(--text-lg);font-weight:700;color:var(--text);">DepEd Basilan</span>
+                    <span style="font-size:var(--text-lg);font-weight:700;color:var(--text);">LearnBasilan</span>
+                    <span style="font-size:var(--text-lg);font-weight:700;color:var(--text);">Mother Tongue</span>
+                    <span style="font-size:var(--text-lg);font-weight:700;color:var(--text);">QR Learning</span>
+                    <span style="font-size:var(--text-lg);font-weight:700;color:var(--text);">Offline First</span>
                 </div>
             </div>
         </section>
 
-        <section id="features" class="section" aria-label="Features">
+        <!-- ═══════════════════════════════════════════════════════════════
+             FEATURES — Reef Ecosystem Cards
+             ═══════════════════════════════════════════════════════════════ -->
+        <section id="features" class="section section-shallow" aria-label="Features">
             <div class="container">
-                <div class="text-center mb-12 reveal">
-                    <p class="text-sm font-bold uppercase tracking-widest text-coral mb-3">Features</p>
-                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Everything You Need to Learn</h2>
-                    <p class="text-ocean max-w-xl mx-auto font-semibold">Designed for the unique needs of students in Basilan &mdash; no internet, no problem.</p>
+                <div class="text-center" style="margin-bottom:var(--space-3xl);">
+                    <p class="reveal" style="font-size:var(--text-sm);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--reef-coral);margin-bottom:var(--space-sm);">Features</p>
+                    <h2 class="reveal reveal-delay-1" style="font-size:var(--text-3xl);font-weight:700;margin-bottom:var(--space-md);">Everything You Need to Learn</h2>
+                    <p class="reveal reveal-delay-2" style="color:var(--text-secondary);max-width:560px;margin:0 auto;font-weight:600;">Designed for the unique needs of students in Basilan — no internet, no problem.</p>
                 </div>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:var(--space-xl);">
                     <div class="card reveal reveal-delay-1">
-                        <div class="feature-icon icon-coral"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
-                        <h3 class="text-lg font-bold mb-2">Offline First</h3>
-                        <p class="text-sm">All lessons, quizzes, and progress stored locally on device. No internet connection needed.</p>
+                        <div class="feature-icon icon-coral">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        </div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">Offline First</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.7;">All lessons, quizzes, and progress stored locally on device. No internet connection needed.</p>
                     </div>
                     <div class="card reveal reveal-delay-2">
-                        <div class="feature-icon icon-teal"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-                        <h3 class="text-lg font-bold mb-2">QR Sharing</h3>
-                        <p class="text-sm">Share lessons, quizzes, and progress via QR codes. No data plan required.</p>
+                        <div class="feature-icon icon-teal">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        </div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">QR Sharing</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.7;">Share lessons, quizzes, and progress via QR codes. No data plan required.</p>
                     </div>
                     <div class="card reveal reveal-delay-3">
-                        <div class="feature-icon icon-gold"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg></div>
-                        <h3 class="text-lg font-bold mb-2">5 Languages</h3>
-                        <p class="text-sm">Content in Filipino, Chavacano, Yakan, Tausug, and English &mdash; learn in your mother tongue.</p>
+                        <div class="feature-icon icon-gold">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                        </div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">5 Languages</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.7;">Content in Filipino, Chavacano, Yakan, Tausug, and English — learn in your mother tongue.</p>
                     </div>
                     <div class="card reveal reveal-delay-4">
-                        <div class="feature-icon icon-green"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
-                        <h3 class="text-lg font-bold mb-2">Gamified Learning</h3>
-                        <p class="text-sm">Earn XP, unlock achievements, build streaks, and level up as you master each lesson.</p>
+                        <div class="feature-icon icon-green">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">Gamified Learning</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);line-height:1.7;">Earn XP, unlock achievements, build streaks, and level up as you master each lesson.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="languages" class="section bg-white dark:bg-ocean-dark" aria-label="Languages">
+        <!-- ═══════════════════════════════════════════════════════════════
+             LANGUAGES — Bioluminescent Chips
+             ═══════════════════════════════════════════════════════════════ -->
+        <section id="languages" class="section" aria-label="Languages">
             <div class="container">
-                <div class="text-center mb-12 reveal">
-                    <p class="text-sm font-bold uppercase tracking-widest text-teal mb-3">Languages</p>
-                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Learn in Your Mother Tongue</h2>
-                    <p class="text-ocean max-w-xl mx-auto font-semibold">Five languages carefully chosen to represent the rich linguistic heritage of Basilan.</p>
+                <div class="text-center" style="margin-bottom:var(--space-3xl);">
+                    <p class="reveal" style="font-size:var(--text-sm);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--reef-teal);margin-bottom:var(--space-sm);">Languages</p>
+                    <h2 class="reveal reveal-delay-1" style="font-size:var(--text-3xl);font-weight:700;margin-bottom:var(--space-md);">Learn in Your Mother Tongue</h2>
+                    <p class="reveal reveal-delay-2" style="color:var(--text-secondary);max-width:560px;margin:0 auto;font-weight:600;">Five languages carefully chosen to represent the rich linguistic heritage of Basilan.</p>
                 </div>
-                <div class="flex flex-wrap justify-center gap-4 reveal">
-                    <div class="language-chip" style="background:#FFF0EB;color:var(--coral-dark)">Filipino</div>
-                    <div class="language-chip" style="background:#E8F8F6;color:var(--teal-dark)">Chavacano</div>
-                    <div class="language-chip" style="background:#FFF8E0;color:#92400E">Yakan</div>
-                    <div class="language-chip" style="background:#EDF8EF;color:#166534">Tausug</div>
-                    <div class="language-chip" style="background:#E0F2FE;color:#075985">English</div>
+                <div class="reveal" style="display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-md);margin-bottom:var(--space-3xl);">
+                    <div class="language-chip" style="background:rgba(255,126,95,0.1);color:var(--reef-coral-deep);border-color:rgba(255,126,95,0.2);">Filipino</div>
+                    <div class="language-chip" style="background:rgba(46,196,182,0.1);color:var(--reef-teal-deep);border-color:rgba(46,196,182,0.2);">Chavacano</div>
+                    <div class="language-chip" style="background:rgba(255,217,61,0.1);color:#92400E;border-color:rgba(255,217,61,0.2);">Yakan</div>
+                    <div class="language-chip" style="background:rgba(107,203,119,0.1);color:#166534;border-color:rgba(107,203,119,0.2);">Tausug</div>
+                    <div class="language-chip" style="background:rgba(45,122,135,0.1);color:var(--ocean-mid);border-color:rgba(45,122,135,0.2);">English</div>
                 </div>
-                <div class="grid md:grid-cols-3 gap-6 mt-12">
-                    <div class="card reveal reveal-delay-1 text-center">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-coral to-coral-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-coral/20">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:var(--space-xl);">
+                    <div class="card reveal reveal-delay-1 text-center" style="text-align:center;">
+                        <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:linear-gradient(135deg, var(--reef-coral), var(--reef-coral-glow));display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-lg);box-shadow:var(--shadow-glow-coral);">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         </div>
-                        <h3 class="font-bold mb-2">For Students</h3>
-                        <p class="text-sm">Interactive lessons, quizzes, and progress tracking with rewards and achievements.</p>
+                        <h3 style="font-weight:700;margin-bottom:var(--space-sm);">For Students</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Interactive lessons, quizzes, and progress tracking with rewards and achievements.</p>
                     </div>
-                    <div class="card reveal reveal-delay-2 text-center">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal to-teal-light flex items-center justify-center mx-auto mb-5 shadow-lg shadow-teal/20">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <div class="card reveal reveal-delay-2 text-center" style="text-align:center;">
+                        <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:linear-gradient(135deg, var(--reef-teal), var(--reef-teal-glow));display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-lg);box-shadow:var(--shadow-glow-teal);">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         </div>
-                        <h3 class="font-bold mb-2">For Teachers</h3>
-                        <p class="text-sm">Create custom lessons and quizzes, distribute via QR, and collect progress reports.</p>
+                        <h3 style="font-weight:700;margin-bottom:var(--space-sm);">For Teachers</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Create custom lessons and quizzes, distribute via QR, and collect progress reports.</p>
                     </div>
-                    <div class="card reveal reveal-delay-3 text-center">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-300 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-amber-400/20">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <div class="card reveal reveal-delay-3 text-center" style="text-align:center;">
+                        <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:linear-gradient(135deg, var(--reef-gold), var(--reef-gold-glow));display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-lg);box-shadow:0 8px 24px rgba(255,217,61,0.3);">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         </div>
-                        <h3 class="font-bold mb-2">For Communities</h3>
-                        <p class="text-sm">Share learning materials across classrooms without depending on internet infrastructure.</p>
+                        <h3 style="font-weight:700;margin-bottom:var(--space-sm);">For Communities</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Share learning materials across classrooms without depending on internet infrastructure.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="how-it-works" class="section" aria-label="How It Works">
+        <!-- ═══════════════════════════════════════════════════════════════
+             HOW IT WORKS — Reef Journey
+             ═══════════════════════════════════════════════════════════════ -->
+        <section id="how-it-works" class="section section-shallow" aria-label="How It Works">
             <div class="container">
-                <div class="text-center mb-12 reveal">
-                    <p class="text-sm font-bold uppercase tracking-widest text-coral mb-3">How It Works</p>
-                    <h2 class="text-3xl md:text-4xl font-bold text-ocean mb-4">Learning Made Simple</h2>
-                    <p class="text-ocean max-w-xl mx-auto font-semibold">Three easy steps to start your learning journey with LearnBasilan.</p>
+                <div class="text-center" style="margin-bottom:var(--space-3xl);">
+                    <p class="reveal" style="font-size:var(--text-sm);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--reef-coral);margin-bottom:var(--space-sm);">How It Works</p>
+                    <h2 class="reveal reveal-delay-1" style="font-size:var(--text-3xl);font-weight:700;margin-bottom:var(--space-md);">Learning Made Simple</h2>
+                    <p class="reveal reveal-delay-2" style="color:var(--text-secondary);max-width:560px;margin:0 auto;font-weight:600;">Three easy steps to start your learning journey with LearnBasilan.</p>
                 </div>
-                <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    <div class="text-center reveal reveal-delay-1">
-                        <div class="step-number mx-auto mb-5"><span>1</span></div>
-                        <h3 class="text-lg font-bold mb-3">Install the App</h3>
-                        <p class="text-sm">Download LearnBasilan on any Android device. No registration or internet needed to get started.</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:var(--space-2xl);max-width:900px;margin:0 auto;">
+                    <div class="text-center reveal reveal-delay-1" style="text-align:center;">
+                        <div class="step-number" style="margin:0 auto var(--space-lg);"><span>1</span></div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">Install the App</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Download LearnBasilan on any Android device. No registration or internet needed to get started.</p>
                     </div>
-                    <div class="text-center reveal reveal-delay-2">
-                        <div class="step-number teal-step mx-auto mb-5"><span>2</span></div>
-                        <h3 class="text-lg font-bold mb-3">Choose Language</h3>
-                        <p class="text-sm">Pick your preferred language &mdash; Filipino, Chavacano, Yakan, Tausug, or English.</p>
+                    <div class="text-center reveal reveal-delay-2" style="text-align:center;">
+                        <div class="step-number teal-step" style="margin:0 auto var(--space-lg);"><span>2</span></div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">Choose Language</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Pick your preferred language — Filipino, Chavacano, Yakan, Tausug, or English.</p>
                     </div>
-                    <div class="text-center reveal reveal-delay-3">
-                        <div class="step-number gold-step mx-auto mb-5"><span>3</span></div>
-                        <h3 class="text-lg font-bold mb-3">Start Learning</h3>
-                        <p class="text-sm">Explore subjects, complete lessons, take quizzes, earn XP, and unlock achievements!</p>
+                    <div class="text-center reveal reveal-delay-3" style="text-align:center;">
+                        <div class="step-number gold-step" style="margin:0 auto var(--space-lg);"><span>3</span></div>
+                        <h3 style="font-size:var(--text-lg);font-weight:700;margin-bottom:var(--space-sm);">Start Learning</h3>
+                        <p style="font-size:var(--text-sm);color:var(--text-secondary);">Explore subjects, complete lessons, take quizzes, earn XP, and unlock achievements!</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="section bg-white dark:bg-ocean-dark" aria-label="Statistics">
+        <!-- ═══════════════════════════════════════════════════════════════
+             STATISTICS — Reef Metrics
+             ═══════════════════════════════════════════════════════════════ -->
+        <section class="section" aria-label="Statistics">
             <div class="container">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                    <div class="reveal reveal-delay-1">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:var(--space-2xl);text-align:center;">
+                    <div class="reveal reveal-delay-1" style="text-align:center;">
                         <div class="stat-value count-up" data-target="24">0</div>
-                        <p class="text-sm font-semibold text-ocean mt-2">Interactive Lessons</p>
+                        <p style="font-size:var(--text-sm);font-weight:700;color:var(--text-secondary);margin-top:var(--space-sm);">Interactive Lessons</p>
                     </div>
-                    <div class="reveal reveal-delay-2">
+                    <div class="reveal reveal-delay-2" style="text-align:center;">
                         <div class="stat-value count-up" data-target="12">0</div>
-                        <p class="text-sm font-semibold text-ocean mt-2">Quiz Sets</p>
+                        <p style="font-size:var(--text-sm);font-weight:700;color:var(--text-secondary);margin-top:var(--space-sm);">Quiz Sets</p>
                     </div>
-                    <div class="reveal reveal-delay-3">
+                    <div class="reveal reveal-delay-3" style="text-align:center;">
                         <div class="stat-value count-up" data-target="8">0</div>
-                        <p class="text-sm font-semibold text-ocean mt-2">Achievement Badges</p>
+                        <p style="font-size:var(--text-sm);font-weight:700;color:var(--text-secondary);margin-top:var(--space-sm);">Achievement Badges</p>
                     </div>
-                    <div class="reveal reveal-delay-4">
+                    <div class="reveal reveal-delay-4" style="text-align:center;">
                         <div class="stat-value count-up" data-target="5">0</div>
-                        <p class="text-sm font-semibold text-ocean mt-2">Languages</p>
+                        <p style="font-size:var(--text-sm);font-weight:700;color:var(--text-secondary);margin-top:var(--space-sm);">Languages</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- ═══════════════════════════════════════════════════════════════
+             CTA — Bioluminescent Call to Action
+             ═══════════════════════════════════════════════════════════════ -->
         <section id="download" class="section" aria-label="Get Started">
             <div class="container">
-                <div class="cta-gradient rounded-3xl p-8 md:p-16 text-center text-white reveal">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Start Learning?</h2>
-                    <p class="text-lg text-white/90 max-w-lg mx-auto mb-8 font-semibold">
-                        Join students across Basilan and experience learning in your mother tongue &mdash; 
+                <div class="cta-gradient reveal" style="border-radius:var(--radius-2xl);padding:var(--space-3xl) var(--space-xl);text-align:center;color:white;">
+                    <h2 style="font-size:var(--text-3xl);font-weight:700;margin-bottom:var(--space-md);color:white;">Ready to Start Learning?</h2>
+                    <p style="font-size:var(--text-lg);color:rgba(255,255,255,0.9);max-width:520px;margin:0 auto var(--space-2xl);font-weight:600;">
+                        Join students across Basilan and experience learning in your mother tongue —
                         completely offline, completely free.
                     </p>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <a href="/api/download" class="btn text-ocean-dark font-bold hover:bg-cream hover:scale-105 transition-all shadow-lg" style="background:#FFFFFF;color:#0E2D32">
+                    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:var(--space-md);">
+                        <a href="/api/download" class="btn" style="background:white;color:var(--ocean-abyss);font-weight:700;box-shadow:var(--shadow-lg);">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.807 1.626a1 1 0 0 1 0 1.732l-2.807 1.626L15.206 12l2.492-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"/></svg>
                             Download APK
                         </a>
-                        <a href="#features" class="btn bg-white/15 text-white border-2 border-white/30 hover:bg-white/25 hover:scale-105 transition-all">
+                        <a href="#features" class="btn btn-ghost">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                             Learn More
                         </a>
@@ -597,95 +1470,139 @@
         </section>
     </main>
 
-    <footer class="bg-ocean-dark text-white py-12">
+    <!-- ═══════════════════════════════════════════════════════════════
+         FOOTER — Deep Ocean
+         ═══════════════════════════════════════════════════════════════ -->
+    <footer class="footer">
         <div class="container">
-            <div class="grid md:grid-cols-4 gap-8">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:var(--space-2xl);">
                 <div>
-                    <div class="flex items-center gap-2.5 text-lg font-bold mb-4" style="font-family:var(--font-display)">
-                        <img src="/static/logo.png" alt="LearnBasilan" class="w-7 h-7 rounded-lg object-cover" />
+                    <div style="display:flex;align-items:center;gap:var(--space-sm);font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);margin-bottom:var(--space-lg);color:white;">
+                        <img src="https://likenmuff.github.io/Novu/website/static/logo.png" alt="LearnBasilan" style="width:32px;height:32px;border-radius:var(--radius-sm);object-fit:cover;" />
                         LearnBasilan
                     </div>
-                    <p class="text-sm text-white/75 max-w-xs">An offline-first mother tongue mobile learning system with QR-based content distribution for elementary students.</p>
+                    <p style="font-size:var(--text-sm);color:rgba(255,255,255,0.65);max-width:280px;line-height:1.7;">An offline-first mother tongue mobile learning system with QR-based content distribution for elementary students.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Product</h4>
-                    <div class="flex flex-col gap-2 text-sm">
-                        <a href="#features">Features</a>
-                        <a href="#languages">Languages</a>
-                        <a href="#how-it-works">How It Works</a>
-                        <a href="#download">Download</a>
+                    <h4 style="font-weight:700;font-size:var(--text-sm);text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);margin-bottom:var(--space-lg);">Product</h4>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <a href="#features" style="font-size:var(--text-sm);">Features</a>
+                        <a href="#languages" style="font-size:var(--text-sm);">Languages</a>
+                        <a href="#how-it-works" style="font-size:var(--text-sm);">How It Works</a>
+                        <a href="#download" style="font-size:var(--text-sm);">Download</a>
                     </div>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Languages</h4>
-                    <div class="flex flex-col gap-2 text-sm">
-                        <span>Filipino</span>
-                        <span>Chavacano</span>
-                        <span>Yakan</span>
-                        <span>Tausug</span>
-                        <span>English</span>
+                    <h4 style="font-weight:700;font-size:var(--text-sm);text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);margin-bottom:var(--space-lg);">Languages</h4>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <span style="font-size:var(--text-sm);">Filipino</span>
+                        <span style="font-size:var(--text-sm);">Chavacano</span>
+                        <span style="font-size:var(--text-sm);">Yakan</span>
+                        <span style="font-size:var(--text-sm);">Tausug</span>
+                        <span style="font-size:var(--text-sm);">English</span>
                     </div>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-3 text-sm uppercase tracking-wider text-white/80">Contact</h4>
-                    <div class="flex flex-col gap-2 text-sm">
-                        <span class="text-white/75">Basilan, Philippines</span>
-                        <a href="#" class="text-white/75 hover:text-white">learnbasilan@email.com</a>
+                    <h4 style="font-weight:700;font-size:var(--text-sm);text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);margin-bottom:var(--space-lg);">Contact</h4>
+                    <div style="display:flex;flex-direction:column;gap:var(--space-sm);">
+                        <span style="font-size:var(--text-sm);color:rgba(255,255,255,0.65);">Basilan, Philippines</span>
+                        <a href="mailto:learnbasilan@email.com" style="font-size:var(--text-sm);">learnbasilan@email.com</a>
                     </div>
-                    <div class="flex gap-3 mt-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="Facebook">
+                    <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-lg);">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="Facebook">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                         </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="Twitter">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="Twitter">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
                         </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-coral/30 transition-colors" aria-label="GitHub">
+                        <a href="#" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;transition:background 0.2s;" aria-label="GitHub">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-white/10 mt-8 pt-8 text-center text-sm text-white/60">
-                &copy; 2024 LearnBasilan. Open source under MIT License.
+            <div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:var(--space-2xl);padding-top:var(--space-xl);text-align:center;font-size:var(--text-sm);color:rgba(255,255,255,0.5);">
+                © 2024 LearnBasilan. Open source under MIT License.
             </div>
         </div>
     </footer>
 
+    <!-- ═══════════════════════════════════════════════════════════════
+         JAVASCRIPT — Interactions & Animations
+         ═══════════════════════════════════════════════════════════════ -->
     <script>
         (function() {
+            /* ─── Navigation Scroll Effect ─── */
+            const nav = document.getElementById('nav');
+            let lastScroll = 0;
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+                if (currentScroll > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+                lastScroll = currentScroll;
+            }, { passive: true });
+
+            /* ─── Mobile Drawer ─── */
             const menuBtn = document.getElementById('menuBtn');
-            const mobileNav = document.getElementById('mobileNav');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            const drawerOverlay = document.getElementById('drawerOverlay');
 
-            if (menuBtn && mobileNav) {
-                menuBtn.addEventListener('click', function() {
-                    const isOpen = mobileNav.classList.toggle('open');
-                    menuBtn.classList.toggle('active');
-                    menuBtn.setAttribute('aria-expanded', isOpen);
-                    document.body.style.overflow = isOpen ? 'hidden' : '';
-                });
-
-                mobileNav.querySelectorAll('a').forEach(function(link) {
-                    link.addEventListener('click', function() {
-                        mobileNav.classList.remove('open');
-                        menuBtn.classList.remove('active');
-                        menuBtn.setAttribute('aria-expanded', 'false');
-                        document.body.style.overflow = '';
-                    });
-                });
+            function openDrawer() {
+                menuBtn.classList.add('active');
+                mobileDrawer.classList.add('open');
+                drawerOverlay.classList.add('open');
+                menuBtn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeDrawer() {
+                menuBtn.classList.remove('active');
+                mobileDrawer.classList.remove('open');
+                drawerOverlay.classList.remove('open');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
             }
 
-            const observer = new IntersectionObserver(function(entries) {
+            if (menuBtn) {
+                menuBtn.addEventListener('click', function() {
+                    if (mobileDrawer.classList.contains('open')) {
+                        closeDrawer();
+                    } else {
+                        openDrawer();
+                    }
+                });
+            }
+            if (drawerOverlay) {
+                drawerOverlay.addEventListener('click', closeDrawer);
+            }
+
+            mobileDrawer.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', closeDrawer);
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && mobileDrawer.classList.contains('open')) {
+                    closeDrawer();
+                }
+            });
+
+            /* ─── Scroll Reveal Observer ─── */
+            const revealObserver = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-            document.querySelectorAll('.reveal').forEach(function(el) {
-                observer.observe(el);
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(function(el) {
+                revealObserver.observe(el);
             });
 
+            /* ─── Stat Counter Animation ─── */
             const countObserver = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
@@ -702,7 +1619,9 @@
 
             function animateCount(el, target) {
                 let current = 0;
-                const increment = Math.ceil(target / 40);
+                const increment = Math.ceil(target / 50);
+                const duration = 1200;
+                const stepTime = duration / (target / increment);
                 const timer = setInterval(function() {
                     current += increment;
                     if (current >= target) {
@@ -710,13 +1629,14 @@
                         clearInterval(timer);
                     }
                     el.textContent = current;
-                }, 40);
+                }, stepTime);
             }
 
             document.querySelectorAll('.count-up').forEach(function(el) {
                 countObserver.observe(el);
             });
 
+            /* ─── Smooth Scroll for Anchors ─── */
             document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
                 anchor.addEventListener('click', function(e) {
                     const target = document.querySelector(this.getAttribute('href'));
@@ -726,6 +1646,40 @@
                     }
                 });
             });
+
+            /* ─── Hero Particles ─── */
+            const particlesContainer = document.getElementById('heroParticles');
+            if (particlesContainer) {
+                const colors = ['var(--reef-coral)', 'var(--reef-teal)', 'var(--reef-gold)', 'var(--reef-green)'];
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    const size = Math.random() * 6 + 2;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: ${color};
+                        left: ${Math.random() * 100}%;
+                        animation-duration: ${Math.random() * 10 + 8}s;
+                        animation-delay: ${Math.random() * 5}s;
+                    `;
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            /* ─── Parallax on Scroll (phone float) ─── */
+            const phoneFloat = document.querySelector('.phone-float');
+            if (phoneFloat && window.matchMedia('(min-width: 1024px)').matches) {
+                window.addEventListener('scroll', function() {
+                    const scrolled = window.pageYOffset;
+                    const phoneRect = phoneFloat.getBoundingClientRect();
+                    if (phoneRect.top < window.innerHeight && phoneRect.bottom > 0) {
+                        const parallax = scrolled * 0.15;
+                        phoneFloat.style.transform = `translateY(${parallax}px)`;
+                    }
+                }, { passive: true });
+            }
         })();
     </script>
 </body>
