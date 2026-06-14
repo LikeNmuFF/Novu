@@ -38,12 +38,14 @@ export default function HomeScreen({
   onSubjectPress,
   onScanPress,
   onNavPress,
+  onImportedPress,
   activeTab = 'home',
 }: {
   user: User;
   onSubjectPress: (subjectId: number) => void;
   onScanPress: () => void;
   onNavPress: (screen: string) => void;
+  onImportedPress?: (item: ImportedItem) => void;
   activeTab?: string;
 }) {
   const { t } = useTranslation();
@@ -235,7 +237,12 @@ export default function HomeScreen({
               <Text style={styles.sectionTitleCount}>{importedItems.length}</Text>
             </View>
             {importedItems.slice(-3).reverse().map((item) => (
-              <View key={item.id} style={styles.importedCard}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.importedCard}
+                onPress={() => onImportedPress?.(item)}
+                activeOpacity={0.7}
+              >
                 <Text style={styles.importedIcon}>
                   {item.type === 'lesson' ? '📖' : item.type === 'quiz' ? '❓' : '📦'}
                 </Text>
@@ -246,7 +253,7 @@ export default function HomeScreen({
                   </Text>
                 </View>
                 <Text style={styles.importedArrow}>→</Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}

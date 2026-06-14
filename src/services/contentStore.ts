@@ -49,12 +49,33 @@ export async function importContent(
     const lessonContentText = (lessonContent.content as string) || '';
     const lessonTitle = (lessonContent.title as string) || title;
 
-    // Resolve subject_id from name if not provided
-    let resolvedSubjectId = subjectId;
+    // Resolve subject_id with multiple fallback strategies
+    let resolvedSubjectId: number | undefined;
+
+    // Strategy 1: Try exact name match (case-insensitive)
+    if (subjectName) {
+      const subj = await db.getFirstAsync<{ id: number }>(
+        'SELECT id FROM subjects WHERE LOWER(name) = LOWER(?)',
+        [subjectName]
+      );
+      resolvedSubjectId = subj?.id;
+    }
+
+    // Strategy 2: Try partial name match if exact match failed
     if (!resolvedSubjectId && subjectName) {
       const subj = await db.getFirstAsync<{ id: number }>(
-        'SELECT id FROM subjects WHERE name = ?',
-        [subjectName]
+        'SELECT id FROM subjects WHERE LOWER(name) LIKE LOWER(?)',
+        [`%${subjectName}%`]
+      );
+      resolvedSubjectId = subj?.id;
+    }
+
+    // Strategy 3: Try the provided subject_id (might be from teacher's device)
+    if (!resolvedSubjectId && subjectId) {
+      // Check if this subject_id exists in student's database
+      const subj = await db.getFirstAsync<{ id: number }>(
+        'SELECT id FROM subjects WHERE id = ?',
+        [subjectId]
       );
       resolvedSubjectId = subj?.id;
     }
@@ -72,6 +93,9 @@ export async function importContent(
         'INSERT INTO lessons (subject_id, title, content, language, chapter_number, grade_level, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
         [resolvedSubjectId, lessonTitle, lessonContentText, language, nextChapter, gradeLevel, null, importedAt]
       );
+    } else {
+      // Subject not found - still save to imported_content but warn
+      console.warn(`Subject "${subjectName}" not found in database. Lesson saved to imported content only.`);
     }
   }
 

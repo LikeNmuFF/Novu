@@ -305,6 +305,21 @@ function AppContent() {
             }}
             onScanPress={() => navigate('qrcode')}
             onNavPress={handleNavPress}
+            onImportedPress={async (item) => {
+              // If it's a lesson, try to find it in the lessons table and open it
+              if (item.type === 'lesson') {
+                const content = item.content as Record<string, unknown>;
+                const lessonTitle = (content.title as string) || item.title;
+                const db = await getDb();
+                const lesson = await db.getFirstAsync<{ id: number }>(
+                  'SELECT id FROM lessons WHERE title = ? ORDER BY id DESC LIMIT 1',
+                  [lessonTitle]
+                );
+                if (lesson) {
+                  await handleOpenLesson(lesson.id);
+                }
+              }
+            }}
             activeTab="home"
           />
         </SafeAreaProvider>
