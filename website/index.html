@@ -1030,7 +1030,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           VIDEO SCROLL SECTION — Apple-style Video Scrub
+           VIDEO SCROLL SECTION — Cinematic Apple-style
            ═══════════════════════════════════════════════════════════════ */
         .video-scroll-section {
             height: 400vh;
@@ -1041,7 +1041,7 @@
             top: 0;
             height: 100vh;
             overflow: hidden;
-            background: var(--ocean-abyss);
+            background: #000;
         }
         .video-scroll-video {
             position: absolute;
@@ -1050,6 +1050,8 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
+            will-change: transform;
+            transform: scale(1.1) translateX(-1%);
         }
         .video-scroll-canvas {
             position: absolute;
@@ -1066,38 +1068,121 @@
             background: linear-gradient(
                 180deg,
                 transparent 0%,
-                rgba(14, 45, 50, 0.3) 50%,
-                rgba(14, 45, 50, 0.8) 100%
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.6) 100%
             );
             z-index: 1;
             pointer-events: none;
         }
+
+        /* Cinematic Letterbox Bars */
+        .video-scroll-letterbox-top,
+        .video-scroll-letterbox-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 12vh;
+            background: #000;
+            z-index: 5;
+            will-change: transform;
+        }
+        .video-scroll-letterbox-top {
+            top: 0;
+            transform: translateY(-100%);
+        }
+        .video-scroll-letterbox-bottom {
+            bottom: 0;
+            transform: translateY(100%);
+        }
+
+        /* Vignette Overlay */
+        .video-scroll-vignette {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 40%,
+                rgba(0, 0, 0, 0.55) 100%
+            );
+            opacity: 0.3;
+            will-change: opacity;
+        }
+
+        /* Light Leak / Glow Blob */
+        .video-scroll-lightleak {
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 60vw;
+            height: 60vh;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(255, 126, 95, 0.25) 0%,
+                rgba(255, 166, 143, 0.1) 40%,
+                transparent 70%
+            );
+            border-radius: 50%;
+            z-index: 2;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            will-change: transform, opacity;
+            filter: blur(40px);
+        }
+
+        /* Text Overlay */
         .video-scroll-overlay {
             position: absolute;
             inset: 0;
-            z-index: 2;
+            z-index: 4;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: var(--space-xl);
+            will-change: transform;
         }
         .video-scroll-title {
-            font-size: var(--text-4xl);
+            font-size: clamp(2rem, 5vw, var(--text-4xl));
             font-weight: 700;
             color: white;
             margin-bottom: var(--space-lg);
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
+        }
+        .video-scroll-title .word {
+            display: inline-block;
             opacity: 0;
-            text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            will-change: transform, opacity;
         }
         .video-scroll-subtitle {
-            font-size: var(--text-xl);
-            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(1rem, 2.5vw, var(--text-xl));
+            color: rgba(255, 255, 255, 0.9);
             max-width: 600px;
             font-weight: 600;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+            line-height: 1.5;
+        }
+        .video-scroll-subtitle .word {
+            display: inline-block;
             opacity: 0;
-            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            will-change: transform, opacity;
+        }
+
+        /* Scroll Progress Indicator */
+        .video-scroll-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--reef-coral, #FF7E5F), var(--reef-gold, #FFD93D));
+            z-index: 6;
+            will-change: width;
+            box-shadow: 0 0 12px rgba(255, 126, 95, 0.6), 0 0 24px rgba(255, 126, 95, 0.3);
+            border-radius: 0 2px 2px 0;
         }
 
         /* Fallback Animated Gradient (when no video) */
@@ -1126,20 +1211,20 @@
         .video-particles {
             position: absolute;
             inset: 0;
-            z-index: 1;
+            z-index: 2;
             pointer-events: none;
             overflow: hidden;
         }
         .video-particle {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
             animation: video-particle-drift linear infinite;
         }
         @keyframes video-particle-drift {
             0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
+            10% { opacity: 0.35; }
+            90% { opacity: 0.35; }
             100% { transform: translateY(-10vh) translateX(40px) scale(0.6); opacity: 0; }
         }
         .reef-curve {
@@ -1285,11 +1370,17 @@
                 <!-- Floating particles -->
                 <div class="video-particles" id="videoParticles"></div>
 
+                <!-- Light leak glow blob -->
+                <div class="video-scroll-lightleak" id="video-lightleak"></div>
+
                 <!-- Gradient overlay -->
                 <div class="video-scroll-gradient"></div>
 
+                <!-- Vignette -->
+                <div class="video-scroll-vignette" id="video-vignette"></div>
+
                 <!-- Text overlay -->
-                <div class="video-scroll-overlay">
+                <div class="video-scroll-overlay" id="video-overlay">
                     <h2 class="video-scroll-title" id="video-title">
                         Learning Comes Alive
                     </h2>
@@ -1297,6 +1388,13 @@
                         Explore the underwater world of knowledge — where every lesson is an adventure.
                     </p>
                 </div>
+
+                <!-- Cinematic letterbox bars -->
+                <div class="video-scroll-letterbox-top" id="letterbox-top"></div>
+                <div class="video-scroll-letterbox-bottom" id="letterbox-bottom"></div>
+
+                <!-- Scroll progress indicator -->
+                <div class="video-scroll-progress" id="video-progress"></div>
             </div>
         </section>
 
@@ -1735,7 +1833,7 @@
                 }
             }
 
-            /* ─── Video Scroll Section — GSAP ScrollTrigger ─── */
+            /* ─── Video Scroll Section — Cinematic GSAP ScrollTrigger ─── */
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             
             if (!prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
@@ -1745,8 +1843,25 @@
                 const video = document.querySelector('#hero-video');
                 const canvas = document.querySelector('#hero-canvas');
                 const fallback = document.querySelector('#video-fallback');
-                const videoTitle = document.querySelector('#video-title');
-                const videoSubtitle = document.querySelector('#video-subtitle');
+                const vignette = document.querySelector('#video-vignette');
+                const lightleak = document.querySelector('#video-lightleak');
+                const progressBar = document.querySelector('#video-progress');
+                const letterboxTop = document.querySelector('#letterbox-top');
+                const letterboxBottom = document.querySelector('#letterbox-bottom');
+
+                // Wrap title and subtitle words for stagger animation
+                const titleEl = document.querySelector('#video-title');
+                const subtitleEl = document.querySelector('#video-subtitle');
+                if (titleEl) {
+                    const titleText = titleEl.textContent.trim();
+                    titleEl.innerHTML = titleText.split(/\s+/).map(w => `<span class="word">${w}</span>`).join(' ');
+                }
+                if (subtitleEl) {
+                    const subText = subtitleEl.textContent.trim();
+                    subtitleEl.innerHTML = subText.split(/\s+/).map(w => `<span class="word">${w}</span>`).join(' ');
+                }
+                const titleWords = document.querySelectorAll('#video-title .word');
+                const subtitleWords = document.querySelectorAll('#video-subtitle .word');
 
                 // Video particles
                 const videoParticlesContainer = document.getElementById('videoParticles');
@@ -1814,8 +1929,8 @@
                     });
                 }
 
-                // Text layer animations
-                const textTl = gsap.timeline({
+                /* ═══ CINEMATIC MASTER TIMELINE ═══ */
+                const cinematicTl = gsap.timeline({
                     scrollTrigger: {
                         trigger: '.video-scroll-section',
                         start: 'top top',
@@ -1824,30 +1939,109 @@
                     }
                 });
 
-                // Fade in title at 10% scroll
-                textTl.fromTo('#video-title',
+                // 1. Letterbox bars slide in (0% → 5%)
+                cinematicTl.to(letterboxTop,
+                    { y: '0%', duration: 0.05, ease: 'power2.inOut' },
+                    0
+                );
+                cinematicTl.to(letterboxBottom,
+                    { y: '0%', duration: 0.05, ease: 'power2.inOut' },
+                    0
+                );
+
+                // 2. Ken Burns zoom: scale 1.1 → 1.0, pan left to right (0% → 100%)
+                cinematicTl.to('.video-scroll-video, .video-scroll-fallback',
+                    { scale: 1.0, x: '1%', duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 3. Vignette intensity: 0.3 → 0.7 (0% → 100%)
+                cinematicTl.to(vignette,
+                    { opacity: 0.7, duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 4. Light leak drift: top-right → bottom-left (0% → 100%)
+                cinematicTl.fromTo(lightleak,
+                    { x: '0%', y: '0%', opacity: 0.6 },
+                    { x: '-40%', y: '30%', opacity: 0.2, duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 5. Parallax: text overlay moves slightly slower (depth illusion)
+                cinematicTl.to('.video-scroll-overlay',
+                    { y: '-5%', duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 6. Parallax: particles move even slower
+                cinematicTl.to('.video-particles',
+                    { y: '-15%', duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 7. Scroll progress bar width
+                cinematicTl.to(progressBar,
+                    { width: '100%', duration: 1, ease: 'none' },
+                    0
+                );
+
+                // 8. Title words stagger in (5% → 20%)
+                cinematicTl.fromTo(titleWords,
+                    { opacity: 0, y: 40, rotateX: -15 },
+                    { opacity: 1, y: 0, rotateX: 0, duration: 0.15, stagger: 0.03, ease: 'power3.out' },
+                    0.05
+                );
+
+                // 9. Subtitle words stagger in (15% → 30%)
+                cinematicTl.fromTo(subtitleWords,
                     { opacity: 0, y: 30 },
-                    { opacity: 1, y: 0, duration: 0.15 },
-                    0.1
-                )
-                // Fade in subtitle at 25% scroll
-                .fromTo('#video-subtitle',
-                    { opacity: 0, y: 20 },
-                    { opacity: 1, y: 0, duration: 0.15 },
-                    0.25
-                )
-                // Fade out text at 70% scroll
-                .to('.video-scroll-overlay',
-                    { opacity: 0, duration: 0.15 },
+                    { opacity: 1, y: 0, duration: 0.12, stagger: 0.02, ease: 'power2.out' },
+                    0.15
+                );
+
+                // 10. Text fades out word-by-word (65% → 80%)
+                cinematicTl.to(titleWords,
+                    { opacity: 0, y: -20, duration: 0.1, stagger: 0.02, ease: 'power2.in' },
+                    0.65
+                );
+                cinematicTl.to(subtitleWords,
+                    { opacity: 0, y: -15, duration: 0.08, stagger: 0.015, ease: 'power2.in' },
                     0.7
+                );
+
+                // 11. Letterbox bars slide out (85% → 95%)
+                cinematicTl.to(letterboxTop,
+                    { y: '-100%', duration: 0.1, ease: 'power2.inOut' },
+                    0.85
+                );
+                cinematicTl.to(letterboxBottom,
+                    { y: '100%', duration: 0.1, ease: 'power2.inOut' },
+                    0.85
+                );
+
+                // 12. Progress bar glow pulse at end
+                cinematicTl.to(progressBar,
+                    { boxShadow: '0 0 20px rgba(255, 126, 95, 0.9), 0 0 40px rgba(255, 126, 95, 0.5)', duration: 0.05 },
+                    0.95
                 );
 
             } else if (prefersReducedMotion) {
                 // Reduced motion: show static state
-                const videoTitle = document.querySelector('#video-title');
-                const videoSubtitle = document.querySelector('#video-subtitle');
-                if (videoTitle) videoTitle.style.opacity = '1';
-                if (videoSubtitle) videoSubtitle.style.opacity = '1';
+                const titleEl = document.querySelector('#video-title');
+                const subtitleEl = document.querySelector('#video-subtitle');
+                const letterboxTop = document.querySelector('#letterbox-top');
+                const letterboxBottom = document.querySelector('#letterbox-bottom');
+                if (titleEl) {
+                    titleEl.style.opacity = '1';
+                    titleEl.querySelectorAll('.word').forEach(w => w.style.opacity = '1');
+                }
+                if (subtitleEl) {
+                    subtitleEl.style.opacity = '1';
+                    subtitleEl.querySelectorAll('.word').forEach(w => w.style.opacity = '1');
+                }
+                if (letterboxTop) letterboxTop.style.transform = 'translateY(0)';
+                if (letterboxBottom) letterboxBottom.style.transform = 'translateY(0)';
             }
         })();
     </script>
