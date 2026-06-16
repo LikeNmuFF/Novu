@@ -1061,6 +1061,59 @@
             object-fit: cover;
             z-index: 0;
             display: none;
+            will-change: transform;
+            transform: scale(1.1) translateX(-1%);
+        }
+
+        /* Loading Indicator */
+        .video-scroll-loading {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #0a1a1f;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .video-scroll-loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .video-scroll-loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(255, 126, 95, 0.2);
+            border-top-color: #FF7E5F;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .video-scroll-loading-text {
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+        .video-scroll-loading-bar {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .video-scroll-loading-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #FF7E5F, #FFD93D);
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
         .video-scroll-gradient {
             position: absolute;
@@ -1343,11 +1396,14 @@
         </section>
 
         <!-- ═══════════════════════════════════════════════════════════════
-             VIDEO SCROLL — Apple-style Video Scrub Section
+             VIDEO SCROLL — Cinematic Image Sequence Section
              ═══════════════════════════════════════════════════════════════ -->
         <section class="video-scroll-section" id="video-scroll-section" aria-label="Video scroll experience">
             <div class="video-scroll-sticky">
-                <!-- Video element (hidden until video added) -->
+                <!-- Image sequence canvas (primary) -->
+                <canvas class="video-scroll-canvas" id="hero-canvas" width="1200" height="1200"></canvas>
+
+                <!-- Video fallback (if image sequence fails) -->
                 <video
                     class="video-scroll-video"
                     id="hero-video"
@@ -1361,8 +1417,14 @@
                     <source src="/videos/reef-hero.mp4" type="video/mp4">
                 </video>
 
-                <!-- Canvas for image sequence (alternative) -->
-                <canvas class="video-scroll-canvas" id="hero-canvas" width="1920" height="1080"></canvas>
+                <!-- Loading indicator for frames -->
+                <div class="video-scroll-loading" id="video-loading">
+                    <div class="video-scroll-loading-spinner"></div>
+                    <p class="video-scroll-loading-text">Loading experience...</p>
+                    <div class="video-scroll-loading-bar">
+                        <div class="video-scroll-loading-bar-fill" id="loading-bar-fill"></div>
+                    </div>
+                </div>
 
                 <!-- Fallback animated gradient (when no video) -->
                 <div class="video-scroll-fallback" id="video-fallback"></div>
@@ -1833,21 +1895,24 @@
                 }
             }
 
-            /* ─── Video Scroll Section — Cinematic GSAP ScrollTrigger ─── */
+            /* ─── Video Scroll Section — Cinematic Image Sequence ─── */
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             
             if (!prefersReducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
 
                 const videoSection = document.querySelector('.video-scroll-section');
-                const video = document.querySelector('#hero-video');
                 const canvas = document.querySelector('#hero-canvas');
+                const ctx = canvas ? canvas.getContext('2d') : null;
+                const video = document.querySelector('#hero-video');
                 const fallback = document.querySelector('#video-fallback');
                 const vignette = document.querySelector('#video-vignette');
                 const lightleak = document.querySelector('#video-lightleak');
                 const progressBar = document.querySelector('#video-progress');
                 const letterboxTop = document.querySelector('#letterbox-top');
                 const letterboxBottom = document.querySelector('#letterbox-bottom');
+                const loadingEl = document.querySelector('#video-loading');
+                const loadingBarFill = document.querySelector('#loading-bar-fill');
 
                 // Wrap title and subtitle words for stagger animation
                 const titleEl = document.querySelector('#video-title');
@@ -1881,53 +1946,166 @@
                     }
                 }
 
-                // Check if video is available
-                const hasVideo = video && video.querySelector('source') && 
-                    video.querySelector('source').src && 
-                    video.querySelector('source').src.includes('reef-hero');
+                /* ═══ IMAGE SEQUENCE LOADER ═══ */
+                const TOTAL_FRAMES = 60;
+                const frames = [];
+                let framesLoaded = 0;
+                let currentFrameIndex = -1;
+                let useImageSequence = false;
 
-                if (hasVideo) {
-                    // Video scrub mode
-                    video.style.display = 'block';
-                    fallback.style.display = 'none';
+                function updateLoadingBar(percent) {
+                    if (loadingBarFill) loadingBarFill.style.width = percent + '%';
+                }
 
-                    const initVideoScrub = () => {
-                        ScrollTrigger.create({
-                            trigger: '.video-scroll-section',
-                            start: 'top top',
-                            end: 'bottom bottom',
-                            scrub: 0.5,
-                            onUpdate: (self) => {
-                                if (video.readyState >= 2 && video.duration) {
-                                    video.currentTime = self.progress * video.duration;
-                                }
-                            }
-                        });
-                    };
+                function hideLoading() {
+                    if (loadingEl) loadingEl.classList.add('hidden');
+                }
 
-                    if (video.readyState >= 2) {
-                        initVideoScrub();
+                function drawFrame(index) {
+                    if (!ctx || !frames[index]) return;
+                    if (index === currentFrameIndex) return;
+                    currentFrameIndex = index;
+
+                    const img = frames[index];
+                    const cw = canvas.width;
+                    const ch = canvas.height;
+
+                    // Cover-fit the image to canvas
+                    const imgRatio = img.naturalWidth / img.naturalHeight;
+                    const canvasRatio = cw / ch;
+                    let drawW, drawH, drawX, drawY;
+
+                    if (imgRatio > canvasRatio) {
+                        drawH = ch;
+                        drawW = ch * imgRatio;
+                        drawX = (cw - drawW) / 2;
+                        drawY = 0;
                     } else {
-                        video.addEventListener('loadedmetadata', initVideoScrub);
+                        drawW = cw;
+                        drawH = cw / imgRatio;
+                        drawX = 0;
+                        drawY = (ch - drawH) / 2;
                     }
-                } else {
-                    // Fallback gradient animation mode
-                    if (video) video.style.display = 'none';
-                    if (canvas) canvas.style.display = 'none';
-                    fallback.style.display = 'block';
 
-                    // Parallax on fallback gradient
-                    gsap.to('.video-scroll-fallback', {
-                        backgroundPosition: '100% 50%',
-                        ease: 'none',
-                        scrollTrigger: {
-                            trigger: '.video-scroll-section',
-                            start: 'top top',
-                            end: 'bottom bottom',
-                            scrub: 1
-                        }
+                    ctx.clearRect(0, 0, cw, ch);
+                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                }
+
+                function loadFrame(index) {
+                    return new Promise((resolve) => {
+                        if (frames[index]) { resolve(); return; }
+                        const img = new Image();
+                        img.onload = () => {
+                            frames[index] = img;
+                            framesLoaded++;
+                            updateLoadingBar(Math.round((framesLoaded / TOTAL_FRAMES) * 100));
+                            resolve();
+                        };
+                        img.onerror = () => { resolve(); };
+                        const num = String(index + 1).padStart(3, '0');
+                        img.src = `/static/frames/frame-${num}.jpg`;
                     });
                 }
+
+                async function loadAllFrames() {
+                    // Load first 10 frames immediately
+                    const batch1 = [];
+                    for (let i = 0; i < Math.min(10, TOTAL_FRAMES); i++) {
+                        batch1.push(loadFrame(i));
+                    }
+                    await Promise.all(batch1);
+
+                    // Draw first frame immediately
+                    if (frames[0]) {
+                        drawFrame(0);
+                        canvas.style.display = 'block';
+                        useImageSequence = true;
+                    }
+
+                    // Load remaining frames in parallel batches
+                    for (let i = 10; i < TOTAL_FRAMES; i += 5) {
+                        const batch = [];
+                        for (let j = i; j < Math.min(i + 5, TOTAL_FRAMES); j++) {
+                            batch.push(loadFrame(j));
+                        }
+                        await Promise.all(batch);
+                    }
+
+                    hideLoading();
+                }
+
+                // Start loading frames
+                if (canvas && ctx) {
+                    loadAllFrames();
+                }
+
+                /* ═══ SCROLL-DRIVEN FRAME RENDERING ═══ */
+                let rafId = null;
+                let targetFrame = 0;
+
+                function renderLoop() {
+                    if (useImageSequence && frames[targetFrame]) {
+                        drawFrame(targetFrame);
+                    }
+                    rafId = null;
+                }
+
+                function onScrollUpdate(progress) {
+                    targetFrame = Math.min(
+                        TOTAL_FRAMES - 1,
+                        Math.floor(progress * TOTAL_FRAMES)
+                    );
+                    if (rafId === null) {
+                        rafId = requestAnimationFrame(renderLoop);
+                    }
+                }
+
+                // If image sequence fails, fallback to video
+                function initVideoFallback() {
+                    useImageSequence = false;
+                    if (canvas) canvas.style.display = 'none';
+                    if (loadingEl) loadingEl.classList.add('hidden');
+
+                    const hasVideo = video && video.querySelector('source') && 
+                        video.querySelector('source').src && 
+                        video.querySelector('source').src.includes('reef-hero');
+
+                    if (hasVideo) {
+                        video.style.display = 'block';
+                        fallback.style.display = 'none';
+
+                        const initVideoScrub = () => {
+                            ScrollTrigger.create({
+                                trigger: '.video-scroll-section',
+                                start: 'top top',
+                                end: 'bottom bottom',
+                                scrub: 0.5,
+                                onUpdate: (self) => {
+                                    if (video.readyState >= 2 && video.duration) {
+                                        video.currentTime = self.progress * video.duration;
+                                    }
+                                }
+                            });
+                        };
+
+                        if (video.readyState >= 2) {
+                            initVideoScrub();
+                        } else {
+                            video.addEventListener('loadedmetadata', initVideoScrub);
+                        }
+                    } else {
+                        // No video either — show gradient fallback
+                        if (video) video.style.display = 'none';
+                        fallback.style.display = 'block';
+                    }
+                }
+
+                // If frames fail to load after timeout, fallback
+                setTimeout(() => {
+                    if (framesLoaded < 5) {
+                        initVideoFallback();
+                    }
+                }, 8000);
 
                 /* ═══ CINEMATIC MASTER TIMELINE ═══ */
                 const cinematicTl = gsap.timeline({
@@ -1935,7 +2113,10 @@
                         trigger: '.video-scroll-section',
                         start: 'top top',
                         end: 'bottom bottom',
-                        scrub: 0.8
+                        scrub: 0.8,
+                        onUpdate: (self) => {
+                            onScrollUpdate(self.progress);
+                        }
                     }
                 });
 
@@ -1950,7 +2131,7 @@
                 );
 
                 // 2. Ken Burns zoom: scale 1.1 → 1.0, pan left to right (0% → 100%)
-                cinematicTl.to('.video-scroll-video, .video-scroll-fallback',
+                cinematicTl.to('.video-scroll-canvas, .video-scroll-video, .video-scroll-fallback',
                     { scale: 1.0, x: '1%', duration: 1, ease: 'none' },
                     0
                 );
@@ -2028,6 +2209,8 @@
 
             } else if (prefersReducedMotion) {
                 // Reduced motion: show static state
+                const loadingEl = document.querySelector('#video-loading');
+                if (loadingEl) loadingEl.classList.add('hidden');
                 const titleEl = document.querySelector('#video-title');
                 const subtitleEl = document.querySelector('#video-subtitle');
                 const letterboxTop = document.querySelector('#letterbox-top');
