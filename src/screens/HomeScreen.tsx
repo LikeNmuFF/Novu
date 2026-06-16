@@ -50,7 +50,7 @@ export default function HomeScreen({
   const { theme } = useTheme();
   const { colors } = theme;
   const { width } = useResponsive();
-  const styles = createStyles(colors);
+  const styles = createStyles(colors, width);
   const xpAnim = useRef(new Animated.Value(0)).current;
   const [subjects, setSubjects] = useState<SubjectCard[]>([]);
   const barAnims = useRef<Animated.Value[]>([]).current;
@@ -318,7 +318,7 @@ export default function HomeScreen({
   );
 }
 
-const createStyles = (colors: any) =>
+const createStyles = (colors: any, width: number) =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     header: {
