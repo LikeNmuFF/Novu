@@ -108,7 +108,7 @@ export default function TeacherDashboardScreen({
     try {
       await deleteStudentReport(report.id!);
       setReports(prev => prev.filter(r => r.id !== report.id));
-      Alert.alert(t('alerts.success'), 'Report deleted');
+      Alert.alert(t('alerts.success'), t('teacher.reportDeleted'));
     } catch {
       Alert.alert(t('alerts.error'), t('errors.storage'));
     }
@@ -132,7 +132,7 @@ export default function TeacherDashboardScreen({
       {/* Header */}
       <View style={[styles.header, { paddingTop: topInset }]}>
         <TouchableOpacity onPress={onBack}>
-          <Text style={styles.headerBack}>← Back</Text>
+          <Text style={styles.headerBack}>← {t('app.back')}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('teacher.dashboard.title')}</Text>
         <View style={styles.headerAvatar}>
@@ -145,11 +145,11 @@ export default function TeacherDashboardScreen({
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statNum}>{lessons.length}</Text>
-            <Text style={styles.statLabel}>{t('subjects.title')}</Text>
+            <Text style={styles.statLabel}>{t('teacher.dashboard.lessonsCreated')}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statNum}>{quizCount}</Text>
-            <Text style={styles.statLabel}>{t('quiz.title')}</Text>
+            <Text style={styles.statLabel}>{t('teacher.dashboard.quizzesCreated')}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statNum}>{studentCount}</Text>
@@ -265,7 +265,7 @@ export default function TeacherDashboardScreen({
                 <View style={styles.lessonSubject}>
                   <Text style={styles.lessonSubjectText}>{lesson.subject}</Text>
                   <Text style={styles.lessonLang}>{lesson.language}</Text>
-                  <Text style={styles.lessonGrade}>Grade {lesson.grade_level}</Text>
+                  <Text style={styles.lessonGrade}>{t('onboarding.grade')} {lesson.grade_level}</Text>
                 </View>
                 <Text style={styles.lessonTitle}>{lesson.title}</Text>
               </View>

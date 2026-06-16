@@ -243,6 +243,7 @@
     "studentReports": "Mga Ulat sa Estudyante",
     "noReports": "Wala pa ulat",
     "noReportsDesc": "I-scan ang QR code sa progreso sa estudyante para makita ang iyang ulat",
+    "reportDeleted": "Napalo na ang report!",
     "generateCode": "Maggawa ug Teacher Code",
     "generateCodeDesc": "Maggawa ug code para sa bag-o nga teacher registration",
     "latestCode": "Pinakabag-o nga Code:",
