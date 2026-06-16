@@ -1769,7 +1769,7 @@
                 // Check if video is available
                 const hasVideo = video && video.querySelector('source') && 
                     video.querySelector('source').src && 
-                    !video.querySelector('source').src.includes('reef-hero');
+                    video.querySelector('source').src.includes('reef-hero');
 
                 if (hasVideo) {
                     // Video scrub mode
