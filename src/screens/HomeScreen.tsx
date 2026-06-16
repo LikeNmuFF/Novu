@@ -88,7 +88,8 @@ export default function HomeScreen({
   useEffect(() => {
     refreshImported();
     getUserStats(user.id).then(setStats).catch(() => {});
-    getLastActivity(user.id).then(setRecentActivity).catch(() => {});
+    const gradeNum = parseInt(user.grade.replace('Grade ', '')) || 1;
+    getLastActivity(user.id, gradeNum).then(setRecentActivity).catch(() => {});
 
     const loadSubjects = async () => {
       try {
@@ -98,9 +99,7 @@ export default function HomeScreen({
         );
         const cards: SubjectCard[] = [];
         for (const row of rows) {
-          const progress = await getSubjectProgress(user.id, row.id);
-          // Get lesson count for this grade level
-          const gradeNum = parseInt(user.grade.replace('Grade ', '')) || 1;
+          const progress = await getSubjectProgress(user.id, row.id, gradeNum);
           const lessonCount = await db.getFirstAsync<{ count: number }>(
             'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ? AND grade_level = ?',
             [row.id, gradeNum]

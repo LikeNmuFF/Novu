@@ -236,7 +236,7 @@ export async function getEarnedBadges(userId: number): Promise<Array<{
   });
 }
 
-export async function getLastActivity(userId: number): Promise<{
+export async function getLastActivity(userId: number, gradeLevel?: number): Promise<{
   subjectId: number;
   subjectName: string;
   subjectIcon: string;
@@ -245,6 +245,13 @@ export async function getLastActivity(userId: number): Promise<{
   nextLessonId: number | null;
 } | null> {
   const db = await getDb();
+  const gradeFilter = gradeLevel !== undefined ? 'AND l.grade_level = ?' : '';
+  const gradeFilterP2 = gradeLevel !== undefined ? 'AND l2.grade_level = ?' : '';
+  const gradeFilterL4 = gradeLevel !== undefined ? 'AND l4.grade_level = ?' : '';
+  const gradeFilterL3 = gradeLevel !== undefined ? 'AND l3.grade_level = ?' : '';
+  const params: number[] = gradeLevel !== undefined
+    ? [userId, gradeLevel, gradeLevel, gradeLevel, userId, userId, gradeLevel]
+    : [userId, userId, userId];
   const result = await db.getFirstAsync<{
     subjectId: number;
     subjectName: string;
@@ -259,19 +266,19 @@ export async function getLastActivity(userId: number): Promise<{
       s.icon AS subjectIcon,
       (SELECT COUNT(*) FROM progress p2
        JOIN lessons l2 ON p2.lesson_id = l2.id
-       WHERE l2.subject_id = s.id AND p2.user_id = ? AND p2.status = 'completed') AS completed,
-      (SELECT COUNT(*) FROM lessons l3 WHERE l3.subject_id = s.id) AS total,
+       WHERE l2.subject_id = s.id AND p2.user_id = ? AND p2.status = 'completed' ${gradeFilterP2}) AS completed,
+      (SELECT COUNT(*) FROM lessons l3 WHERE l3.subject_id = s.id ${gradeLevel !== undefined ? 'AND l3.grade_level = ?' : ''}) AS total,
       (SELECT l4.id FROM lessons l4
-       WHERE l4.subject_id = s.id
+       WHERE l4.subject_id = s.id ${gradeFilterL4}
        AND l4.id NOT IN (SELECT p3.lesson_id FROM progress p3 WHERE p3.user_id = ? AND p3.status = 'completed')
        ORDER BY l4.chapter_number ASC LIMIT 1) AS nextLessonId
     FROM progress p
     JOIN lessons l ON p.lesson_id = l.id
     JOIN subjects s ON l.subject_id = s.id
-    WHERE p.user_id = ? AND p.status = 'completed'
+    WHERE p.user_id = ? AND p.status = 'completed' ${gradeFilter}
     ORDER BY p.completed_at DESC
     LIMIT 1`,
-    [userId, userId, userId]
+    params
   );
   return result || null;
 }

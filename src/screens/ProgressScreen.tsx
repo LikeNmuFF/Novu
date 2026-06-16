@@ -66,19 +66,26 @@ export default function ProgressScreen({
         'SELECT id, name, icon, color FROM subjects ORDER BY subject_order'
       );
 
+      const gradeNum = user.grade ? parseInt(user.grade.replace('Grade ', ''), 10) : undefined;
       const progress: SubjectProgress[] = [];
       for (const subj of subjects) {
         const total = await db.getFirstAsync<{ count: number }>(
-          'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ?',
-          [subj.id]
+          gradeNum !== undefined
+            ? 'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ? AND grade_level = ?'
+            : 'SELECT COUNT(*) as count FROM lessons WHERE subject_id = ?',
+          gradeNum !== undefined ? [subj.id, gradeNum] : [subj.id]
         );
         const completed = await db.getFirstAsync<{ count: number }>(
-          "SELECT COUNT(*) as count FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'",
-          [user.id, subj.id]
+          gradeNum !== undefined
+            ? "SELECT COUNT(*) as count FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ? AND grade_level = ?) AND status = 'completed'"
+            : "SELECT COUNT(*) as count FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'",
+          gradeNum !== undefined ? [user.id, subj.id, gradeNum] : [user.id, subj.id]
         );
         const avg = await db.getFirstAsync<{ avg: number | null }>(
-          "SELECT AVG(score) as avg FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'",
-          [user.id, subj.id]
+          gradeNum !== undefined
+            ? "SELECT AVG(score) as avg FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ? AND grade_level = ?) AND status = 'completed'"
+            : "SELECT AVG(score) as avg FROM progress WHERE user_id = ? AND lesson_id IN (SELECT id FROM lessons WHERE subject_id = ?) AND status = 'completed'",
+          gradeNum !== undefined ? [user.id, subj.id, gradeNum] : [user.id, subj.id]
         );
 
         progress.push({

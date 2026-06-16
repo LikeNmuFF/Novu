@@ -108,9 +108,9 @@ export default function LearnScreen({
       }>('SELECT id, name, icon, color, bg_color FROM subjects ORDER BY subject_order ASC');
 
       const cards: SubjectWithChapters[] = [];
+      const gradeNum = user.grade ? parseInt(user.grade.replace('Grade ', ''), 10) : undefined;
       for (const row of rows) {
-        const progress = await getSubjectProgress(user.id, row.id);
-        const gradeNum = user.grade ? parseInt(user.grade.replace('Grade ', ''), 10) : undefined;
+        const progress = await getSubjectProgress(user.id, row.id, gradeNum);
         const chapters = await getChaptersForSubject(user.id, row.id, gradeNum);
         cards.push({
           id: row.id,
