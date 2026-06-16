@@ -235,3 +235,43 @@ export async function getEarnedBadges(userId: number): Promise<Array<{
     };
   });
 }
+
+export async function getLastActivity(userId: number): Promise<{
+  subjectId: number;
+  subjectName: string;
+  subjectIcon: string;
+  completed: number;
+  total: number;
+  nextLessonId: number | null;
+} | null> {
+  const db = await getDb();
+  const result = await db.getFirstAsync<{
+    subjectId: number;
+    subjectName: string;
+    subjectIcon: string;
+    completed: number;
+    total: number;
+    nextLessonId: number | null;
+  }>(
+    `SELECT
+      s.id AS subjectId,
+      s.name AS subjectName,
+      s.icon AS subjectIcon,
+      (SELECT COUNT(*) FROM progress p2
+       JOIN lessons l2 ON p2.lesson_id = l2.id
+       WHERE l2.subject_id = s.id AND p2.user_id = ? AND p2.status = 'completed') AS completed,
+      (SELECT COUNT(*) FROM lessons l3 WHERE l3.subject_id = s.id) AS total,
+      (SELECT l4.id FROM lessons l4
+       WHERE l4.subject_id = s.id
+       AND l4.id NOT IN (SELECT p3.lesson_id FROM progress p3 WHERE p3.user_id = ? AND p3.status = 'completed')
+       ORDER BY l4.chapter_number ASC LIMIT 1) AS nextLessonId
+    FROM progress p
+    JOIN lessons l ON p.lesson_id = l.id
+    JOIN subjects s ON l.subject_id = s.id
+    WHERE p.user_id = ? AND p.status = 'completed'
+    ORDER BY p.completed_at DESC
+    LIMIT 1`,
+    [userId, userId, userId]
+  );
+  return result || null;
+}

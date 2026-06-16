@@ -6,16 +6,13 @@ import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
-  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { QRChunkMeta, QRContentType } from '../types/qr';
 import { createQRPackage } from '../utils/qr/package';
 import { useTheme } from '../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
-const QR_SIZE = width - 80;
+import { useResponsive } from '../hooks/useResponsive';
 
 export default function QRGeneratorScreen({
   content,
@@ -32,6 +29,8 @@ export default function QRGeneratorScreen({
 }) {
   const { theme } = useTheme();
   const { colors } = theme;
+  const { width } = useResponsive();
+  const QR_SIZE = width - 80;
   const [chunks] = useState<QRChunkMeta[]>(() => createQRPackage(content, contentType));
   const [currentChunk, setCurrentChunk] = useState(0);
   const insets = useSafeAreaInsets();

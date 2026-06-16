@@ -9,22 +9,19 @@ import {
   RefreshControl,
   Alert,
   Modal,
-  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
 import QRCode from 'react-native-qrcode-svg';
 import { useTheme } from '../context/ThemeContext';
+import { useResponsive } from '../hooks/useResponsive';
 import { getDb } from '../services/database';
 import { getUserStats } from '../services/auth';
 import { createQRPackage } from '../utils/qr/package';
 import { QRContentType, QRChunkMeta } from '../types/qr';
 import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
-
-const { width: screenWidth } = Dimensions.get('window');
-const QR_SIZE = screenWidth - 120;
 
 interface SubjectProgress {
   name: string;
@@ -48,6 +45,8 @@ export default function ProgressScreen({
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { colors } = theme;
+  const { width: screenWidth } = useResponsive();
+  const QR_SIZE = screenWidth - 120;
   const topInset = Math.max(insets.top, 16);
 
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });

@@ -5,21 +5,20 @@ import {
   Image,
   StyleSheet,
   Animated,
-  Dimensions,
   Platform,
   SafeAreaView,
 } from 'react-native';
 import * as Font from 'expo-font';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
+import { useResponsive } from '../hooks/useResponsive';
 
 const systemFont = Platform.select({ default: 'sans-serif', ios: 'System' });
 
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const { theme } = useTheme();
   const { colors } = theme;
+  const { width } = useResponsive();
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
@@ -154,7 +153,7 @@ function makeStyles(colors: any) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.teal,
+      backgroundColor: colors.splashBg,
       justifyContent: 'center',
       alignItems: 'center',
       position: 'relative',

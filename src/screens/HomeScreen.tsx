@@ -7,20 +7,18 @@ import {
   StyleSheet,
   ScrollView,
   Animated,
-  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
+import { useResponsive } from '../hooks/useResponsive';
 import { getImportedContent, ImportedItem } from '../services/contentStore';
 import { getUserStats } from '../services/auth';
-import { getSubjectProgress } from '../services/progress';
+import { getSubjectProgress, getLastActivity } from '../services/progress';
 import { getDb } from '../services/database';
 import BottomNav from '../components/BottomNav';
 import type { User } from '../services/auth';
-
-const { width } = Dimensions.get('window');
 
 interface SubjectCard {
   id: number;
@@ -51,6 +49,7 @@ export default function HomeScreen({
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { colors } = theme;
+  const { width } = useResponsive();
   const styles = createStyles(colors);
   const xpAnim = useRef(new Animated.Value(0)).current;
   const [subjects, setSubjects] = useState<SubjectCard[]>([]);
@@ -59,6 +58,14 @@ export default function HomeScreen({
   const [stats, setStats] = useState({ xp: 0, level: 1, streak: 0 });
   const [importedItems, setImportedItems] = useState<ImportedItem[]>([]);
   const badgeScale = useRef(new Animated.Value(0)).current;
+  const [recentActivity, setRecentActivity] = useState<{
+    subjectId: number;
+    subjectName: string;
+    subjectIcon: string;
+    completed: number;
+    total: number;
+    nextLessonId: number | null;
+  } | null>(null);
 
   const insets = useSafeAreaInsets();
   const topInset = Math.max(insets.top, 16);
@@ -81,6 +88,7 @@ export default function HomeScreen({
   useEffect(() => {
     refreshImported();
     getUserStats(user.id).then(setStats).catch(() => {});
+    getLastActivity(user.id).then(setRecentActivity).catch(() => {});
 
     const loadSubjects = async () => {
       try {
@@ -212,11 +220,23 @@ export default function HomeScreen({
         </View>
 
         {/* Continue Learning */}
-        <TouchableOpacity style={styles.continueCard} onPress={() => onSubjectPress(subjects.length > 0 ? subjects[0].id : 1)} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.continueCard}
+          onPress={() => {
+            if (recentActivity) {
+              onSubjectPress(recentActivity.subjectId);
+            } else if (subjects.length > 0) {
+              onSubjectPress(subjects[0].id);
+            }
+          }}
+          activeOpacity={0.8}
+        >
           <View style={styles.continueContent}>
             <Text style={styles.continueTitle}>{t('home.continueLearning')}</Text>
             <Text style={styles.continueDesc}>
-              {subjects.length > 0
+              {recentActivity
+                ? `${recentActivity.subjectName} — ${recentActivity.completed}/${recentActivity.total} lessons`
+                : subjects.length > 0
                 ? `${subjects[0].name} — ${subjects[0].completed}/${subjects[0].total} lessons`
                 : 'Start your learning journey!'}
             </Text>
