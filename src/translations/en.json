@@ -389,7 +389,21 @@
       "lowScoreWarning": "{{name}} needs support in {{subject}}",
       "noData": "No analytics data available.",
       "exportReport": "Export Report"
-    }
+    },
+    "scanProgress": "Scan Student Progress",
+    "scanProgressDesc": "Scan a student's QR code to view their progress",
+    "studentReports": "Student Reports",
+    "noReports": "No reports yet",
+    "noReportsDesc": "Scan a student's progress QR to see their report",
+    "generateCode": "Generate Teacher Code",
+    "generateCodeDesc": "Create a code for new teacher registration",
+    "latestCode": "Latest Code:",
+    "codeExpires": "Expires in 7 days • One-time use",
+    "lessonDesc": "Write a lesson and generate a QR code to share",
+    "quizDesc": "Make a quiz and distribute it via QR",
+    "noLessons": "No lessons yet",
+    "noLessonsDesc": "Create your first lesson to share with students",
+    "shareQR": "Share QR"
   },
   "qr": {
     "title": "QR Code",
@@ -512,12 +526,5 @@
     "level": "Level",
     "dayStreak": "{{count}} day streak",
     "lessonsCompleted": "{{count}}/{{total}} lessons"
-  },
-  "teacher": {
-    "scanProgress": "Scan Student Progress",
-    "scanProgressDesc": "Scan a student's QR code to view their progress",
-    "studentReports": "Student Reports",
-    "noReports": "No reports yet",
-    "noReportsDesc": "Scan a student's progress QR to see their report"
   }
 }

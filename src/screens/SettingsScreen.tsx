@@ -17,9 +17,9 @@ import { useTheme } from '../context/ThemeContext';
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'fil', name: 'Filipino', flag: '🇵🇭' },
-  { code: 'chavacano', name: 'Chavacano', flag: '🇵🇭' },
-  { code: 'yakan', name: 'Yakan', flag: '🇵🇭' },
-  { code: 'tausug', name: 'Tausug', flag: '🇵🇭' },
+  { code: 'chav', name: 'Chavacano', flag: '🇵🇭' },
+  { code: 'yak', name: 'Yakan', flag: '🇵🇭' },
+  { code: 'tau', name: 'Tausug', flag: '🇵🇭' },
 ];
 
 export default function SettingsScreen({

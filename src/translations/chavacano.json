@@ -157,23 +157,101 @@
   "teacher": {
     "dashboard": {
       "title": "Teacher Dashboard",
+      "welcome": "Bienvenido Teacher {{name}}!",
+      "overview": "Overview",
       "totalStudents": "Total Students",
       "averageScore": "Average Score",
       "lessonsCreated": "Mga Aralin na Nagawa",
       "quizzesCreated": "Mga Quiz na Nagawa",
+      "studentsNeedSupport": "Students Needing Support",
+      "noStudents": "Wala pa student data imported.",
+      "recentActivity": "Recent Activity",
       "generateCode": "Genera Teacher Code"
     },
-    "code": {
-      "title": "Teacher Code",
-      "generated": "Ya generá el Teacher Code!",
-      "expires": "Expira en 7 days"
+    "contentCreator": {
+      "title": "Tagalikha ng Nilalaman",
+      "createSubject": "Gumawa ng Paksa",
+      "createLesson": "Crea Aralin",
+      "createQuiz": "Crea Quiz",
+      "editLesson": "I-edit ang Aralin",
+      "deleteLesson": "Tanggalin ang Aralin",
+      "editQuiz": "I-edit ang Quiz",
+      "deleteQuiz": "Tanggalin ang Quiz",
+      "selectSubject": "Pumili ng Paksa",
+      "subjectName": "Pangalan ng Paksa",
+      "subjectIcon": "Icon ng Paksa",
+      "lessonTitle": "Pamagat ng Aralin",
+      "lessonContent": "Nilalaman ng Aralin",
+      "lessonImage": "Larawan ng Aralin (Opsyonal)",
+      "lessonLanguage": "Wika ng Aralin",
+      "lessonOrder": "Pagkakasunod-sunod ng Aralin",
+      "quizQuestion": "Tanong",
+      "choiceA": "Pagpipilian A",
+      "choiceB": "Pagpipilian B",
+      "choiceC": "Pagpipilian C",
+      "choiceD": "Pagpipilian D",
+      "correctAnswer": "Tamang Sagot",
+      "explanation": "Paliwanag (Opsyonal)",
+      "preview": "Tingnan Muna",
+      "publish": "I-publish",
+      "saveDraft": "I-save Draft",
+      "confirmDelete": "Sigurado ka bang gusto mong tanggalin ito?",
+      "created": "Matagumpay na nagawa ang nilalaman!",
+      "updated": "Matagumpay na na-update ang nilalaman!",
+      "deleted": "Matagumpay na na-delete ang nilalaman!"
     },
-    "createLesson": {
-      "title": "Crea Aralin"
+    "qrDistribution": {
+      "title": "QR Distribution Center",
+      "generateLessonQR": "Gumawa ng Lesson QR",
+      "generateQuizQR": "Gumawa ng Quiz QR",
+      "generateSubjectQR": "Gumawa ng Subject QR",
+      "generateTranslationQR": "Gumawa ng Translation QR",
+      "selectContent": "Pumili ng Nilalaman",
+      "generateQR": "Gumawa ng QR Code",
+      "shareQR": "I-share ang QR Code",
+      "scanCode": "I-scan ang Code",
+      "qrGenerated": "Na-generate na ang QR code!",
+      "scanInstructions": "Itutok ang camera sa QR code ng estudyante",
+      "scanning": "Nag-scan...",
+      "scanComplete": "Tapos na ang Scan!",
+      "scanError": "Nabiglang mag-scan. Subukan muli."
     },
-    "createQuiz": {
-      "title": "Crea Quiz"
-    }
+    "progressImport": {
+      "title": "Pag-import ng Progreso ng Estudyante",
+      "scanStudentQR": "I-scan ang Progress QR ng Estudyante",
+      "importedStudents": "Mga Na-import na Estudyante",
+      "noImports": "Wala pang na-import na progreso ng estudyante.",
+      "lastImport": "Huling Import",
+      "importDate": "Na-import noong {{date}}",
+      "viewDetails": "Tingnan ang Detalye"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "studentName": "Pangalan ng Estudyante",
+      "averageScore": "Average na Score",
+      "lessonsCompleted": "Mga Natapos na Aralin",
+      "badgesEarned": "Mga Napanalunan na Badge",
+      "weakAreas": "Mga Dehado na Bahagi",
+      "performanceIndicators": "Mga Tagapagpahiwatig ng Performans",
+      "lowScore": "Score na bababa sa 50%",
+      "lowScoreWarning": "Kailangan ng tulong si {{name}} sa {{subject}}",
+      "noData": "Wala pang datos ng analytics.",
+      "exportReport": "I-export ang Ulat"
+    },
+    "scanProgress": "I-scan ang Progreso ng Estudyante",
+    "scanProgressDesc": "I-scan ang QR code ng estudyante para makita ang kanyang progreso",
+    "studentReports": "Mga Ulat ng Estudyante",
+    "noReports": "Wala pang ulat",
+    "noReportsDesc": "I-scan ang QR code ng progreso ng estudyante para makita ang kanyang ulat",
+    "generateCode": "Genera Teacher Code",
+    "generateCodeDesc": "Gumawa ng code para sa bagong teacher registration",
+    "latestCode": "Pinakabagong Code:",
+    "codeExpires": "Expira en 7 days • One-time use",
+    "lessonDesc": "Crea aralin at gumawa ng QR code para share",
+    "quizDesc": "Crea quiz at i-share sa QR",
+    "noLessons": "Wala pang aralin",
+    "noLessonsDesc": "Gumawa ng iyong unang aralin para i-share sa mga estudyante",
+    "shareQR": "I-share ang QR"
   },
   "qr": {
     "scan": "Scan QR Code",
@@ -235,12 +313,5 @@
     "level": "Nivel",
     "dayStreak": "{{count}} na araw streak",
     "lessonsCompleted": "{{count}}/{{total}} na aralin"
-  },
-  "teacher": {
-    "scanProgress": "Scan Progreso del Estudiante",
-    "scanProgressDesc": "Scan el QR code del estudiante para mira su progreso",
-    "studentReports": "Mga Reporte del Estudiante",
-    "noReports": "Wala pa reporte",
-    "noReportsDesc": "Scan el QR code del progreso del estudiante para mira su reporte"
   }
 }

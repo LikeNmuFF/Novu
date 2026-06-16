@@ -161,17 +161,17 @@ export default function TeacherDashboardScreen({
         <TouchableOpacity style={styles.codeCard} onPress={handleGenerateCode} activeOpacity={0.8}>
           <Text style={styles.codeIcon}>🔑</Text>
           <View style={styles.codeContent}>
-            <Text style={styles.codeTitle}>Generate Teacher Code</Text>
-            <Text style={styles.codeDesc}>Create a code for new teacher registration</Text>
+            <Text style={styles.codeTitle}>{t('teacher.generateCode')}</Text>
+            <Text style={styles.codeDesc}>{t('teacher.generateCodeDesc')}</Text>
           </View>
           <Text style={styles.codeArrow}>→</Text>
         </TouchableOpacity>
 
         {generatedCode ? (
           <View style={styles.codeDisplay}>
-            <Text style={styles.codeLabel}>Latest Code:</Text>
+            <Text style={styles.codeLabel}>{t('teacher.latestCode')}</Text>
             <Text style={styles.codeValue}>{generatedCode}</Text>
-            <Text style={styles.codeHint}>Expires in 7 days • One-time use</Text>
+            <Text style={styles.codeHint}>{t('teacher.codeExpires')}</Text>
           </View>
         ) : null}
 
@@ -180,7 +180,7 @@ export default function TeacherDashboardScreen({
           <Text style={styles.createIcon}>➕</Text>
           <View style={styles.createContent}>
             <Text style={styles.createTitle}>{t('teacher.contentCreator.createLesson')}</Text>
-            <Text style={styles.createDesc}>Write a lesson and generate a QR code to share</Text>
+            <Text style={styles.createDesc}>{t('teacher.lessonDesc')}</Text>
           </View>
           <Text style={styles.createArrow}>→</Text>
         </TouchableOpacity>
@@ -189,7 +189,7 @@ export default function TeacherDashboardScreen({
           <Text style={styles.createIcon}>❓</Text>
           <View style={styles.createContent}>
             <Text style={styles.createTitle}>{t('teacher.contentCreator.createQuiz')}</Text>
-            <Text style={styles.createDesc}>Make a quiz and distribute it via QR</Text>
+            <Text style={styles.createDesc}>{t('teacher.quizDesc')}</Text>
           </View>
           <Text style={styles.createArrow}>→</Text>
         </TouchableOpacity>
@@ -198,20 +198,20 @@ export default function TeacherDashboardScreen({
         <TouchableOpacity style={styles.scanCard} onPress={onScanProgress} activeOpacity={0.8}>
           <Text style={styles.scanIcon}>📷</Text>
           <View style={styles.scanContent}>
-            <Text style={styles.scanTitle}>Scan Student Progress</Text>
-            <Text style={styles.scanDesc}>Scan a student's QR code to view their progress</Text>
+            <Text style={styles.scanTitle}>{t('teacher.scanProgress')}</Text>
+            <Text style={styles.scanDesc}>{t('teacher.scanProgressDesc')}</Text>
           </View>
           <Text style={styles.scanArrow}>→</Text>
         </TouchableOpacity>
 
         {/* Student Reports */}
-        <Text style={styles.sectionTitle}>Student Reports</Text>
+        <Text style={styles.sectionTitle}>{t('teacher.studentReports')}</Text>
 
         {reports.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={styles.emptyText}>No reports yet</Text>
-            <Text style={styles.emptyDesc}>Scan a student's progress QR to see their report</Text>
+            <Text style={styles.emptyText}>{t('teacher.noReports')}</Text>
+            <Text style={styles.emptyDesc}>{t('teacher.noReportsDesc')}</Text>
           </View>
         ) : (
           reports.map((report, idx) => (
@@ -250,8 +250,8 @@ export default function TeacherDashboardScreen({
         {lessons.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📖</Text>
-            <Text style={styles.emptyText}>No lessons yet</Text>
-            <Text style={styles.emptyDesc}>Create your first lesson to share with students</Text>
+            <Text style={styles.emptyText}>{t('teacher.noLessons')}</Text>
+            <Text style={styles.emptyDesc}>{t('teacher.noLessonsDesc')}</Text>
           </View>
         ) : (
           lessons.map((lesson) => (
@@ -274,7 +274,7 @@ export default function TeacherDashboardScreen({
                 onPress={() => onShareLesson(lesson)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.shareBtnText}>Share QR</Text>
+                <Text style={styles.shareBtnText}>{t('teacher.shareQR')}</Text>
               </TouchableOpacity>
             </TouchableOpacity>
           ))
